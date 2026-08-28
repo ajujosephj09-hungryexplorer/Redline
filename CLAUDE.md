@@ -32,3 +32,13 @@ A web app that uploads a contract and returns:
 
 - Supabase project: set up from scratch. Auth flow decided as we build.
 - Solo development.
+
+## Agent skills
+
+### Issue tracker
+
+Issues are tracked in GitHub Issues. See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context layout with `CONTEXT.md` at repo root and `docs/adr/` for architectural decisions. See `docs/agents/domain.md`.
