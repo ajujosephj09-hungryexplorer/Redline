@@ -26,7 +26,10 @@ A web app that uploads a contract and returns:
 ## Before you start
 
 - `research/summary.md` — market validation, pain points, and competitive gaps. Read before deciding what to build.
-- `PRD.md` — will hold the brief once written. Read before building.
+- `PRD.md` — the brief for v1, written against the research. Read before building.
+- `SPEC.md` — the buildable spec derived from the brief. Read before creating tickets.
+- `CONTEXT.md` — domain vocabulary. Use these terms consistently.
+- `docs/definition-of-ready.md` — every ticket must satisfy this DoR before entering a sprint. Apply it when creating tickets via `to-tickets` or any other method.
 
 ## During the build
 
