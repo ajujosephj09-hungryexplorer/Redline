@@ -25,6 +25,11 @@ How dangerous a flagged clause is **based on its specific language**, not its ca
 ### Counter-Offer
 Drafted alternative language attached to a risk flag. The flag detects the problem (broad); the counter-offer proposes the remedy (specific to the contract shape). Example: a "Termination without guaranteed payment" flag might draft minimum-commitment language for an hourly contract or kill-fee language for a retainer.
 
+### Question Box
+An **output feature**, not an input mode. The question box appears alongside the analysis results after the rules have run. It has access to the full analysis context (flags, gaps, summary) and the uploaded document. The user does not need to know what to ask — the red-line rules do the asking. The question box lets the user explore what the rules already surfaced (see ADR 0006).
+
+The question box is not a standalone document Q&A tool. It does not work without an analysis having run first.
+
 ## Default Red-Line Rules (v1)
 
 These six rules ship out of the box, tuned for freelancer contracts:

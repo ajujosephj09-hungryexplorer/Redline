@@ -27,7 +27,7 @@ The court does not care whether you read it. Redline makes sure you did.
 3. **Risk flags ranked by severity** — each flag names the problem in confident, direct language and cites the exact source sentence from the document underneath. Severity is assessed from the specific language (scope, duration, one-sidedness), not from the clause category. Two clauses of the same type can have different severities.
 4. **Gap analysis** — flags clauses that should exist but don't. Checked for IP Assignment, Payment Terms, and Termination — the three areas where absence hurts the freelancer. Does not flag absence of Non-Compete, Indemnification, or Forced Arbitration, because missing is the preferred state.
 5. **Counter-offer for each flag and gap** — drafted alternative language the freelancer can send back. The flag detects the problem broadly; the counter-offer proposes a remedy specific to the contract shape (e.g., minimum-commitment language for hourly contracts, kill-fee language for retainers).
-6. **Question box** — the user asks questions and gets answers sourced only from the uploaded document. No external knowledge. No speculation.
+6. **Question box** — appears alongside the analysis results, not as a standalone feature. The user sees the flags and gaps the rules surfaced, then asks follow-up questions grounded in the same document. The question box has access to the analysis context (flags, gaps, summary), so it can answer "why was this flagged?" not just "what does this sentence say?" It does not work without the analysis having run first. No external knowledge. No speculation.
 7. **Editable red-line rules** — six defaults ship out of the box (see "My red lines" below). Users can toggle defaults on/off, adjust wording, add entirely new rules, and delete defaults. Full control.
 8. **Document library** — saved past documents for reference.
 
@@ -47,7 +47,7 @@ These are testable. If the product ships and any of these fail, the analysis can
 
 **Clean contract behavior:** Given a contract with no issues, the tool shows the plain-English summary and a checklist of every rule that was checked, each with a clean status. It does not invent flags to justify its existence.
 
-**Question box grounding:** Every answer from the question box is traceable to the uploaded document. If the document does not contain the answer, the tool says so. An answer that draws on knowledge outside the document is a bug.
+**Question box grounding:** The question box is an output feature — it appears after the analysis runs and has access to the analysis context (flags, gaps, summary). Every answer is traceable to the uploaded document. If the document does not contain the answer, the tool says so. An answer that draws on knowledge outside the document is a bug. The question box does not need to function as a standalone document Q&A tool — the red-line rules are the framework that does the asking.
 
 **False positive preference:** The tool errs toward flagging. A clause that is borderline gets flagged, not skipped. The user dismisses it in 10 seconds by reading the citation. A missed risk is invisible until the freelancer gets hurt.
 
@@ -100,6 +100,9 @@ Flags say "This clause assigns all derivative IP rights to the client," not "Thi
 
 **Severity from specific language, not clause category or enforceability.**
 The tool does not say "this is probably unenforceable." It does not know the user's jurisdiction and does not guess. A clause that is harsh on paper but unlikely to hold up in court is flagged at the severity the language warrants. Users in jurisdictions where a specific clause type is unenforceable will see flags they could safely ignore — but users whose clients operate in jurisdictions where it *is* enforceable will be protected. The cost is some unnecessary flags; the benefit is never telling someone "don't worry about it" when they should.
+
+**Question box as output, not input.**
+The question box is downstream of the analysis — it appears after the rules run, not as a standalone Q&A tool. The red-line rules are the framework that interrogates the document. The user does not need to know what to ask. Users who want to ask open-ended questions about a document without running an analysis first cannot — the question box requires the analysis to have run. This is intentional: the product exists because freelancers don't know what to look for, so asking them to formulate questions reproduces the problem.
 
 **No automatic learning from dismissals.**
 When a user dismisses a flag, nothing adjusts. They can manually edit their rules anytime, but the tool does not learn from their behavior. Users who review many contracts will see the same false positives repeatedly until they edit their rules themselves. A dismissal-to-learning pipeline is deferred to a future version.
