@@ -22,14 +22,15 @@ The court does not care whether you read it. Redline makes sure you did.
 
 ## What the first version does
 
-1. **Upload a contract** — the user pastes or uploads a document. Parsing happens in the browser. Only plain text is stored. No OCR.
-2. **Plain-English summary** — a readable summary of what the contract says, written for someone who is not a lawyer.
-3. **Risk flags ranked by severity** — each flag names the problem in confident, direct language and cites the exact source sentence from the document underneath. Severity is assessed from the specific language (scope, duration, one-sidedness), not from the clause category. Two clauses of the same type can have different severities.
-4. **Gap analysis** — flags clauses that should exist but don't. Checked for IP Assignment, Payment Terms, and Termination — the three areas where absence hurts the freelancer. Does not flag absence of Non-Compete, Indemnification, or Forced Arbitration, because missing is the preferred state.
-5. **Counter-offer for each flag and gap** — drafted alternative language the freelancer can send back. The flag detects the problem broadly; the counter-offer proposes a remedy specific to the contract shape (e.g., minimum-commitment language for hourly contracts, kill-fee language for retainers).
-6. **Question box** — appears alongside the analysis results, not as a standalone feature. The user sees the flags and gaps the rules surfaced, then asks follow-up questions grounded in the same document. The question box has access to the analysis context (flags, gaps, summary), so it can answer "why was this flagged?" not just "what does this sentence say?" It does not work without the analysis having run first. No external knowledge. No speculation.
-7. **Editable red-line rules** — six defaults ship out of the box (see "My red lines" below). Users can toggle defaults on/off, adjust wording, add entirely new rules, and delete defaults. Full control.
-8. **Document library** — saved past documents for reference.
+1. **Landing page** — a public page that demonstrates what the product does: a contract turning into ranked flags, each citing the exact source sentence. One action: try it on your document. No legal advice, no invented prices or testimonials. The diagnostic report is the hero.
+2. **Upload a contract** — the user pastes or uploads a document. Parsing happens in the browser. Only plain text is stored. No OCR.
+3. **Plain-English summary** — a readable summary of what the contract says, written for someone who is not a lawyer.
+4. **Risk flags ranked by severity** — each flag names the problem in confident, direct language and cites the exact source sentence from the document underneath. Severity is assessed from the specific language (scope, duration, one-sidedness), not from the clause category. Two clauses of the same type can have different severities.
+5. **Gap analysis** — flags clauses that should exist but don't. Checked for IP Assignment, Payment Terms, and Termination — the three areas where absence hurts the freelancer. Does not flag absence of Non-Compete, Indemnification, or Forced Arbitration, because missing is the preferred state.
+6. **Counter-offer for each flag and gap** — drafted alternative language the freelancer can send back. The flag detects the problem broadly; the counter-offer proposes a remedy specific to the contract shape (e.g., minimum-commitment language for hourly contracts, kill-fee language for retainers).
+7. **Question box** — appears alongside the analysis results, not as a standalone feature. The user sees the flags and gaps the rules surfaced, then asks follow-up questions grounded in the same document. The question box has access to the analysis context (flags, gaps, summary), so it can answer "why was this flagged?" not just "what does this sentence say?" It does not work without the analysis having run first. No external knowledge. No speculation.
+8. **Editable red-line rules** — six defaults ship out of the box (see "My red lines" below). Users can toggle defaults on/off, adjust wording, add entirely new rules, and delete defaults. Full control.
+9. **Document library** — saved past documents for reference.
 
 That is the complete list. Nothing else is in scope.
 

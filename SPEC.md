@@ -10,6 +10,7 @@ Existing tools are either enterprise-priced ($30,000+/year) or too shallow (no s
 
 A web app where a freelancer uploads an inbound contract and immediately gets back:
 
+- A public landing page that demonstrates the product: a contract turning into ranked flags with exact citations. One action: try it on your document. No legal advice, no invented claims.
 - A plain-English summary of what the contract says
 - Risk flags ranked by severity, each citing the exact source sentence, with a drafted counter-offer attached
 - Gap analysis for clauses that should exist but don't (IP, Payment, Termination)

@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-17T00:00:00Z",
+  "title": "Design System: Redline",
+  "extensions": {
+    "colorMeta": {
+      "navy": {
+        "role": "primary",
+        "displayName": "Deep Navy",
+        "canonical": "oklch(28% 0.03 260)",
+        "tonalRamp": [
+          "oklch(15% 0.03 260)",
+          "oklch(22% 0.03 260)",
+          "oklch(28% 0.03 260)",
+          "oklch(38% 0.03 260)",
+          "oklch(50% 0.03 260)",
+          "oklch(65% 0.02 260)",
+          "oklch(80% 0.01 260)",
+          "oklch(95% 0.005 260)"
+        ]
+      },
+      "severity-critical": {
+        "role": "tertiary",
+        "displayName": "Severity Critical",
+        "canonical": "oklch(53% 0.22 27)",
+        "tonalRamp": [
+          "oklch(15% 0.08 27)",
+          "oklch(25% 0.12 27)",
+          "oklch(35% 0.16 27)",
+          "oklch(53% 0.22 27)",
+          "oklch(62% 0.18 27)",
+          "oklch(72% 0.12 27)",
+          "oklch(85% 0.06 27)",
+          "oklch(95% 0.02 27)"
+        ]
+      },
+      "severity-moderate": {
+        "role": "tertiary",
+        "displayName": "Severity Moderate",
+        "canonical": "oklch(79% 0.17 85)",
+        "tonalRamp": [
+          "oklch(15% 0.06 85)",
+          "oklch(30% 0.10 85)",
+          "oklch(45% 0.13 85)",
+          "oklch(60% 0.15 85)",
+          "oklch(79% 0.17 85)",
+          "oklch(85% 0.12 85)",
+          "oklch(92% 0.06 85)",
+          "oklch(97% 0.02 85)"
+        ]
+      },
+      "severity-clear": {
+        "role": "tertiary",
+        "displayName": "Severity Clear",
+        "canonical": "oklch(55% 0.16 150)",
+        "tonalRamp": [
+          "oklch(15% 0.06 150)",
+          "oklch(25% 0.10 150)",
+          "oklch(35% 0.13 150)",
+          "oklch(55% 0.16 150)",
+          "oklch(65% 0.12 150)",
+          "oklch(75% 0.08 150)",
+          "oklch(88% 0.04 150)",
+          "oklch(96% 0.01 150)"
+        ]
+      },
+      "clinical-white": {
+        "role": "neutral",
+        "displayName": "Clinical White",
+        "canonical": "#ffffff"
+      },
+      "surface-muted": {
+        "role": "neutral",
+        "displayName": "Surface Muted",
+        "canonical": "#f8fafc"
+      },
+      "border-light": {
+        "role": "neutral",
+        "displayName": "Border Light",
+        "canonical": "#e2e8f0"
+      },
+      "text-secondary": {
+        "role": "neutral",
+        "displayName": "Text Secondary",
+        "canonical": "#64748b"
+      },
+      "text-tertiary": {
+        "role": "neutral",
+        "displayName": "Text Tertiary",
+        "canonical": "#94a3b8"
+      },
+      "counter-offer-bg": {
+        "role": "neutral",
+        "displayName": "Counter-Offer Background",
+        "canonical": "#ecfdf5"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The Redline wordmark only. Bold, tight tracking, steps from 2.25rem to 3rem."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headings. Bold, 1.5rem."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Findings, descriptions, list content. Regular or semibold, 0.875rem, relaxed leading."
+      },
+      "body-large": {
+        "displayName": "Body Large",
+        "purpose": "Tagline and section lead-in paragraphs. 1.125rem."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Severity pills, block headers, status text. Semibold, 0.75rem, uppercase, wide tracking."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Cited contract text inside finding expansions. Evidence typeface."
+      }
+    },
+    "shadows": [
+      {
+        "name": "report-card",
+        "value": "0 1px 2px 0 rgba(226, 232, 240, 0.5)",
+        "purpose": "Subtle lift on the diagnostic report card only. The single shadowed element in the system."
+      }
+    ],
+    "motion": [
+      {
+        "name": "report-entrance",
+        "value": "opacity 700ms cubic-bezier(0.16, 1, 0.3, 1), transform 700ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Report card fade-and-rise on page load."
+      },
+      {
+        "name": "expand-collapse",
+        "value": "grid-template-rows 300ms ease-out",
+        "purpose": "Finding row expansion and collapse."
+      },
+      {
+        "name": "chevron-rotate",
+        "value": "transform 300ms ease-out",
+        "purpose": "Chevron rotation on finding row toggle."
+      },
+      {
+        "name": "hover-color",
+        "value": "color 150ms, background-color 150ms",
+        "purpose": "Default hover transition on buttons and interactive rows."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "md",
+        "value": "768px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The sole button variant. Navy fill, white text, used for both CTAs on the landing page.",
+      "html": "<a href=\"#\" class=\"ds-btn-primary\">Try it on your contract</a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; background-color: #1e293b; color: #ffffff; font-family: 'Libre Franklin', sans-serif; font-weight: 600; font-size: 1rem; line-height: 1.5; padding: 14px 32px; border-radius: 6px; text-decoration: none; transition: background-color 150ms; cursor: pointer; border: none; } .ds-btn-primary:hover { background-color: #1e293b; filter: brightness(1.15); } .ds-btn-primary:focus-visible { outline: 2px solid #1e293b; outline-offset: 2px; }"
+    },
+    {
+      "name": "Severity Pill — Critical",
+      "kind": "chip",
+      "refersTo": "severity-pill-critical",
+      "description": "Uppercase severity label for critical findings. Red background, white text.",
+      "html": "<span class=\"ds-pill-critical\">Critical</span>",
+      "css": ".ds-pill-critical { display: inline-block; background-color: #dc2626; color: #ffffff; font-family: 'Libre Franklin', sans-serif; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 4px 10px; border-radius: 2px; line-height: 1.5; }"
+    },
+    {
+      "name": "Severity Pill — Moderate",
+      "kind": "chip",
+      "refersTo": "severity-pill-moderate",
+      "description": "Uppercase severity label for moderate findings. Amber background, navy text.",
+      "html": "<span class=\"ds-pill-moderate\">Moderate</span>",
+      "css": ".ds-pill-moderate { display: inline-block; background-color: #f59e0b; color: #1e293b; font-family: 'Libre Franklin', sans-serif; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 4px 10px; border-radius: 2px; line-height: 1.5; }"
+    },
+    {
+      "name": "Citation Block",
+      "kind": "card",
+      "refersTo": "citation-block",
+      "description": "Cited contract text inside an expanded finding. Monospace font, navy left border, muted background.",
+      "html": "<div class=\"ds-citation\"><p class=\"ds-citation-label\">Cited from your contract</p><p class=\"ds-citation-text\">\"Contractor hereby assigns to Client all right, title, and interest in and to any and all work product...\"</p></div>",
+      "css": ".ds-citation { background-color: #f8fafc; border-left: 2px solid #1e293b; padding: 12px 16px; } .ds-citation-label { font-family: 'Libre Franklin', sans-serif; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin: 0 0 6px 0; } .ds-citation-text { font-family: 'Roboto Mono', monospace; font-size: 0.875rem; line-height: 1.625; color: #1e293b; margin: 0; }"
+    },
+    {
+      "name": "Counter-Offer Block",
+      "kind": "card",
+      "refersTo": "counter-offer-block",
+      "description": "Drafted alternative language inside an expanded finding. Green left border, light emerald background.",
+      "html": "<div class=\"ds-counter\"><p class=\"ds-counter-label\">Counter-offer</p><p class=\"ds-counter-text\">Contractor assigns rights to deliverables created specifically for this project. Pre-existing materials remain the property of Contractor.</p></div>",
+      "css": ".ds-counter { background-color: #ecfdf5; border-left: 2px solid #16a34a; padding: 12px 16px; } .ds-counter-label { font-family: 'Libre Franklin', sans-serif; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin: 0 0 6px 0; } .ds-counter-text { font-family: 'Libre Franklin', sans-serif; font-size: 0.875rem; line-height: 1.625; color: #1e293b; margin: 0; }"
+    },
+    {
+      "name": "Finding Row",
+      "kind": "custom",
+      "refersTo": "finding-row",
+      "description": "Expandable accordion row inside the report card. Severity pill, rule name, assessment, chevron toggle.",
+      "html": "<div class=\"ds-finding\"><button class=\"ds-finding-header\"><span class=\"ds-pill-critical\">Critical</span><div class=\"ds-finding-body\"><p class=\"ds-finding-rule\">IP Assignment</p><p class=\"ds-finding-assessment\">This clause assigns all derivative works and pre-existing materials to the client.</p></div><span class=\"ds-finding-chevron\">&#x25BE;</span></button></div>",
+      "css": ".ds-finding { border-bottom: 1px solid #e2e8f0; } .ds-finding:last-child { border-bottom: none; } .ds-finding-header { display: flex; align-items: flex-start; gap: 16px; width: 100%; text-align: left; padding: 16px 20px; background: none; border: none; cursor: pointer; font-family: 'Libre Franklin', sans-serif; transition: background-color 150ms; } .ds-finding-header:hover { background-color: #f8fafc; } .ds-finding-body { flex: 1; min-width: 0; } .ds-finding-rule { font-size: 0.875rem; font-weight: 600; color: #1e293b; margin: 0; } .ds-finding-assessment { font-size: 0.875rem; color: #475569; line-height: 1.625; margin: 2px 0 0 0; } .ds-finding-chevron { color: #94a3b8; margin-top: 4px; flex-shrink: 0; transition: transform 300ms ease-out; } .ds-finding-header:focus-visible { outline: 2px solid #1e293b; outline-offset: 2px; } .ds-pill-critical { display: inline-block; background-color: #dc2626; color: #ffffff; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 4px 10px; border-radius: 2px; line-height: 1.5; }"
+    },
+    {
+      "name": "Report Card",
+      "kind": "card",
+      "refersTo": "report-card",
+      "description": "The diagnostic report container. The only shadowed element in the system.",
+      "html": "<div class=\"ds-report\"><div class=\"ds-report-header\"><p class=\"ds-report-title\">Acme Corp — Freelance Design Agreement</p><div class=\"ds-report-stats\"><span class=\"ds-stat\"><span class=\"ds-dot ds-dot-critical\"></span>2 critical</span><span class=\"ds-stat\"><span class=\"ds-dot ds-dot-moderate\"></span>2 moderate</span><span class=\"ds-stat\"><span class=\"ds-dot ds-dot-clear\"></span>2 clear</span></div></div></div>",
+      "css": ".ds-report { border: 1px solid #e2e8f0; border-radius: 6px; background-color: #ffffff; box-shadow: 0 1px 2px 0 rgba(226, 232, 240, 0.5); } .ds-report-header { padding: 16px 20px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; } .ds-report-title { font-family: 'Libre Franklin', sans-serif; font-weight: 600; font-size: 0.875rem; color: #1e293b; margin: 0; } .ds-report-stats { display: flex; align-items: center; gap: 12px; font-family: 'Libre Franklin', sans-serif; font-size: 0.75rem; font-variant-numeric: tabular-nums; color: #1e293b; } .ds-stat { display: flex; align-items: center; gap: 6px; } .ds-dot { width: 8px; height: 8px; border-radius: 9999px; } .ds-dot-critical { background-color: #dc2626; } .ds-dot-moderate { background-color: #f59e0b; } .ds-dot-clear { background-color: #16a34a; }"
+    },
+    {
+      "name": "Rules Checklist Row",
+      "kind": "custom",
+      "refersTo": "rules-checklist-row",
+      "description": "A row in the rules checklist showing rule name and severity status as colored text.",
+      "html": "<div class=\"ds-rule-row\"><span class=\"ds-rule-name\">IP Assignment</span><span class=\"ds-rule-status ds-status-critical\">Critical</span></div>",
+      "css": ".ds-rule-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #e2e8f0; } .ds-rule-row:last-child { border-bottom: none; } .ds-rule-name { font-family: 'Libre Franklin', sans-serif; font-size: 0.875rem; font-weight: 500; color: #1e293b; } .ds-rule-status { font-family: 'Libre Franklin', sans-serif; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; } .ds-status-critical { color: #dc2626; } .ds-status-moderate { color: #f59e0b; } .ds-status-clear { color: #16a34a; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Diagnostic Report",
+    "overview": "The system presents contract analysis as a clinical workup. The visual language borrows from medical diagnostics and lab reports: white ground, restrained palette, tabular findings, severity indicators as the only saturated color. Authority comes from structure and evidence, not decoration. The page is the report; the report is the product.\n\nThe density is high for a landing page but appropriate for the form it imitates. Every visual element either conveys a finding, cites evidence, or prompts an action. Decorative elements are absent by design, not by omission.",
+    "keyCharacteristics": [
+      "Clinical white ground with a single structural color (deep navy)",
+      "Severity as the only source of saturated color (red, amber, green)",
+      "Monospace face distinguishes cited contract text from analysis",
+      "Tabular findings layout with expandable rows",
+      "Single narrow column (max 768px) for readability and report feel"
+    ],
+    "rules": [
+      {
+        "name": "The Severity Monopoly Rule",
+        "body": "Red, amber, and green appear only as severity indicators. They are never used for buttons, backgrounds, links, decorative elements, or branding. Their diagnostic meaning depends on this exclusivity.",
+        "section": "colors"
+      },
+      {
+        "name": "The Navy-Is-Ink Rule",
+        "body": "Navy (#1e293b) functions as ink, not as an accent. It is the default text color, the heading color, and the button fill. There is no separate \"text color\" and \"brand color\" -- they are the same value.",
+        "section": "colors"
+      },
+      {
+        "name": "The Evidence Wall Rule",
+        "body": "Cited contract text is always set in Roboto Mono. Analysis and counter-offers are always set in Libre Franklin. The typeface boundary is the credibility boundary -- it tells the reader what came from their document versus what the tool produced.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Document Rule",
+        "body": "Only the report card casts a shadow. It is the artifact being examined; the subtle lift distinguishes it from the page surface. Extending shadows to other elements would dilute this distinction.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use navy (#1e293b) as the default text color. It is ink, not an accent -- every heading and body element uses it.",
+      "Do set cited contract text in Roboto Mono and all other text in Libre Franklin. The typeface is the trust signal.",
+      "Do keep the container at max-w-3xl (768px). The narrow measure is the form, not a constraint to break out of.",
+      "Do use alternating white/slate-50 section backgrounds to create rhythm without borders.",
+      "Do pair left-border accents with background tints for nested evidence blocks (navy border + slate-50 for citations, green border + emerald-50 for counter-offers)."
+    ],
+    "donts": [
+      "Don't use severity colors (red, amber, green) for anything other than severity indicators. Buttons, links, backgrounds, and decorative elements stay navy or neutral.",
+      "Don't add shadows to elements other than the report card. Depth comes from tonal layering.",
+      "Don't introduce gradients, decorative illustrations, or background patterns. The data visualization is the design.",
+      "Don't use display-size type for anything other than the product name. Section headings stay at headline scale (1.5rem).",
+      "Don't break the single-column layout with sidebars, multi-column grids, or full-bleed media. The report form depends on the narrow measure."
+    ]
+  }
+}

@@ -22,6 +22,7 @@ A web app that uploads a contract and returns:
 - State only what the document says. Unsupported claims are bugs.
 - Ask before adding a dependency.
 - Ask me before building anything not on the list above.
+- All copy a user reads in this product — landing page, UI labels, error messages, empty states — must be run through the humanizer skill before it is committed. Copy that reads as though a model wrote it is a defect, not a matter of taste.
 
 ## Before you start
 
