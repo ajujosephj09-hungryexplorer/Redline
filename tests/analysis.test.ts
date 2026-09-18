@@ -95,7 +95,7 @@ describe('analysis engine', () => {
     }
   })
 
-  it('returns empty gaps and checklist (ticket 05 fills these)', async () => {
+  it('returns zero gaps and a full checklist for risky contract (all clause types present)', async () => {
     const text = readFileSync(
       join(__dirname, 'fixtures/risky-contract.txt'),
       'utf8'
@@ -107,7 +107,20 @@ describe('analysis engine', () => {
 
     const result = await analyzeContract(text, rules)
 
-    expect(result.gaps).toEqual([])
-    expect(result.checklist).toEqual([])
+    // All clause types exist in the risky contract, so no gaps
+    expect(result.gaps).toHaveLength(0)
+
+    // Checklist has one entry per enabled rule
+    expect(result.checklist).toHaveLength(rules.filter((r) => r.enabled).length)
+
+    // Every flagged rule should show as 'flagged' in the checklist
+    const flaggedNames = new Set(result.flags.map((f) => f.ruleName))
+    for (const item of result.checklist) {
+      if (flaggedNames.has(item.ruleName)) {
+        expect(item.status).toBe('flagged')
+      } else {
+        expect(item.status).toBe('clean')
+      }
+    }
   })
 })

@@ -46,8 +46,32 @@ async function main() {
     console.log('')
   }
 
+  // Gaps
+  if (result.gaps.length > 0) {
+    console.log('GAPS:')
+    for (const gap of result.gaps) {
+      const explanationPreview =
+        gap.explanation.length > 80
+          ? gap.explanation.slice(0, 80) + '...'
+          : gap.explanation
+      console.log(`  [MISSING] ${gap.ruleName}: ${explanationPreview}`)
+    }
+    console.log('')
+  }
+
+  // Checklist
+  if (result.checklist.length > 0) {
+    console.log('CHECKLIST:')
+    for (const item of result.checklist) {
+      console.log(`  ${item.ruleName}: ${item.status}`)
+    }
+    console.log('')
+  }
+
+  // Summary line
+  const cleanCount = result.checklist.filter((c) => c.status === 'clean').length
   console.log('---')
-  console.log(`${result.flags.length} flags found`)
+  console.log(`${result.flags.length} flags, ${result.gaps.length} gaps, ${cleanCount} clean`)
   console.log(
     `${citationsVerified}/${result.flags.length} citations verified as verbatim substrings`
   )
