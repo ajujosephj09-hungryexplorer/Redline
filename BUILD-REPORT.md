@@ -29,42 +29,18 @@ All 9 tickets are complete. No tickets are blocked.
 
 - **Vercel deployment** — live at redline-kappa-umber.vercel.app. Auto-deploys from master.
 - **OpenRouter env vars** — `OPENROUTER_API_KEY` and `OPENROUTER_MODEL` set in both `.env.local` (local dev) and Vercel (production).
+- **Supabase** — project created (`phtutsxmzhbibehqaigq`). Env vars set in `.env.local` and Vercel. All 5 migrations run. Tables: profiles, documents, rules, analyses — all with RLS policies.
 - **Landing page** — public, no auth needed.
 - **Anonymous analysis** — paste a contract at `/analyze`, runs through OpenRouter, returns flags with citations.
-
-## What Needs Supabase
-
-These features are built but won't work until a Supabase project is connected:
-
-- **Sign up / log in** — auth pages exist but have no database to talk to
-- **Document library** — saving and revisiting past contracts
-- **Rules customization** — editing, adding, deleting rules that persist across sessions
-- **Document persistence** — saving uploaded contracts tied to user accounts
-
-### To set up Supabase
-
-1. Create a project at supabase.com
-2. Grab the project URL and anon key from Settings → API
-3. Add them as env vars:
-   - **Locally:** add to `.env.local`
-     ```
-     NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-     NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-     ```
-   - **Vercel:** add in Settings → Environment Variables (same as the OpenRouter vars)
-4. Run the 5 migration files against your Supabase database (SQL Editor, in order):
-   - `supabase/migrations/00001_create_profiles.sql`
-   - `supabase/migrations/00002_create_documents.sql`
-   - `supabase/migrations/00003_create_rules.sql`
-   - `supabase/migrations/00004_seed_default_rules.sql`
-   - `supabase/migrations/00005_create_analyses.sql`
-5. Redeploy on Vercel (or push any commit to trigger it)
-6. Test signup/login/library manually
+- **Auth** — sign up / log in pages wired to Supabase. Ready for manual testing.
+- **Document library** — saves and retrieves past contracts per user account.
+- **Rules customization** — editable red-line rules that persist across sessions.
+- **Question box** — follow-up questions grounded in the document and analysis context.
 
 ## Decisions Made
 
 ### 1. Vercel deployment (ticket 01)
-Vercel is connected to the GitHub repo. Pushes to master trigger automatic production deploys. OpenRouter env vars are set in Vercel project settings. Supabase vars will be added when the project is created.
+Vercel is connected to the GitHub repo. Pushes to master trigger automatic production deploys. All 4 env vars (OpenRouter + Supabase) are set in Vercel project settings.
 
 ### 2. App works without Supabase
 The app starts and serves the landing page, upload, and anonymous analysis without Supabase env vars. Auth-dependent features (library, rules persistence) degrade gracefully with sign-in prompts.
@@ -89,7 +65,7 @@ pdfjs-dist requires a web worker. The worker file is copied from node_modules to
 
 ## What Could Not Be Verified
 
-1. **Supabase auth flow** — No Supabase project exists yet. Needs manual testing after setup.
+1. **Supabase auth flow** — Supabase is connected and migrations are run. Needs manual testing (sign up, log in, save a document, check library).
 2. **Real document parsing** — PDF and DOCX parsing tested with text fixtures only, not real binary files. The parser uses pdfjs-dist and mammoth which are battle-tested libraries.
 3. **Mobile responsive behavior** — Not verified visually. The design uses max-w-3xl which should work on mobile, but no browser testing was done.
 
