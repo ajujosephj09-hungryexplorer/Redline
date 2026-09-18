@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 const navLinks = [
-  { href: '/dashboard', label: 'Library' },
+  { href: '/library', label: 'Library' },
   { href: '/upload', label: 'Upload' },
   { href: '/rules', label: 'Rules' },
 ]
