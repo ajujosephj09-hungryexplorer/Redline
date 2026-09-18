@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import type { AnalysisResult, RiskFlag, Severity } from '@/lib/analysis/types'
+import type { AnalysisResult, RiskFlag, Gap, ChecklistItem, Severity } from '@/lib/analysis/types'
 import type { Rule } from '@/lib/rules/types'
 import { getLocalRules } from '@/lib/rules/local'
+import QuestionBox from '@/components/QuestionBox'
 
 interface Props {
   documentText: string
@@ -126,6 +127,115 @@ function FindingRow({ flag }: { flag: RiskFlag }) {
 }
 
 // ---------------------------------------------------------------------------
+// GapCard — a missing clause
+// ---------------------------------------------------------------------------
+
+function GapCard({ gap }: { gap: Gap }) {
+  const [copied, setCopied] = useState(false)
+
+  const copyCounter = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(gap.counterOffer)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    } catch {
+      // Clipboard API may not be available in all contexts
+    }
+  }, [gap.counterOffer])
+
+  return (
+    <div className="border border-dashed border-slate-300 rounded-md bg-white">
+      <div className="px-4 py-3 space-y-3">
+        {/* Header */}
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-semibold text-amber-600 uppercase tracking-wider">
+            Missing
+          </span>
+          <span className="text-sm font-semibold text-navy">
+            {gap.ruleName}
+          </span>
+        </div>
+
+        {/* Explanation */}
+        <p className="text-sm text-slate-700 leading-relaxed">
+          {gap.explanation}
+        </p>
+
+        {/* Counter-offer block */}
+        <div>
+          <div className="flex items-center justify-between mb-1.5">
+            <p className="uppercase text-xs tracking-wider font-semibold text-slate-500">
+              Suggested language
+            </p>
+            <button
+              onClick={copyCounter}
+              className="text-xs text-slate-500 hover:text-navy transition-colors"
+            >
+              {copied ? 'Copied' : 'Copy'}
+            </button>
+          </div>
+          <div className="bg-emerald-50 border-l-4 border-green-600 rounded-r-md p-3">
+            <p className="text-sm text-navy leading-relaxed whitespace-pre-wrap">
+              {gap.counterOffer}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// RulesChecklist — what was checked
+// ---------------------------------------------------------------------------
+
+function checklistStatusStyle(status: ChecklistItem['status']) {
+  switch (status) {
+    case 'flagged':
+      return 'text-severity-critical'
+    case 'gap':
+      return 'text-amber-600'
+    case 'clean':
+      return 'text-severity-clear'
+  }
+}
+
+function checklistStatusLabel(status: ChecklistItem['status']) {
+  switch (status) {
+    case 'flagged':
+      return 'Flagged'
+    case 'gap':
+      return 'Missing'
+    case 'clean':
+      return 'Clear'
+  }
+}
+
+function RulesChecklist({ items }: { items: ChecklistItem[] }) {
+  if (items.length === 0) return null
+
+  return (
+    <div className="mt-6">
+      <h2 className="text-sm uppercase tracking-wider font-semibold text-slate-500 mb-2">
+        What was checked
+      </h2>
+      <div className="border border-slate-200 rounded-md divide-y divide-slate-200">
+        {items.map((item, i) => (
+          <div key={i} className="flex items-center justify-between px-5 py-3.5">
+            <span className="text-sm font-semibold text-navy">{item.ruleName}</span>
+            <span
+              className={`text-xs font-semibold uppercase tracking-wider ${checklistStatusStyle(item.status)}`}
+            >
+              {checklistStatusLabel(item.status)}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
@@ -209,8 +319,11 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
 
   // ---- Results ----
   const flags = result?.flags ?? []
+  const gaps = result?.gaps ?? []
+  const checklist = result?.checklist ?? []
   const criticalCount = flags.filter((f) => f.severity === 'critical').length
   const moderateCount = flags.filter((f) => f.severity === 'moderate').length
+  const isClean = flags.length === 0 && gaps.length === 0
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -226,12 +339,26 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
         </p>
       </div>
 
+      {/* Clean contract message */}
+      {isClean && (
+        <div className="mt-4 bg-white border border-slate-200 rounded-md shadow-sm p-5">
+          <p className="text-sm text-severity-clear font-semibold">
+            No issues found
+          </p>
+          <p className="text-sm text-slate-600 mt-1">
+            The contract looks fair based on the rules that were checked.
+          </p>
+        </div>
+      )}
+
       {/* Stats bar */}
-      {flags.length > 0 && (
+      {(flags.length > 0 || gaps.length > 0) && (
         <div className="mt-4 flex items-center gap-4 text-sm">
-          <span className="text-slate-600">
-            {flags.length} {flags.length === 1 ? 'finding' : 'findings'}
-          </span>
+          {flags.length > 0 && (
+            <span className="text-slate-600">
+              {flags.length} {flags.length === 1 ? 'finding' : 'findings'}
+            </span>
+          )}
           {criticalCount > 0 && (
             <span className="text-severity-critical font-semibold">
               {criticalCount} critical
@@ -242,24 +369,40 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
               {moderateCount} moderate
             </span>
           )}
+          {gaps.length > 0 && (
+            <span className="text-amber-600 font-semibold">
+              {gaps.length} missing
+            </span>
+          )}
         </div>
       )}
 
       {/* Findings */}
-      <div className="mt-4 space-y-3">
-        {flags.length === 0 ? (
-          <div className="bg-white border border-slate-200 rounded-md shadow-sm p-5">
-            <p className="text-sm text-severity-clear font-semibold">
-              No issues found
-            </p>
-            <p className="text-sm text-slate-600 mt-1">
-              The contract looks fair based on the rules that were checked.
-            </p>
+      {flags.length > 0 && (
+        <div className="mt-4 space-y-3">
+          {flags.map((flag, i) => <FindingRow key={i} flag={flag} />)}
+        </div>
+      )}
+
+      {/* Gaps */}
+      {gaps.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-sm uppercase tracking-wider font-semibold text-slate-500 mb-2">
+            Missing from this contract
+          </h2>
+          <div className="space-y-3">
+            {gaps.map((gap, i) => <GapCard key={i} gap={gap} />)}
           </div>
-        ) : (
-          flags.map((flag, i) => <FindingRow key={i} flag={flag} />)
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Rules checklist */}
+      <RulesChecklist items={checklist} />
+
+      {/* Question box — only shown after analysis completes */}
+      {result && (
+        <QuestionBox documentText={documentText} analysisResult={result} />
+      )}
     </div>
   )
 }
