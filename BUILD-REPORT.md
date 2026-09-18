@@ -27,8 +27,8 @@ All 9 tickets are complete. No tickets are blocked.
 
 ## Decisions Made
 
-### 1. Vercel deployment skipped (ticket 01)
-No Vercel credentials available in this session. The app builds cleanly and is ready to deploy. Run `vercel` or push to a connected GitHub repo.
+### 1. Vercel deployment (ticket 01)
+Vercel is connected to the GitHub repo. All commits were pushed to master, which triggers automatic deploys. Check https://vercel.com/aju-joseph-johns-projects/redline for deployment status. If the build failed, the env vars `OPENROUTER_API_KEY`, `OPENROUTER_MODEL`, `NEXT_PUBLIC_SUPABASE_URL`, and `NEXT_PUBLIC_SUPABASE_ANON_KEY` need to be set in Vercel's project settings (Settings → Environment Variables) — they're in `.env.local` locally but Vercel needs its own copies.
 
 ### 2. Supabase runs locally without a project
 All tables and policies are written as SQL migration files in `supabase/migrations/`. The app starts and works (landing page, upload, analysis) without `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Only library, rules customization, and document persistence need a Supabase project.
@@ -53,10 +53,9 @@ pdfjs-dist requires a web worker. The worker file is copied from node_modules to
 
 ## What Could Not Be Verified
 
-1. **Live OpenRouter analysis** — Verified. 6/6 flags, 6/6 citations correct. Model `z-ai/glm-5.3-flash` via Fireworks. Note: the model can be temporarily rate-limited on Fireworks (429 errors); retry after a few seconds.
-2. **Supabase auth flow** — No Supabase project exists. Run the migrations, set env vars, and test signup/login/library manually.
-3. **Real document parsing** — PDF and DOCX parsing are tested with text fixtures but not with real binary files in automated tests. The parser uses pdfjs-dist and mammoth which are battle-tested libraries.
-4. **Mobile responsive behavior** — Not verified visually. The design uses max-w-3xl which should work on mobile, but no browser testing was done.
+1. **Supabase auth flow** — No Supabase project exists. Run the migrations, set env vars, and test signup/login/library manually.
+2. **Real document parsing** — PDF and DOCX parsing are tested with text fixtures but not with real binary files in automated tests. The parser uses pdfjs-dist and mammoth which are battle-tested libraries.
+3. **Mobile responsive behavior** — Not verified visually. The design uses max-w-3xl which should work on mobile, but no browser testing was done.
 
 ## Commands to Run First
 
@@ -64,13 +63,10 @@ pdfjs-dist requires a web worker. The worker file is copied from node_modules to
 # 1. Install dependencies (if not already done)
 npm install
 
-# 2. Set up environment variables
-cp .env.local.example .env.local  # or create manually
-# Add to .env.local:
+# 2. Set up environment variables (.env.local already exists with OpenRouter creds)
+# Add Supabase vars when the project is ready:
 #   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
 #   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-#   OPENROUTER_API_KEY=your-openrouter-key
-#   OPENROUTER_MODEL=your-model-id
 
 # 3. Run Supabase migrations (in order)
 # Apply these against your Supabase project:
