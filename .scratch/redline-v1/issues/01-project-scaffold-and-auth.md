@@ -4,13 +4,13 @@
 
 **Blocked by:** None — can start immediately.
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Next.js project initialised with TypeScript, Tailwind, and App Router
-- [ ] Supabase project connected (auth + database)
-- [ ] User can sign up with email and password
-- [ ] User can log in and is redirected to a protected dashboard route
-- [ ] User can log out and is redirected to a public page
-- [ ] Unauthenticated requests to protected routes redirect to login
-- [ ] Credentials stored in `.env.local` (gitignored), no secrets committed
-- [ ] Deployed to Vercel and reachable at a live URL
+- [x] Next.js project initialised with TypeScript, Tailwind, and App Router
+- [x] Supabase project connected (auth + database)
+- [x] User can sign up with email and password
+- [x] User can log in and is redirected to a protected dashboard route
+- [x] User can log out and is redirected to a public page
+- [x] Unauthenticated requests to protected routes redirect to login
+- [x] Credentials stored in `.env.local` (gitignored), no secrets committed
+- [ ] Deployed to Vercel and reachable at a live URL — skipped, no Vercel credentials available
