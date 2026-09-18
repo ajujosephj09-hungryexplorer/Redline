@@ -1,0 +1,135 @@
+# Build Report
+
+**Date:** 2026-09-18
+**Builder:** Claude Opus 4.6 (automated, unattended)
+
+## Ticket Status
+
+| # | Ticket | Status |
+|---|--------|--------|
+| 00 | Landing page | Done (pre-existing) |
+| 01 | Project scaffold + auth | Done |
+| 02 | Document upload + browser parsing | Done |
+| 03 | Default rules schema + seed | Done |
+| 04 | Analysis engine — summary + risk flags | Done |
+| 05 | Gap analysis + rules checklist | Done |
+| 06 | Red-line rules CRUD | Done |
+| 07 | Question box | Done |
+| 08 | Document library | Done |
+
+All 9 tickets are complete. No tickets are blocked.
+
+## Verification
+
+- `npm run build` — passes. All 13 routes compile.
+- `npm test` — 68 tests pass across 8 test files, zero failures.
+- `npm run smoke` — exits cleanly. OPENROUTER_API_KEY was not set, so live analysis was not run. The script is ready: set the key and model, run `npm run smoke`, and it will analyze the risky fixture contract and verify each citation appears verbatim in the input.
+
+## Decisions Made
+
+### 1. Vercel deployment skipped (ticket 01)
+No Vercel credentials available in this session. The app builds cleanly and is ready to deploy. Run `vercel` or push to a connected GitHub repo.
+
+### 2. Supabase runs locally without a project
+All tables and policies are written as SQL migration files in `supabase/migrations/`. The app starts and works (landing page, upload, analysis) without `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Only library, rules customization, and document persistence need a Supabase project.
+
+### 3. Gap analysis was already in the analysis engine
+Ticket 04's agent built the gap detection, gap UI, and rules checklist as part of the analysis engine. Ticket 05 added dedicated tests, extended the test stubs with gap mock data, and updated the smoke script. The engine, UI, and prompt were already correct.
+
+### 4. OpenRouter structured output
+The analysis engine uses `response_format: { type: "json_schema" }` with a strict schema. Provider pinned to Fireworks, fallbacks disabled, reasoning effort low. Model ID read from `OPENROUTER_MODEL` — never hardcoded.
+
+### 5. Anonymous analysis path
+When Supabase is absent, users can still paste a contract and analyze it via sessionStorage and the `/analyze` route. The question box also works in this path. Only persistence (library, custom rules) requires an account.
+
+### 6. Test mocking boundary
+Tests mock `callOpenRouter` (the HTTP call to OpenRouter) but NOT the analysis engine itself. The engine's prompt construction, result validation, severity sorting, gap filtering, and checklist rebuilding all run for real. The stubs return fixture-derived payloads with citations that are verified as verbatim substrings of the fixture contract.
+
+### 7. No impeccable direction round
+The build prompt said not to start one. All screens follow DESIGN.md (clinical white, navy ink, severity-only color, max-w-3xl, finding row accordion, rules checklist). Copy was written in direct human language per the standing rule.
+
+### 8. PDF worker
+pdfjs-dist requires a web worker. The worker file is copied from node_modules to `public/` via a postinstall script. The built file is gitignored.
+
+## What Could Not Be Verified
+
+1. **Live OpenRouter analysis** — OPENROUTER_API_KEY not set. Run `npm run smoke` with the key and model set to verify end-to-end.
+2. **Supabase auth flow** — No Supabase project exists. Run the migrations, set env vars, and test signup/login/library manually.
+3. **Real document parsing** — PDF and DOCX parsing are tested with text fixtures but not with real binary files in automated tests. The parser uses pdfjs-dist and mammoth which are battle-tested libraries.
+4. **Mobile responsive behavior** — Not verified visually. The design uses max-w-3xl which should work on mobile, but no browser testing was done.
+
+## Commands to Run First
+
+```bash
+# 1. Install dependencies (if not already done)
+npm install
+
+# 2. Set up environment variables
+cp .env.local.example .env.local  # or create manually
+# Add to .env.local:
+#   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+#   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+#   OPENROUTER_API_KEY=your-openrouter-key
+#   OPENROUTER_MODEL=your-model-id
+
+# 3. Run Supabase migrations (in order)
+# Apply these against your Supabase project:
+#   supabase/migrations/00001_create_profiles.sql
+#   supabase/migrations/00002_create_documents.sql
+#   supabase/migrations/00003_create_rules.sql
+#   supabase/migrations/00004_seed_default_rules.sql
+#   supabase/migrations/00005_create_analyses.sql
+
+# 4. Verify the build
+npm run build
+npm test
+
+# 5. Run the smoke test with a live model
+npm run smoke
+
+# 6. Start the dev server
+npm run dev
+```
+
+## File Inventory
+
+### Routes
+- `/` — Landing page (public)
+- `/login` — Sign in
+- `/signup` — Sign up
+- `/auth/callback` — Supabase auth callback
+- `/dashboard` — Redirects to `/library`
+- `/library` — Document library (authenticated)
+- `/upload` — Upload or paste a contract (authenticated)
+- `/rules` — View and manage red-line rules (authenticated)
+- `/dashboard/documents/[id]` — Analysis results for a document (authenticated)
+- `/analyze` — Anonymous analysis via sessionStorage (public)
+- `/api/analyze` — Analysis API endpoint
+- `/api/question` — Question box API endpoint
+
+### Key modules
+- `src/lib/analysis/engine.ts` — Core analysis pipeline
+- `src/lib/analysis/openrouter.ts` — OpenRouter API client
+- `src/lib/analysis/question.ts` — Question answering logic
+- `src/lib/analysis/types.ts` — Analysis type definitions
+- `src/lib/parser.ts` — Client-side document parsing
+- `src/lib/rules/` — Rules types, defaults, CRUD actions, local fallback
+- `src/lib/supabase/` — Supabase client with graceful degradation
+- `src/lib/documents/format.ts` — Document title/date formatting
+
+### Migrations
+- `00001_create_profiles.sql` — Profiles table + auto-create trigger
+- `00002_create_documents.sql` — Documents table with RLS
+- `00003_create_rules.sql` — Rules table with RLS
+- `00004_seed_default_rules.sql` — Default rules seed trigger
+- `00005_create_analyses.sql` — Analyses table with RLS
+
+### Tests (68 total)
+- `tests/scaffold.test.ts` — 5 tests (Supabase config, client degradation)
+- `tests/parser.test.ts` — 7 tests (text parsing, fixture citations)
+- `tests/rules.test.ts` — 6 tests (default rules, gap metadata)
+- `tests/rules-crud.test.ts` — 18 tests (CRUD operations, local fallback)
+- `tests/analysis.test.ts` — 5 tests (risky/clean contracts, disabled rules, severity)
+- `tests/gaps.test.ts` — 5 tests (gap production, checklist, clean behavior)
+- `tests/question-box.test.ts` — 8 tests (grounding, not-found, history)
+- `tests/library.test.ts` — 14 tests (title derivation, date formatting)

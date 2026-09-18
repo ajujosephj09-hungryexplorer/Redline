@@ -4,13 +4,13 @@
 
 **Blocked by:** 03 — Default red-line rules schema + seed
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] User can toggle any rule on or off; disabled rules are excluded from analysis
-- [ ] User can edit the wording of any rule (default or custom)
-- [ ] User can add a new custom rule with a name and wording
-- [ ] User can delete any rule, including defaults
-- [ ] All changes persist across sessions (stored in Supabase, tied to user)
-- [ ] UI clearly distinguishes default rules from custom rules
-- [ ] At least one rule must remain active (or handle the zero-rules edge case gracefully)
-- [ ] Deleted defaults are not re-seeded on next login
+- [x] User can toggle any rule on or off; disabled rules are excluded from analysis
+- [x] User can edit the wording of any rule (default or custom)
+- [x] User can add a new custom rule with a name and wording
+- [x] User can delete any rule, including defaults
+- [x] All changes persist across sessions (stored in Supabase, tied to user)
+- [x] UI clearly distinguishes default rules from custom rules
+- [x] At least one rule must remain active (or handle the zero-rules edge case gracefully)
+- [x] Deleted defaults are not re-seeded on next login

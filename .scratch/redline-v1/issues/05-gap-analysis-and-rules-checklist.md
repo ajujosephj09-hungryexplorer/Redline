@@ -4,13 +4,13 @@
 
 **Blocked by:** 04 — Analysis engine — summary + risk flags
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Analysis prompt extended to detect missing IP, Payment, and Termination clauses
-- [ ] Each gap includes an explanation of why the absence matters and a drafted counter-offer
-- [ ] Gaps are visually distinct from flags in the UI (ADR 0005)
-- [ ] No gaps produced for Non-Compete, Indemnification, or Forced Arbitration (absence is preferred)
-- [ ] Rules checklist shows every active rule with its status: flagged, gap, or clean
-- [ ] Clean contract behavior: when no flags and no gaps exist, the user sees the summary + all-clean checklist (no fabricated flags)
-- [ ] Counter-offer text on gaps is copyable
-- [ ] Custom rules that the user marks as gap-producing also trigger gap analysis
+- [x] Analysis prompt extended to detect missing IP, Payment, and Termination clauses
+- [x] Each gap includes an explanation of why the absence matters and a drafted counter-offer
+- [x] Gaps are visually distinct from flags in the UI (ADR 0005)
+- [x] No gaps produced for Non-Compete, Indemnification, or Forced Arbitration (absence is preferred)
+- [x] Rules checklist shows every active rule with its status: flagged, gap, or clean
+- [x] Clean contract behavior: when no flags and no gaps exist, the user sees the summary + all-clean checklist (no fabricated flags)
+- [x] Counter-offer text on gaps is copyable
+- [x] Custom rules that the user marks as gap-producing also trigger gap analysis

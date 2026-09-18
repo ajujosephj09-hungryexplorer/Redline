@@ -1,5 +1,5 @@
 import type { Rule } from '@/lib/rules/types'
-import type { AnalysisResult, RiskFlag, Severity } from './types'
+import type { AnalysisResult, RiskFlag, Gap, ChecklistItem, Severity } from './types'
 import { callOpenRouter } from './openrouter'
 import type { Message } from './openrouter'
 
@@ -29,8 +29,33 @@ const ANALYSIS_SCHEMA = {
         additionalProperties: false,
       },
     },
+    gaps: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          ruleName: { type: 'string', description: 'Name of the gap-producing rule whose clause type is absent from the contract.' },
+          explanation: { type: 'string', description: 'Why the absence of this clause type matters for the freelancer. Direct, no hedging.' },
+          counterOffer: { type: 'string', description: 'Proposed contract language that would fill this gap, tailored to the contract.' },
+        },
+        required: ['ruleName', 'explanation', 'counterOffer'],
+        additionalProperties: false,
+      },
+    },
+    checklist: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          ruleName: { type: 'string', description: 'The exact rule name.' },
+          status: { type: 'string', enum: ['flagged', 'gap', 'clean'], description: 'flagged = rule triggered a risk flag; gap = clause type is missing; clean = clause exists and is fair.' },
+        },
+        required: ['ruleName', 'status'],
+        additionalProperties: false,
+      },
+    },
   },
-  required: ['summary', 'flags'],
+  required: ['summary', 'flags', 'gaps', 'checklist'],
   additionalProperties: false,
 }
 
@@ -41,18 +66,23 @@ function buildSystemPrompt(rules: Rule[]): string {
     'You analyze freelance contracts for risks. You work for the freelancer, not the client.\n\n'
 
   if (enabledRules.length === 0) {
-    prompt += 'No rules are active. Return an empty flags array and a brief summary.\n'
+    prompt += 'No rules are active. Return an empty flags array, empty gaps array, empty checklist array, and a brief summary.\n'
     return prompt
   }
 
   prompt += 'RULES TO CHECK:\n'
   for (const rule of enabledRules) {
-    prompt += `- ${rule.name}: ${rule.description}\n`
+    const gapTag = rule.produces_gap ? ' [GAP-PRODUCING]' : ' [NON-GAP-PRODUCING]'
+    prompt += `- ${rule.name}${gapTag}: ${rule.description}\n`
   }
+
+  const gapRules = enabledRules.filter((r) => r.produces_gap)
+  const nonGapRules = enabledRules.filter((r) => !r.produces_gap)
 
   prompt += `
 INSTRUCTIONS:
 1. Return a plain-English summary of the contract. Write it for someone who is not a lawyer. Use direct language — no jargon, no filler.
+
 2. Return risk flags. For each flag, include:
    - ruleName: the exact rule name from the list above
    - problem: a confident, direct statement of why this clause is a problem. No hedging unless the language is genuinely ambiguous.
@@ -62,20 +92,44 @@ INSTRUCTIONS:
 3. Flag aggressively when uncertain. False positives are preferred over false negatives.
 4. Use confident tone. Save hedging for language that is genuinely ambiguous.
 5. Sort flags by severity: critical first, then moderate, then low.
-6. If a rule matches nothing in the contract, do not create a flag for it.`
+6. If a rule matches nothing in the contract, do not create a flag for it.
+
+GAP DETECTION:
+For each rule marked [GAP-PRODUCING], check if the contract contains any clause covering that topic. If the topic is entirely absent from the contract, return a gap. If a clause exists (even a bad one), do not return a gap for that rule — the clause's problems are covered by flags, not gaps.`
+
+  if (gapRules.length > 0) {
+    prompt += `\nGap-producing rules: ${gapRules.map((r) => r.name).join(', ')}.`
+  }
+
+  if (nonGapRules.length > 0) {
+    prompt += `\nRules that NEVER produce gaps (absence is the preferred state): ${nonGapRules.map((r) => r.name).join(', ')}. Do NOT return gaps for these rules under any circumstances.`
+  }
+
+  prompt += `
+For each gap, include:
+   - ruleName: the exact rule name
+   - explanation: why the absence of this clause type matters for the freelancer
+   - counterOffer: proposed contract language that would fill the gap, tailored to this contract
+
+RULES CHECKLIST:
+Return a checklist with exactly one entry per active rule. For each rule:
+   - ruleName: the exact rule name
+   - status: "flagged" if the rule produced one or more risk flags, "gap" if the rule produced a gap, "clean" if the clause exists and is fair (no flag, no gap)
+The checklist must contain exactly ${enabledRules.length} entries — one for each active rule listed above.`
 
   return prompt
 }
 
 /**
  * Analyzes a contract against a set of rules and returns structured results.
- * Calls the model via OpenRouter. Gaps and checklist are populated by ticket 05.
+ * Returns flags (risky clauses), gaps (missing clauses), and a per-rule checklist.
  */
 export async function analyzeContract(
   text: string,
   rules: Rule[]
 ): Promise<AnalysisResult> {
   const systemPrompt = buildSystemPrompt(rules)
+  const enabledRules = rules.filter((r) => r.enabled)
 
   const messages: Message[] = [
     { role: 'system', content: systemPrompt },
@@ -90,6 +144,15 @@ export async function analyzeContract(
       citation: string
       severity: string
       counterOffer: string
+    }>
+    gaps: Array<{
+      ruleName: string
+      explanation: string
+      counterOffer: string
+    }>
+    checklist: Array<{
+      ruleName: string
+      status: string
     }>
   }
 
@@ -113,10 +176,48 @@ export async function analyzeContract(
   }
   flags.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity])
 
+  // Build a set of rule names that can produce gaps
+  const gapProducingNames = new Set(
+    enabledRules.filter((r) => r.produces_gap).map((r) => r.name)
+  )
+
+  // Build a set of rule names that produced flags
+  const flaggedNames = new Set(flags.map((f) => f.ruleName))
+
+  // Validate gaps: only gap-producing rules, and only when the rule was not flagged
+  const gaps: Gap[] = (raw.gaps ?? [])
+    .filter(
+      (g) => gapProducingNames.has(g.ruleName) && !flaggedNames.has(g.ruleName)
+    )
+    .map((g) => ({
+      ruleName: g.ruleName,
+      explanation: g.explanation,
+      counterOffer: g.counterOffer,
+    }))
+
+  const gapNames = new Set(gaps.map((g) => g.ruleName))
+
+  // Validate checklist statuses
+  const validStatuses = new Set<string>(['flagged', 'gap', 'clean'])
+
+  // Build the checklist: one entry per enabled rule, with server-side validation
+  // of the status to make sure it's consistent with our flags and gaps
+  const checklist: ChecklistItem[] = enabledRules.map((rule) => {
+    let status: ChecklistItem['status']
+    if (flaggedNames.has(rule.name)) {
+      status = 'flagged'
+    } else if (gapNames.has(rule.name)) {
+      status = 'gap'
+    } else {
+      status = 'clean'
+    }
+    return { ruleName: rule.name, status }
+  })
+
   return {
     summary: raw.summary ?? '',
     flags,
-    gaps: [],
-    checklist: [],
+    gaps,
+    checklist,
   }
 }

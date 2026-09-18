@@ -4,12 +4,12 @@
 
 **Blocked by:** 01 — Project scaffold + auth
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Upload UI accepts paste, .txt, .pdf, and .docx
-- [ ] Text extraction runs client-side (no file sent to server)
-- [ ] Only plain text is stored in the database
-- [ ] Uploaded document is tied to the authenticated user
-- [ ] Image-based / scanned PDFs are detected and rejected with a clear user-facing message
-- [ ] Empty or unreadable files are handled gracefully with an error message
-- [ ] Supabase row-level security ensures users can only see their own documents
+- [x] Upload UI accepts paste, .txt, .pdf, and .docx
+- [x] Text extraction runs client-side (no file sent to server)
+- [x] Only plain text is stored in the database
+- [x] Uploaded document is tied to the authenticated user
+- [x] Image-based / scanned PDFs are detected and rejected with a clear user-facing message
+- [x] Empty or unreadable files are handled gracefully with an error message
+- [x] Supabase row-level security ensures users can only see their own documents

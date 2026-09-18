@@ -4,12 +4,12 @@
 
 **Blocked by:** 04 — Analysis engine — summary + risk flags
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Question box UI appears alongside analysis results, not as a separate page or mode
-- [ ] The question box is only available after an analysis has run
-- [ ] Every answer is traceable to the uploaded document
-- [ ] The question box has access to analysis context (flags, gaps, summary) and can answer "why was this flagged?"
-- [ ] When the question cannot be answered from the document, the response says "not found in document" (or equivalent)
-- [ ] Answers never draw on external knowledge — only the uploaded document and analysis context
-- [ ] Conversation-style follow-ups work within the same analysis session
+- [x] Question box UI appears alongside analysis results, not as a separate page or mode
+- [x] The question box is only available after an analysis has run
+- [x] Every answer is traceable to the uploaded document
+- [x] The question box has access to analysis context (flags, gaps, summary) and can answer "why was this flagged?"
+- [x] When the question cannot be answered from the document, the response says "not found in document" (or equivalent)
+- [x] Answers never draw on external knowledge — only the uploaded document and analysis context
+- [x] Conversation-style follow-ups work within the same analysis session
