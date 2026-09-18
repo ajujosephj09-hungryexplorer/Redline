@@ -23,7 +23,7 @@ All 9 tickets are complete. No tickets are blocked.
 
 - `npm run build` — passes. All 13 routes compile.
 - `npm test` — 68 tests pass across 8 test files, zero failures.
-- `npm run smoke` — exits cleanly. OPENROUTER_API_KEY was not set, so live analysis was not run. The script is ready: set the key and model, run `npm run smoke`, and it will analyze the risky fixture contract and verify each citation appears verbatim in the input.
+- `npm run smoke` — passes against live model (`z-ai/glm-5.3-flash` via Fireworks). 6 flags found on the risky fixture, all 6 citations verified as verbatim substrings. 0 gaps (correct — the contract has all clause types, just bad versions). Summary is specific to the contract and reads well.
 
 ## Decisions Made
 
@@ -53,7 +53,7 @@ pdfjs-dist requires a web worker. The worker file is copied from node_modules to
 
 ## What Could Not Be Verified
 
-1. **Live OpenRouter analysis** — OPENROUTER_API_KEY not set. Run `npm run smoke` with the key and model set to verify end-to-end.
+1. **Live OpenRouter analysis** — Verified. 6/6 flags, 6/6 citations correct. Model `z-ai/glm-5.3-flash` via Fireworks. Note: the model can be temporarily rate-limited on Fireworks (429 errors); retry after a few seconds.
 2. **Supabase auth flow** — No Supabase project exists. Run the migrations, set env vars, and test signup/login/library manually.
 3. **Real document parsing** — PDF and DOCX parsing are tested with text fixtures but not with real binary files in automated tests. The parser uses pdfjs-dist and mammoth which are battle-tested libraries.
 4. **Mobile responsive behavior** — Not verified visually. The design uses max-w-3xl which should work on mobile, but no browser testing was done.
