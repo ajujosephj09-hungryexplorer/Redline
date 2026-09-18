@@ -39,11 +39,6 @@ export async function callOpenRouter(
         schema: jsonSchema,
       },
     },
-    provider: {
-      order: ['fireworks'],
-      allow_fallbacks: false,
-      require_parameters: true,
-    },
     reasoning: { effort: 'low' },
   }
 
