@@ -25,22 +25,58 @@ All 9 tickets are complete. No tickets are blocked.
 - `npm test` — 68 tests pass across 8 test files, zero failures.
 - `npm run smoke` — passes against live model (`z-ai/glm-5.3-flash` via Fireworks). 6 flags found on the risky fixture, all 6 citations verified as verbatim substrings. 0 gaps (correct — the contract has all clause types, just bad versions). Summary is specific to the contract and reads well.
 
+## What's Working Now
+
+- **Vercel deployment** — live at redline-kappa-umber.vercel.app. Auto-deploys from master.
+- **OpenRouter env vars** — `OPENROUTER_API_KEY` and `OPENROUTER_MODEL` set in both `.env.local` (local dev) and Vercel (production).
+- **Landing page** — public, no auth needed.
+- **Anonymous analysis** — paste a contract at `/analyze`, runs through OpenRouter, returns flags with citations.
+
+## What Needs Supabase
+
+These features are built but won't work until a Supabase project is connected:
+
+- **Sign up / log in** — auth pages exist but have no database to talk to
+- **Document library** — saving and revisiting past contracts
+- **Rules customization** — editing, adding, deleting rules that persist across sessions
+- **Document persistence** — saving uploaded contracts tied to user accounts
+
+### To set up Supabase
+
+1. Create a project at supabase.com
+2. Grab the project URL and anon key from Settings → API
+3. Add them as env vars:
+   - **Locally:** add to `.env.local`
+     ```
+     NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+     NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+     ```
+   - **Vercel:** add in Settings → Environment Variables (same as the OpenRouter vars)
+4. Run the 5 migration files against your Supabase database (SQL Editor, in order):
+   - `supabase/migrations/00001_create_profiles.sql`
+   - `supabase/migrations/00002_create_documents.sql`
+   - `supabase/migrations/00003_create_rules.sql`
+   - `supabase/migrations/00004_seed_default_rules.sql`
+   - `supabase/migrations/00005_create_analyses.sql`
+5. Redeploy on Vercel (or push any commit to trigger it)
+6. Test signup/login/library manually
+
 ## Decisions Made
 
 ### 1. Vercel deployment (ticket 01)
-Vercel is connected to the GitHub repo. All commits were pushed to master, which triggers automatic deploys. Check https://vercel.com/aju-joseph-johns-projects/redline for deployment status. If the build failed, the env vars `OPENROUTER_API_KEY`, `OPENROUTER_MODEL`, `NEXT_PUBLIC_SUPABASE_URL`, and `NEXT_PUBLIC_SUPABASE_ANON_KEY` need to be set in Vercel's project settings (Settings → Environment Variables) — they're in `.env.local` locally but Vercel needs its own copies.
+Vercel is connected to the GitHub repo. Pushes to master trigger automatic production deploys. OpenRouter env vars are set in Vercel project settings. Supabase vars will be added when the project is created.
 
-### 2. Supabase runs locally without a project
-All tables and policies are written as SQL migration files in `supabase/migrations/`. The app starts and works (landing page, upload, analysis) without `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Only library, rules customization, and document persistence need a Supabase project.
+### 2. App works without Supabase
+The app starts and serves the landing page, upload, and anonymous analysis without Supabase env vars. Auth-dependent features (library, rules persistence) degrade gracefully with sign-in prompts.
 
 ### 3. Gap analysis was already in the analysis engine
-Ticket 04's agent built the gap detection, gap UI, and rules checklist as part of the analysis engine. Ticket 05 added dedicated tests, extended the test stubs with gap mock data, and updated the smoke script. The engine, UI, and prompt were already correct.
+Ticket 04's agent built the gap detection, gap UI, and rules checklist as part of the analysis engine. Ticket 05 added dedicated tests, extended the test stubs with gap mock data, and updated the smoke script.
 
 ### 4. OpenRouter structured output
 The analysis engine uses `response_format: { type: "json_schema" }` with a strict schema. Provider pinned to Fireworks, fallbacks disabled, reasoning effort low. Model ID read from `OPENROUTER_MODEL` — never hardcoded.
 
 ### 5. Anonymous analysis path
-When Supabase is absent, users can still paste a contract and analyze it via sessionStorage and the `/analyze` route. The question box also works in this path. Only persistence (library, custom rules) requires an account.
+When Supabase is absent, users can paste a contract and analyze it via sessionStorage and the `/analyze` route. The question box also works in this path. Only persistence (library, custom rules) requires an account.
 
 ### 6. Test mocking boundary
 Tests mock `callOpenRouter` (the HTTP call to OpenRouter) but NOT the analysis engine itself. The engine's prompt construction, result validation, severity sorting, gap filtering, and checklist rebuilding all run for real. The stubs return fixture-derived payloads with citations that are verified as verbatim substrings of the fixture contract.
@@ -53,38 +89,24 @@ pdfjs-dist requires a web worker. The worker file is copied from node_modules to
 
 ## What Could Not Be Verified
 
-1. **Supabase auth flow** — No Supabase project exists. Run the migrations, set env vars, and test signup/login/library manually.
-2. **Real document parsing** — PDF and DOCX parsing are tested with text fixtures but not with real binary files in automated tests. The parser uses pdfjs-dist and mammoth which are battle-tested libraries.
+1. **Supabase auth flow** — No Supabase project exists yet. Needs manual testing after setup.
+2. **Real document parsing** — PDF and DOCX parsing tested with text fixtures only, not real binary files. The parser uses pdfjs-dist and mammoth which are battle-tested libraries.
 3. **Mobile responsive behavior** — Not verified visually. The design uses max-w-3xl which should work on mobile, but no browser testing was done.
 
-## Commands to Run First
+## Local Dev Commands
 
 ```bash
-# 1. Install dependencies (if not already done)
-npm install
+# Start the dev server
+npm run dev
 
-# 2. Set up environment variables (.env.local already exists with OpenRouter creds)
-# Add Supabase vars when the project is ready:
-#   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-#   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-
-# 3. Run Supabase migrations (in order)
-# Apply these against your Supabase project:
-#   supabase/migrations/00001_create_profiles.sql
-#   supabase/migrations/00002_create_documents.sql
-#   supabase/migrations/00003_create_rules.sql
-#   supabase/migrations/00004_seed_default_rules.sql
-#   supabase/migrations/00005_create_analyses.sql
-
-# 4. Verify the build
-npm run build
+# Run tests
 npm test
 
-# 5. Run the smoke test with a live model
+# Run the smoke test (live model call)
 npm run smoke
 
-# 6. Start the dev server
-npm run dev
+# Build for production
+npm run build
 ```
 
 ## File Inventory
