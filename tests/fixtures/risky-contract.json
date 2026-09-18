@@ -1,0 +1,41 @@
+{
+  "expectedFlags": [
+    {
+      "rule": "IP Assignment (overbroad)",
+      "severity": "critical",
+      "citation": "All work product, deliverables, materials, inventions, discoveries, improvements, designs, code, documentation, and creative works of any kind, whether or not patentable or copyrightable, that are conceived, created, developed, or reduced to practice by Contractor at any time during the term of this Agreement, including work created prior to the effective date of this Agreement and work created outside the scope of the Services described herein, shall be considered works made for hire and shall be the sole and exclusive property of Client.",
+      "description": "Assigns ownership of all work including pre-existing work and work outside the project scope to the client. Covers everything the contractor creates during the agreement, not just deliverables related to the services."
+    },
+    {
+      "rule": "Non-Compete",
+      "severity": "critical",
+      "citation": "During the term of this Agreement and for a period of twenty-four (24) months following its termination for any reason, Contractor shall not directly or indirectly engage in, own, manage, operate, consult for, be employed by, or participate in any business that is in the same industry as Client or that competes with any product, service, or line of business offered by Client or under development by Client at the time of termination.",
+      "description": "Two-year worldwide non-compete covering the entire industry and any business that competes with anything the client offers or is developing. Effectively bars the contractor from working in their field for two years after termination."
+    },
+    {
+      "rule": "Indemnification (overbroad)",
+      "severity": "moderate",
+      "citation": "Contractor shall defend, indemnify, and hold harmless Client, its officers, directors, employees, agents, affiliates, successors, and assigns from and against any and all claims, damages, losses, liabilities, costs, and expenses, including reasonable attorneys' fees, arising out of or relating to the performance of the Services, any breach of this Agreement by Contractor, any negligent or wrongful act or omission of Contractor, and any claim by a third party relating to Client's use of the work product, including claims arising from circumstances beyond Contractor's knowledge or control.",
+      "description": "Contractor bears liability for all claims related to the client's use of work product, including circumstances beyond the contractor's knowledge or control. Unlimited in scope and duration."
+    },
+    {
+      "rule": "Forced Arbitration + Class Action Waiver",
+      "severity": "moderate",
+      "citation": "Contractor hereby waives any right to participate in a class action, collective action, or representative action against Client, and agrees that any arbitration shall be conducted solely on an individual basis.",
+      "description": "Mandatory binding arbitration with class action waiver. Contractor also bears all filing fees and administrative costs for initiating arbitration, creating a financial barrier to dispute resolution."
+    },
+    {
+      "rule": "Payment Terms (unfavorable)",
+      "severity": "moderate",
+      "citation": "All invoices shall be payable within ninety (90) calendar days following Client's receipt and acceptance of a properly submitted invoice. Client reserves the right to dispute any invoice or portion thereof, in which case payment of the disputed amount shall be withheld pending resolution. No interest, late fees, or penalties of any kind shall accrue on outstanding balances regardless of the duration of non-payment.",
+      "description": "Net-90 payment window with no late-payment penalties. Client can also dispute any invoice amount and withhold payment indefinitely while the dispute is pending."
+    },
+    {
+      "rule": "Termination without guaranteed payment",
+      "severity": "critical",
+      "citation": "Client may terminate this Agreement at any time, with or without cause, upon five (5) calendar days' written notice to Contractor. Upon termination, Client shall have no obligation to pay for any Services not yet completed at the time the termination notice is delivered, nor shall Client owe any cancellation fee, kill fee, minimum commitment, or other termination-related payment of any kind.",
+      "description": "Client can cancel with only 5 days notice and owes nothing for incomplete work, no kill fee, no minimum commitment. Contractor absorbs all losses from blocked time and work in progress."
+    }
+  ],
+  "expectedGaps": []
+}

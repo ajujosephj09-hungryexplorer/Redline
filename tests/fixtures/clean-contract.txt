@@ -1,0 +1,122 @@
+INDEPENDENT CONTRACTOR SERVICE AGREEMENT
+
+This Independent Contractor Service Agreement ("Agreement") is entered into as of March 1, 2026, by and between Fieldwork Studio, Inc., a California corporation ("Client"), and the undersigned independent contractor ("Contractor").
+
+RECITALS
+
+WHEREAS, Client operates a product design consultancy serving technology companies; and
+
+WHEREAS, Contractor possesses skills in visual design and front-end development that Client wishes to engage for a defined project;
+
+NOW, THEREFORE, in consideration of the mutual covenants set forth below, and for other good and valuable consideration, the receipt and sufficiency of which are hereby acknowledged, the parties agree as follows:
+
+1. SCOPE OF SERVICES
+
+1.1 Contractor shall design and develop the user interface for Client's internal project management dashboard, including wireframes, high-fidelity mockups, a component library, and front-end implementation in React (collectively, the "Services").
+
+1.2 The parties shall agree on a written statement of work prior to commencement of the Services. Any material changes to the scope shall be documented in a written amendment signed by both parties.
+
+1.3 Contractor shall perform the Services in a professional and workmanlike manner consistent with generally accepted industry standards.
+
+2. TERM
+
+2.1 This Agreement shall commence on the date first written above and shall continue for an initial period of six (6) months, unless terminated earlier in accordance with Section 8 below.
+
+2.2 The parties may extend the term by mutual written agreement.
+
+3. COMPENSATION AND PAYMENT
+
+3.1 Client shall pay Contractor at the rate of $110.00 per hour for Services rendered pursuant to this Agreement.
+
+3.2 Contractor shall submit itemized invoices on a bi-weekly basis, including a description of Services performed and hours worked.
+
+3.3 All invoices shall be payable within thirty (30) calendar days of Client's receipt of a properly submitted invoice.
+
+3.4 If any invoice remains unpaid for more than fifteen (15) calendar days beyond the due date, interest shall accrue on the outstanding balance at a rate of one and one-half percent (1.5%) per month, or the maximum rate permitted by applicable law, whichever is less. Client shall also be responsible for reasonable collection costs, including attorneys' fees, incurred by Contractor in collecting overdue amounts.
+
+3.5 If Client disputes any portion of an invoice, Client shall notify Contractor in writing within ten (10) calendar days of receipt, specifying the disputed items in reasonable detail. The undisputed portion shall remain payable in accordance with Section 3.3. The parties shall work in good faith to resolve any disputes within thirty (30) calendar days.
+
+4. INTELLECTUAL PROPERTY
+
+4.1 All work product created by Contractor specifically for Client in the performance of the Services described in Section 1 ("Project Work Product") shall be the property of Client. To the extent that any Project Work Product does not qualify as a work made for hire under applicable law, Contractor hereby assigns to Client all right, title, and interest in such Project Work Product upon full payment of all amounts due under this Agreement.
+
+4.2 Contractor retains all right, title, and interest in any tools, libraries, frameworks, methodologies, or other materials that Contractor developed independently prior to or outside the scope of this Agreement ("Pre-Existing Materials"). To the extent that any Pre-Existing Materials are incorporated into the Project Work Product, Contractor grants Client a non-exclusive, perpetual, royalty-free license to use such Pre-Existing Materials solely as part of the delivered Project Work Product.
+
+4.3 Contractor shall have the right to display the Project Work Product in Contractor's portfolio and marketing materials, provided that Contractor does not disclose any Confidential Information in doing so.
+
+5. CONFIDENTIALITY
+
+5.1 Each party shall hold in confidence all proprietary information, trade secrets, and other confidential information disclosed by the other party during the course of this Agreement ("Confidential Information").
+
+5.2 Neither party shall disclose the other party's Confidential Information to any third party without prior written consent, except as required by law.
+
+5.3 The obligations of confidentiality shall survive the termination of this Agreement for a period of three (3) years.
+
+5.4 Confidential Information does not include information that (a) is or becomes publicly available through no fault of the receiving party; (b) was known to the receiving party prior to disclosure; (c) is independently developed by the receiving party without use of the disclosing party's Confidential Information; or (d) is rightfully received from a third party without restriction.
+
+6. REPRESENTATIONS AND WARRANTIES
+
+6.1 Each party represents and warrants that it has the right and authority to enter into this Agreement and to perform its obligations hereunder.
+
+6.2 Contractor represents and warrants that the Project Work Product will be original and will not infringe upon or violate the intellectual property rights of any third party.
+
+6.3 Contractor represents and warrants that the Services will be performed in a competent and professional manner consistent with industry standards.
+
+7. LIMITATION OF LIABILITY
+
+7.1 Neither party shall be liable to the other for any indirect, incidental, consequential, special, or exemplary damages arising out of or in connection with this Agreement, regardless of the theory of liability.
+
+7.2 Each party's total aggregate liability under this Agreement shall not exceed the total amounts paid or payable under this Agreement during the twelve (12) months preceding the event giving rise to the claim.
+
+8. TERMINATION
+
+8.1 Either party may terminate this Agreement for convenience upon thirty (30) calendar days' written notice to the other party.
+
+8.2 Upon termination by either party, Client shall pay Contractor for all Services satisfactorily performed through the effective date of termination, including any work in progress, on a pro-rated basis calculated by hours worked at the hourly rate specified in Section 3.1.
+
+8.3 If Client terminates this Agreement for convenience before the completion of a milestone or deliverable that is substantially underway, Client shall pay Contractor for the reasonable value of the work completed toward that milestone, as determined by the proportion of hours expended relative to the estimated total hours for the milestone.
+
+8.4 Either party may terminate this Agreement immediately upon written notice if the other party materially breaches this Agreement and fails to cure such breach within fifteen (15) calendar days of receiving written notice of the breach.
+
+8.5 Upon termination for any reason, Contractor shall deliver all completed and in-progress work product to Client, and each party shall return or destroy the other party's Confidential Information.
+
+9. RELATIONSHIP OF THE PARTIES
+
+9.1 Contractor is an independent contractor and not an employee, partner, agent, or joint venturer of Client. Nothing in this Agreement shall be construed to create an employment relationship.
+
+9.2 Contractor shall be solely responsible for all taxes, insurance, and benefits arising from the performance of the Services.
+
+9.3 Contractor retains the right to perform services for other clients during the term of this Agreement, provided such work does not conflict with Contractor's obligations under this Agreement or involve the use of Client's Confidential Information.
+
+10. GENERAL PROVISIONS
+
+10.1 Entire Agreement. This Agreement constitutes the entire agreement between the parties with respect to the subject matter hereof and supersedes all prior and contemporaneous agreements, understandings, and discussions, whether oral or written.
+
+10.2 Amendments. This Agreement may not be amended or modified except by a written instrument signed by both parties.
+
+10.3 Waiver. The failure of either party to enforce any provision of this Agreement shall not constitute a waiver of such provision or the right to enforce it at a later time.
+
+10.4 Severability. If any provision of this Agreement is held to be invalid or unenforceable, the remaining provisions shall continue in full force and effect.
+
+10.5 Governing Law. This Agreement shall be governed by and construed in accordance with the laws of the State of California, without regard to its conflict of laws principles.
+
+10.6 Dispute Resolution. Any dispute arising under this Agreement shall be resolved first through good-faith negotiation between the parties. If the dispute cannot be resolved within thirty (30) calendar days, either party may pursue any remedy available at law or in equity in the courts of the State of California.
+
+10.7 Assignment. Neither party may assign this Agreement without the prior written consent of the other party, except that Client may assign this Agreement to a successor entity in connection with a merger, acquisition, or sale of substantially all of its assets.
+
+10.8 Notices. All notices under this Agreement shall be in writing and shall be deemed delivered when sent by certified mail, return receipt requested, or by nationally recognized overnight courier to the addresses set forth in the signature block below.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+FIELDWORK STUDIO, INC.
+
+By: ___________________________
+Name: David Park
+Title: Managing Director
+
+CONTRACTOR
+
+By: ___________________________
+Name: ___________________________
+Date: ___________________________
+Address: ___________________________
