@@ -56,3 +56,4 @@ engine.bin
 .impeccable/mocks/
 .impeccable/questions/
 .impeccable/hook.cache.json
+tsconfig.tsbuildinfo
