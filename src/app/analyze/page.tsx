@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import AnalysisView from '@/app/(app)/dashboard/documents/[id]/AnalysisView'
+import { getLocalRules } from '@/lib/rules/local'
 
 interface PendingDoc {
   title: string
@@ -58,20 +60,11 @@ export default function AnalyzePage() {
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
-      <h1 className="text-2xl font-bold text-navy">{doc.title}</h1>
-
-      <div className="mt-4 border border-slate-200 rounded-md p-5">
-        <p className="text-sm text-slate-600 whitespace-pre-wrap leading-relaxed">
-          {doc.text}
-        </p>
-      </div>
-
-      {/* Placeholder — ticket 04 replaces this with actual analysis output */}
-      <div className="mt-6 border border-dashed border-slate-300 rounded-md p-6 text-center">
-        <p className="text-sm text-slate-500">
-          Analysis results will appear here after the engine is connected
-        </p>
-      </div>
+      <AnalysisView
+        documentText={doc.text}
+        documentTitle={doc.title}
+        rules={getLocalRules()}
+      />
     </div>
   )
 }
