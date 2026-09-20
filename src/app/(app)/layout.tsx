@@ -28,7 +28,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="max-w-3xl mx-auto px-6 flex items-center justify-between h-14">
           <div className="flex items-center gap-6">
             <Link
-              href="/dashboard"
+              href="/"
               className="text-navy font-bold text-base tracking-tight"
             >
               Redline

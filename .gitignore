@@ -50,6 +50,9 @@ secrets/
 .cache/
 .eslintcache
 
+# Private local files
+z-BUILD-STEPS.md
+
 # Impeccable tool artifacts
 engine.bin
 .impeccable/review/
