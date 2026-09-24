@@ -53,6 +53,7 @@ secrets/
 # Private local files
 z-BUILD-STEPS.md
 Project Files/
+.claude/
 
 # Impeccable tool artifacts
 engine.bin
