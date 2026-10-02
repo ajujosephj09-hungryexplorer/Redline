@@ -65,9 +65,7 @@ pdfjs-dist requires a web worker. The worker file is copied from node_modules to
 
 ## What Could Not Be Verified
 
-1. **Supabase auth flow** — Supabase is connected and migrations are run. Needs manual testing (sign up, log in, save a document, check library).
-2. **Real document parsing** — PDF and DOCX parsing tested with text fixtures only, not real binary files. The parser uses pdfjs-dist and mammoth which are battle-tested libraries.
-3. **Mobile responsive behavior** — Not verified visually. The design uses max-w-3xl which should work on mobile, but no browser testing was done.
+1. **Mobile responsive behavior** — Not verified visually. The design uses max-w-3xl which should work on mobile, but no browser testing was done.
 
 ## Local Dev Commands
 
