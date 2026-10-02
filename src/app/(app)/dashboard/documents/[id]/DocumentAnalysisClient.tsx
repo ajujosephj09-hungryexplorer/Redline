@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { fetchRules } from '@/lib/rules/actions'
+import type { Rule } from '@/lib/rules/types'
 import AnalysisView from './AnalysisView'
 
 interface Props {
@@ -16,6 +18,7 @@ interface Document {
 
 export default function DocumentAnalysisClient({ documentId }: Props) {
   const [doc, setDoc] = useState<Document | null>(null)
+  const [rules, setRules] = useState<Rule[] | undefined>(undefined)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -30,21 +33,25 @@ export default function DocumentAnalysisClient({ documentId }: Props) {
         return
       }
 
-      const { data, error: fetchError } = await supabase
-        .from('documents')
-        .select('id, title, plain_text')
-        .eq('id', documentId)
-        .single()
+      const [docResult, userRules] = await Promise.all([
+        supabase
+          .from('documents')
+          .select('id, title, plain_text')
+          .eq('id', documentId)
+          .single(),
+        fetchRules(supabase).catch(() => undefined),
+      ])
 
       if (cancelled) return
 
-      if (fetchError || !data) {
-        setError(fetchError?.message ?? 'Document not found.')
+      if (docResult.error || !docResult.data) {
+        setError(docResult.error?.message ?? 'Document not found.')
         setLoading(false)
         return
       }
 
-      setDoc(data as Document)
+      setDoc(docResult.data as Document)
+      if (userRules && userRules.length > 0) setRules(userRules)
       setLoading(false)
     }
 
@@ -74,6 +81,7 @@ export default function DocumentAnalysisClient({ documentId }: Props) {
     <AnalysisView
       documentText={doc.plain_text}
       documentTitle={doc.title}
+      rules={rules}
     />
   )
 }
