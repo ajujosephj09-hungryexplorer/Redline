@@ -77,6 +77,70 @@ describe('gap analysis', () => {
     }
   })
 
+  it('engine backstops when LLM returns empty gaps for unflagged gap-producing rules', async () => {
+    const rules = getLocalRules()
+
+    // Contract text that genuinely lacks IP, Payment, and Termination clauses.
+    // This is the scenario from Finding #1: the LLM recognized the absences in
+    // the summary but returned "gaps": [] — no structured gap entries.
+    const bareContract = [
+      'INDEPENDENT CONTRACTOR AGREEMENT',
+      'This Agreement is entered into by and between Horizon Labs, Inc. ("Client") and the undersigned contractor ("Contractor").',
+      '1. SCOPE OF SERVICES',
+      'Contractor shall provide data analysis and reporting services for Client.',
+      '2. CONFIDENTIALITY',
+      'Contractor shall maintain strict confidentiality regarding all Client proprietary information.',
+      '3. RELATIONSHIP',
+      'Contractor is an independent contractor, not an employee.',
+      '4. GOVERNING LAW',
+      'This Agreement shall be governed by the laws of the State of New York.',
+    ].join('\n')
+
+    const mockResult = {
+      summary: 'This contract covers scope and confidentiality but says nothing about how you get paid, who owns the work, or how either side exits.',
+      flags: [],
+      gaps: [],
+      checklist: [
+        { ruleName: 'IP Assignment (overbroad)', status: 'clean' },
+        { ruleName: 'Payment Terms (unfavorable)', status: 'clean' },
+        { ruleName: 'Termination without guaranteed payment', status: 'clean' },
+        { ruleName: 'Non-Compete', status: 'clean' },
+        { ruleName: 'Indemnification (overbroad)', status: 'clean' },
+        { ruleName: 'Forced Arbitration + Class Action Waiver', status: 'clean' },
+      ],
+    }
+    vi.mocked(callOpenRouter).mockResolvedValueOnce(mockResult)
+
+    const result = await analyzeContract(bareContract, rules)
+
+    // The engine must produce gaps for the 3 gap-producing rules that have no flags
+    expect(result.gaps.length).toBe(3)
+
+    const gapNames = result.gaps.map((g) => g.ruleName)
+    expect(gapNames).toContain('IP Assignment (overbroad)')
+    expect(gapNames).toContain('Payment Terms (unfavorable)')
+    expect(gapNames).toContain('Termination without guaranteed payment')
+
+    // Each gap must have non-empty explanation and counterOffer
+    for (const gap of result.gaps) {
+      expect(gap.explanation).toBeTruthy()
+      expect(gap.counterOffer).toBeTruthy()
+    }
+
+    // Checklist must show 'gap' not 'clean' for these rules
+    const checklistMap = new Map(
+      result.checklist.map((c) => [c.ruleName, c.status])
+    )
+    expect(checklistMap.get('IP Assignment (overbroad)')).toBe('gap')
+    expect(checklistMap.get('Payment Terms (unfavorable)')).toBe('gap')
+    expect(checklistMap.get('Termination without guaranteed payment')).toBe('gap')
+
+    // Non-gap-producing rules must remain clean
+    expect(checklistMap.get('Non-Compete')).toBe('clean')
+    expect(checklistMap.get('Indemnification (overbroad)')).toBe('clean')
+    expect(checklistMap.get('Forced Arbitration + Class Action Waiver')).toBe('clean')
+  })
+
   it('non-gap-producing rules never produce gaps', async () => {
     const rules = getLocalRules()
     const nonGapRuleNames = rules

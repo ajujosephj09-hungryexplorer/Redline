@@ -195,6 +195,37 @@ export async function analyzeContract(
       counterOffer: g.counterOffer,
     }))
 
+  // Deterministic backstop: if a gap-producing rule was neither flagged nor
+  // gapped by the LLM, check whether the topic even appears in the contract.
+  // If it doesn't, the LLM missed a gap — add one so the absence is never
+  // silently marked "clean."
+  const GAP_TOPIC_PATTERNS: Record<string, RegExp> = {
+    'IP Assignment (overbroad)':
+      /intellectual property|work product|ownership.*assign|assigns.*right|work.made.for.hire|copyright/i,
+    'Payment Terms (unfavorable)':
+      /\bpayment\b|\bcompensat/i,
+    'Termination without guaranteed payment':
+      /(may|can|shall)\s+(terminate|cancel)|termination\s+(clause|section|provision)/i,
+  }
+
+  for (const rule of enabledRules) {
+    if (
+      rule.produces_gap &&
+      !flaggedNames.has(rule.name) &&
+      !gaps.some((g) => g.ruleName === rule.name)
+    ) {
+      const pattern = GAP_TOPIC_PATTERNS[rule.name]
+      if (pattern && !pattern.test(text)) {
+        gaps.push({
+          ruleName: rule.name,
+          explanation: `This contract does not appear to contain a clause covering this area. ${rule.description}`,
+          counterOffer:
+            'Consider adding a clause that addresses this area before signing.',
+        })
+      }
+    }
+  }
+
   const gapNames = new Set(gaps.map((g) => g.ruleName))
 
   // Validate checklist statuses
