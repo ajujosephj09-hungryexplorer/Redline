@@ -62,6 +62,8 @@ Verified by comparing the `flags` and `checklist` arrays in the same JSON respon
 
 **Severity:** Misleads a reader. A freelancer scanning the checklist for a quick verdict sees two green items that are actually flagged as critical/moderate risks in the detailed view.
 
+**Status:** Fixed. LLM-returned rule names are now normalized to canonical names before building the flaggedNames set.
+
 ---
 
 ## 3. Citation uses ellipsis instead of quoting the exact text

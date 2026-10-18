@@ -156,10 +156,22 @@ export async function analyzeContract(
     }>
   }
 
+  // Normalize LLM-returned rule names to canonical names.
+  // The LLM sometimes truncates "IP Assignment (overbroad)" to "IP Assignment".
+  const canonicalNames = enabledRules.map((r) => r.name)
+  function normalizeRuleName(llmName: string): string {
+    if (canonicalNames.includes(llmName)) return llmName
+    const lower = llmName.toLowerCase()
+    const match = canonicalNames.find(
+      (cn) => cn.toLowerCase().startsWith(lower) || lower.startsWith(cn.toLowerCase())
+    )
+    return match ?? llmName
+  }
+
   // Validate and normalize flags
   const validSeverities = new Set<string>(['critical', 'moderate', 'low'])
   const flags: RiskFlag[] = (raw.flags ?? []).map((f) => ({
-    ruleName: f.ruleName,
+    ruleName: normalizeRuleName(f.ruleName),
     problem: f.problem,
     citation: f.citation,
     severity: validSeverities.has(f.severity)
@@ -186,6 +198,7 @@ export async function analyzeContract(
 
   // Validate gaps: only gap-producing rules, and only when the rule was not flagged
   const gaps: Gap[] = (raw.gaps ?? [])
+    .map((g) => ({ ...g, ruleName: normalizeRuleName(g.ruleName) }))
     .filter(
       (g) => gapProducingNames.has(g.ruleName) && !flaggedNames.has(g.ruleName)
     )

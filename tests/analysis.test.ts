@@ -95,6 +95,59 @@ describe('analysis engine', () => {
     }
   })
 
+  it('checklist shows "flagged" even when LLM returns truncated rule names', async () => {
+    const text = readFileSync(
+      join(__dirname, 'fixtures/risky-contract.txt'),
+      'utf8'
+    )
+    const rules = getLocalRules()
+
+    // Simulate the LLM returning truncated names (no parenthetical suffix)
+    const mockResult = {
+      summary: 'Contract with issues.',
+      flags: [
+        {
+          ruleName: 'IP Assignment',
+          problem: 'Overbroad IP clause.',
+          citation: 'All work product shall be the sole property of Client.',
+          severity: 'critical',
+          counterOffer: 'Limit IP assignment to project deliverables.',
+        },
+        {
+          ruleName: 'Payment Terms',
+          problem: 'Net-90 payment window.',
+          citation: 'Client shall pay Contractor within ninety (90) days.',
+          severity: 'moderate',
+          counterOffer: 'Change to net-30.',
+        },
+      ],
+      gaps: [],
+      checklist: [
+        { ruleName: 'IP Assignment', status: 'flagged' },
+        { ruleName: 'Payment Terms', status: 'flagged' },
+        { ruleName: 'Termination without guaranteed payment', status: 'clean' },
+        { ruleName: 'Non-Compete', status: 'clean' },
+        { ruleName: 'Indemnification', status: 'clean' },
+        { ruleName: 'Forced Arbitration', status: 'clean' },
+      ],
+    }
+    vi.mocked(callOpenRouter).mockResolvedValueOnce(mockResult)
+
+    const result = await analyzeContract(text, rules)
+
+    // The engine must match truncated names to canonical rules
+    const checklistMap = new Map(
+      result.checklist.map((c) => [c.ruleName, c.status])
+    )
+    expect(checklistMap.get('IP Assignment (overbroad)')).toBe('flagged')
+    expect(checklistMap.get('Payment Terms (unfavorable)')).toBe('flagged')
+
+    // Flags should also use canonical names
+    const flagNames = result.flags.map((f) => f.ruleName)
+    expect(flagNames).toContain('IP Assignment (overbroad)')
+    expect(flagNames).toContain('Payment Terms (unfavorable)')
+  })
+
   it('returns zero gaps and a full checklist for risky contract (all clause types present)', async () => {
     const text = readFileSync(
       join(__dirname, 'fixtures/risky-contract.txt'),
