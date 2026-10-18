@@ -256,6 +256,8 @@ The anonymous analysis path at `/analyze` was an intentional product decision (B
 
 **Severity:** Medium. The exploit is trivial and the impact is direct financial cost, but it does not expose user data or compromise the system.
 
+**Status:** Fixed. Both API routes now enforce a per-IP rate limit (10 requests per 60 seconds) via an in-memory sliding-window limiter. Returns 429 when exceeded.
+
 ---
 
 ## What the security review found clean

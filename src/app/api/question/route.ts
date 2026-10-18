@@ -1,8 +1,17 @@
 import { NextResponse } from 'next/server'
 import { answerQuestion } from '@/lib/analysis/question'
 import type { AnalysisResult } from '@/lib/analysis/types'
+import { apiLimiter } from '@/lib/rate-limit'
 
 export async function POST(request: Request) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  if (!apiLimiter.check(ip)) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait a minute and try again.' },
+      { status: 429 }
+    )
+  }
+
   if (!process.env.OPENROUTER_API_KEY) {
     return NextResponse.json(
       { error: 'Question answering is not available right now. The server is missing its API key.' },

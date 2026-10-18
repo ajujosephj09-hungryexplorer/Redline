@@ -1,8 +1,17 @@
 import { NextResponse } from 'next/server'
 import { analyzeContract } from '@/lib/analysis/engine'
 import type { Rule } from '@/lib/rules/types'
+import { apiLimiter } from '@/lib/rate-limit'
 
 export async function POST(request: Request) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  if (!apiLimiter.check(ip)) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait a minute and try again.' },
+      { status: 429 }
+    )
+  }
+
   // Check that the API key is configured before doing anything else
   if (!process.env.OPENROUTER_API_KEY) {
     return NextResponse.json(
