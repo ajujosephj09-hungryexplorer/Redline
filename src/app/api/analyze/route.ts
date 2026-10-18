@@ -44,11 +44,12 @@ export async function POST(request: Request) {
     const message =
       err instanceof Error ? err.message : 'Analysis failed unexpectedly.'
 
-    // Surface config errors as 503, everything else as 500
+    // Config errors → 503; upstream/model errors → 502; unknown → 500
     const isConfigError =
       message.includes('OPENROUTER_API_KEY') ||
       message.includes('OPENROUTER_MODEL')
-    const status = isConfigError ? 503 : 500
+    const isUpstreamError = message.includes('analysis service')
+    const status = isConfigError ? 503 : isUpstreamError ? 502 : 500
 
     return NextResponse.json({ error: message }, { status })
   }

@@ -155,6 +155,8 @@ Reproduced across 5 API calls with different payloads during the expired-key per
 
 **Severity:** Stops a reader. The user gets an incomprehensible error with no guidance.
 
+**Status:** Fixed. Error messages are now generic user-safe strings; raw upstream details go to server logs only. Upstream failures return HTTP 502 instead of 500.
+
 ---
 
 ## 7. OpenRouter API key was expired — all analysis non-functional until manually renewed
