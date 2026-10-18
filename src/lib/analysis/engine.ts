@@ -59,6 +59,40 @@ const ANALYSIS_SCHEMA = {
   additionalProperties: false,
 }
 
+/**
+ * Cleans an LLM-returned citation so it is a verbatim substring of the contract.
+ * 1. Strips wrapping quotation marks (straight or smart quotes).
+ * 2. Expands ellipsis: splits on "..." or "…", uses prefix/suffix as anchors
+ *    to find the full passage in the contract text.
+ */
+function cleanCitation(raw: string, contractText: string): string {
+  let cleaned = raw
+
+  // Strip wrapping straight and smart quotes
+  cleaned = cleaned.replace(/^[\u201C\u201D"]+/, '').replace(/[\u201C\u201D"]+$/, '')
+
+  // Expand ellipsis if present
+  const ellipsisPattern = /\.{3}|\u2026/
+  if (ellipsisPattern.test(cleaned)) {
+    const parts = cleaned.split(ellipsisPattern)
+    if (parts.length === 2) {
+      const prefix = parts[0].trimEnd()
+      const suffix = parts[1].trimStart()
+      if (prefix.length > 0 && suffix.length > 0) {
+        const startIdx = contractText.indexOf(prefix)
+        if (startIdx !== -1) {
+          const suffixIdx = contractText.indexOf(suffix, startIdx + prefix.length)
+          if (suffixIdx !== -1) {
+            cleaned = contractText.slice(startIdx, suffixIdx + suffix.length)
+          }
+        }
+      }
+    }
+  }
+
+  return cleaned
+}
+
 function buildSystemPrompt(rules: Rule[]): string {
   const enabledRules = rules.filter((r) => r.enabled)
 
@@ -173,7 +207,7 @@ export async function analyzeContract(
   const flags: RiskFlag[] = (raw.flags ?? []).map((f) => ({
     ruleName: normalizeRuleName(f.ruleName),
     problem: f.problem,
-    citation: f.citation,
+    citation: cleanCitation(f.citation, text),
     severity: validSeverities.has(f.severity)
       ? (f.severity as Severity)
       : 'moderate',

@@ -83,6 +83,8 @@ Verified programmatically: `citation in contract_text` returns `False`.
 
 **Severity:** Misleads a reader. The citation looks like a quote but cannot be found in the document. The freelancer cannot trace the flag back to its source, which is the entire basis for trusting the analysis.
 
+**Status:** Fixed. The engine now expands ellipsis by using prefix/suffix as anchors to find the full passage in the contract text.
+
 ---
 
 ## 4. Citations wrapped in quotation marks not present in the source document
@@ -112,6 +114,8 @@ Verified programmatically: all four `citation in contract_text` checks return `F
 This did not occur in the risky contract fixture (6 citations, all clean), the prompt injection contract (4 citations, all clean), or the first four citations of the Spanish contract. It occurred in all four citations of the long document.
 
 **Severity:** Misleads a reader. Same as finding 3 — the citation cannot be located in the source, breaking the traceability promise.
+
+**Status:** Fixed. The engine now strips wrapping quotation marks (straight and smart quotes) from citations.
 
 ---
 

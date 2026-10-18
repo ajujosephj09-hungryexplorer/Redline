@@ -148,6 +148,93 @@ describe('analysis engine', () => {
     expect(flagNames).toContain('Payment Terms (unfavorable)')
   })
 
+  it('strips wrapping quotation marks from citations (finding 4)', async () => {
+    const text = readFileSync(
+      join(__dirname, 'fixtures/risky-contract.txt'),
+      'utf8'
+    )
+    const rules = getLocalRules()
+
+    const rawCitation =
+      'All work product, deliverables, materials, inventions, discoveries, improvements, designs, code, documentation, and creative works of any kind, whether or not patentable or copyrightable, that are conceived, created, developed, or reduced to practice by Contractor at any time during the term of this Agreement, including work created prior to the effective date of this Agreement and work created outside the scope of the Services described herein, shall be considered works made for hire and shall be the sole and exclusive property of Client.'
+
+    const mockResult = {
+      summary: 'Contract with IP issues.',
+      flags: [
+        {
+          ruleName: 'IP Assignment (overbroad)',
+          problem: 'Overbroad IP clause.',
+          citation: `"${rawCitation}"`,
+          severity: 'critical',
+          counterOffer: 'Limit IP assignment.',
+        },
+      ],
+      gaps: [],
+      checklist: [
+        { ruleName: 'IP Assignment (overbroad)', status: 'flagged' },
+        { ruleName: 'Payment Terms (unfavorable)', status: 'clean' },
+        { ruleName: 'Termination without guaranteed payment', status: 'clean' },
+        { ruleName: 'Non-Compete', status: 'clean' },
+        { ruleName: 'Indemnification (overbroad)', status: 'clean' },
+        { ruleName: 'Forced Arbitration + Class Action Waiver', status: 'clean' },
+      ],
+    }
+    vi.mocked(callOpenRouter).mockResolvedValueOnce(mockResult)
+
+    const result = await analyzeContract(text, rules)
+
+    // Citation must not have wrapping quotes
+    expect(result.flags[0].citation).not.toMatch(/^"/)
+    expect(result.flags[0].citation).not.toMatch(/"$/)
+    // And must be a verbatim substring
+    expect(text).toContain(result.flags[0].citation)
+  })
+
+  it('expands ellipsis in citations to the full passage (finding 3)', async () => {
+    const text = readFileSync(
+      join(__dirname, 'fixtures/risky-contract.txt'),
+      'utf8'
+    )
+    const rules = getLocalRules()
+
+    // The contract contains this full sentence in section 9.1:
+    const fullCitation =
+      'Client may terminate this Agreement at any time, with or without cause, upon five (5) calendar days\' written notice to Contractor.'
+    // LLM returns it with an ellipsis in the middle
+    const ellipsisCitation =
+      'Client may terminate this Agreement at any time... upon five (5) calendar days\' written notice to Contractor.'
+
+    const mockResult = {
+      summary: 'Contract with termination issues.',
+      flags: [
+        {
+          ruleName: 'Termination without guaranteed payment',
+          problem: 'Can terminate with no kill fee.',
+          citation: ellipsisCitation,
+          severity: 'critical',
+          counterOffer: 'Add a kill fee.',
+        },
+      ],
+      gaps: [],
+      checklist: [
+        { ruleName: 'IP Assignment (overbroad)', status: 'clean' },
+        { ruleName: 'Payment Terms (unfavorable)', status: 'clean' },
+        { ruleName: 'Termination without guaranteed payment', status: 'flagged' },
+        { ruleName: 'Non-Compete', status: 'clean' },
+        { ruleName: 'Indemnification (overbroad)', status: 'clean' },
+        { ruleName: 'Forced Arbitration + Class Action Waiver', status: 'clean' },
+      ],
+    }
+    vi.mocked(callOpenRouter).mockResolvedValueOnce(mockResult)
+
+    const result = await analyzeContract(text, rules)
+
+    // Citation must be expanded to the full passage, not contain "..."
+    expect(result.flags[0].citation).not.toContain('...')
+    // And must be a verbatim substring
+    expect(text).toContain(result.flags[0].citation)
+  })
+
   it('returns zero gaps and a full checklist for risky contract (all clause types present)', async () => {
     const text = readFileSync(
       join(__dirname, 'fixtures/risky-contract.txt'),
