@@ -53,8 +53,9 @@ export async function callOpenRouter(
 
   if (!res.ok) {
     const text = await res.text().catch(() => '(no body)')
+    console.error(`OpenRouter request failed (${res.status}): ${text}`)
     throw new Error(
-      `OpenRouter request failed (${res.status}): ${text}`
+      'The analysis service returned an error. Please try again in a moment.'
     )
   }
 
@@ -62,17 +63,21 @@ export async function callOpenRouter(
 
   const content = data?.choices?.[0]?.message?.content
   if (typeof content !== 'string') {
+    console.error(
+      'OpenRouter response missing message content:',
+      JSON.stringify(data).slice(0, 500)
+    )
     throw new Error(
-      'OpenRouter response did not contain a message. Full response: ' +
-        JSON.stringify(data).slice(0, 500)
+      'The analysis service returned an unexpected response. Please try again.'
     )
   }
 
   try {
     return JSON.parse(content)
   } catch {
+    console.error('OpenRouter returned non-JSON content:', content.slice(0, 500))
     throw new Error(
-      'OpenRouter returned non-JSON content: ' + content.slice(0, 500)
+      'The analysis service returned an unexpected response. Please try again.'
     )
   }
 }

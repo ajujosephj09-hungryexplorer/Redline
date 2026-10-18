@@ -1,0 +1,139 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+
+// Do NOT mock callOpenRouter — we test the real function with a mocked fetch
+import { callOpenRouter } from '@/lib/analysis/openrouter'
+
+const LEAKED_PATTERNS = [
+  /openrouter/i,
+  /Bearer/,
+  /WWW-Authenticate/,
+  /invalid_token/,
+  /API key expired/,
+  /"error":\s*\{/,
+  /sk-or-/,
+]
+
+describe('openrouter error sanitization', () => {
+  const originalFetch = globalThis.fetch
+  const originalEnv = { ...process.env }
+
+  beforeEach(() => {
+    process.env.OPENROUTER_API_KEY = 'sk-or-test-key'
+    process.env.OPENROUTER_MODEL = 'test/model'
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+  })
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch
+    process.env.OPENROUTER_API_KEY = originalEnv.OPENROUTER_API_KEY
+    process.env.OPENROUTER_MODEL = originalEnv.OPENROUTER_MODEL
+    vi.restoreAllMocks()
+  })
+
+  it('does not leak upstream details on HTTP 401', async () => {
+    const upstreamBody = JSON.stringify({
+      error: {
+        message: 'API key expired.',
+        code: 401,
+        metadata: {
+          headers: {
+            'WWW-Authenticate':
+              'Bearer error="invalid_token", error_description="API key expired"',
+          },
+        },
+      },
+    })
+
+    globalThis.fetch = vi.fn().mockResolvedValueOnce({
+      ok: false,
+      status: 401,
+      text: () => Promise.resolve(upstreamBody),
+    })
+
+    await expect(
+      callOpenRouter([{ role: 'user', content: 'test' }], {})
+    ).rejects.toThrow('analysis service')
+
+    try {
+      await callOpenRouter([{ role: 'user', content: 'test' }], {})
+    } catch (err) {
+      // Already caught above — this branch won't run, but the first
+      // assertion covers it
+    }
+
+    // Verify the thrown message doesn't contain any upstream detail
+    let thrownMessage = ''
+    try {
+      globalThis.fetch = vi.fn().mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        text: () => Promise.resolve(upstreamBody),
+      })
+      await callOpenRouter([{ role: 'user', content: 'test' }], {})
+    } catch (err) {
+      thrownMessage = (err as Error).message
+    }
+
+    for (const pattern of LEAKED_PATTERNS) {
+      expect(thrownMessage).not.toMatch(pattern)
+    }
+  })
+
+  it('does not leak upstream details on HTTP 500', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      text: () =>
+        Promise.resolve('Internal Server Error: upstream model crashed'),
+    })
+
+    let thrownMessage = ''
+    try {
+      await callOpenRouter([{ role: 'user', content: 'test' }], {})
+    } catch (err) {
+      thrownMessage = (err as Error).message
+    }
+
+    for (const pattern of LEAKED_PATTERNS) {
+      expect(thrownMessage).not.toMatch(pattern)
+    }
+    expect(thrownMessage).not.toContain('upstream model crashed')
+  })
+
+  it('does not leak response body when message content is missing', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ choices: [{ message: {} }] }),
+    })
+
+    let thrownMessage = ''
+    try {
+      await callOpenRouter([{ role: 'user', content: 'test' }], {})
+    } catch (err) {
+      thrownMessage = (err as Error).message
+    }
+
+    expect(thrownMessage).toContain('analysis service')
+    expect(thrownMessage).not.toContain('choices')
+  })
+
+  it('does not leak raw content when response is not valid JSON', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          choices: [{ message: { content: 'not json at all {{{' } }],
+        }),
+    })
+
+    let thrownMessage = ''
+    try {
+      await callOpenRouter([{ role: 'user', content: 'test' }], {})
+    } catch (err) {
+      thrownMessage = (err as Error).message
+    }
+
+    expect(thrownMessage).toContain('analysis service')
+    expect(thrownMessage).not.toContain('not json at all')
+  })
+})

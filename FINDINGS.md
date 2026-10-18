@@ -62,6 +62,8 @@ Verified by comparing the `flags` and `checklist` arrays in the same JSON respon
 
 **Severity:** Misleads a reader. A freelancer scanning the checklist for a quick verdict sees two green items that are actually flagged as critical/moderate risks in the detailed view.
 
+**Status:** Fixed. LLM-returned rule names are now normalized to canonical names before building the flaggedNames set.
+
 ---
 
 ## 3. Citation uses ellipsis instead of quoting the exact text
@@ -80,6 +82,8 @@ The citation replaces "incluyendo herramientas y materiales preexistentes desarr
 Verified programmatically: `citation in contract_text` returns `False`.
 
 **Severity:** Misleads a reader. The citation looks like a quote but cannot be found in the document. The freelancer cannot trace the flag back to its source, which is the entire basis for trusting the analysis.
+
+**Status:** Fixed. The engine now expands ellipsis by using prefix/suffix as anchors to find the full passage in the contract text.
 
 ---
 
@@ -111,6 +115,8 @@ This did not occur in the risky contract fixture (6 citations, all clean), the p
 
 **Severity:** Misleads a reader. Same as finding 3 — the citation cannot be located in the source, breaking the traceability promise.
 
+**Status:** Fixed. The engine now strips wrapping quotation marks (straight and smart quotes) from citations.
+
 ---
 
 ## 5. Landing page sends users to login — no way to try the product without creating an account
@@ -130,6 +136,8 @@ Both CTA buttons link to `/login`. The BUILD-REPORT describes an anonymous analy
 Verified via two separate fetches of the landing page; both CTAs confirmed linking to `/login`.
 
 **Severity:** Stops a reader. A freelancer who arrives and wants to try it must create an account first.
+
+**Status:** Fixed. Both CTA buttons now link to `/analyze`.
 
 ---
 
@@ -152,6 +160,8 @@ The raw JSON error from the upstream provider is embedded in the response. A use
 Reproduced across 5 API calls with different payloads during the expired-key period.
 
 **Severity:** Stops a reader. The user gets an incomprehensible error with no guidance.
+
+**Status:** Fixed. Error messages are now generic user-safe strings; raw upstream details go to server logs only. Upstream failures return HTTP 502 instead of 500.
 
 ---
 
@@ -214,3 +224,57 @@ Fixed during this test session by creating a new key and redeploying.
 - **Input validation:** Empty text, wrong types, empty questions, and GET on POST-only endpoints all return correct 4xx errors
 - **Concurrent requests:** Two simultaneous analyses complete independently without errors or data mixing
 - **Landing page:** Accurate demo, honest about product stage ("no prices, no testimonials"), includes legal advice disclaimer
+
+---
+
+## Security review
+
+**Date:** 2026-10-18
+**Scope:** Full codebase, treating every file as new. Followed the method and confidence bar from `anthropics/claude-code-security-review`.
+**Reviewed:** 5 Supabase migrations, 2 API route handlers, auth callback, middleware, login/signup pages, Supabase client/server/config modules, analysis engine, OpenRouter client, question answering, parser, rules CRUD, all page components.
+**Skipped:** node_modules, tests, fixtures, lock files.
+
+---
+
+## 8. API routes accept unauthenticated requests that consume paid upstream credits
+
+**File:** `src/app/api/analyze/route.ts:5`, `src/app/api/question/route.ts:5`
+
+Neither POST handler checks for a session or any form of authentication. The middleware (`src/middleware.ts:9`) only protects paths starting with `/dashboard`; the `/api/*` routes are outside that list. Any anonymous HTTP client can call the endpoints directly.
+
+**How someone would use it:**
+```bash
+while true; do
+  curl -s -X POST https://redline-kappa-umber.vercel.app/api/analyze \
+    -H 'Content-Type: application/json' \
+    -d '{"text":"test","rules":[]}' &
+done
+```
+Each request forwards to OpenRouter and costs real money. There is no session check, no CSRF token, no origin restriction, and no per-IP throttle. An attacker burns the operator's API budget with a trivial script.
+
+The anonymous analysis path at `/analyze` was an intentional product decision (BUILD-REPORT item 5), so the UI needs these endpoints open. But nothing prevents automated abuse from outside the app.
+
+**Severity:** Medium. The exploit is trivial and the impact is direct financial cost, but it does not expose user data or compromise the system.
+
+**Status:** Fixed. Both API routes now enforce a per-IP rate limit (10 requests per 60 seconds) via an in-memory sliding-window limiter. Returns 429 when exceeded.
+
+---
+
+## What the security review found clean
+
+| Area | Result |
+|------|--------|
+| Supabase RLS | All 4 tables have RLS enabled. SELECT/INSERT/UPDATE/DELETE policies scoped to `auth.uid() = user_id`. No cross-user access path. |
+| SQL injection | All Supabase queries use parameterized `.eq()` calls. No dynamic SQL or `EXECUTE` in migrations. |
+| SECURITY DEFINER functions | Two trigger functions (`handle_new_user`, `seed_default_rules`) both set `search_path = ''`. Triggered only by `auth.users` inserts. |
+| XSS | No `dangerouslySetInnerHTML` anywhere in the codebase. All user content rendered via JSX auto-escaping. |
+| Secrets in client bundles | `OPENROUTER_API_KEY` and `OPENROUTER_MODEL` only read in server-side files. Only `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` reach the browser, by design. |
+| Secrets in error messages | Fixed in finding 6. Error messages are now generic; raw upstream details go to `console.error` only. |
+| Auth callback | Uses `origin` from `request.url` (server-controlled). No open redirect. |
+| Open redirects | All `href` values and `router.push()` calls use hardcoded internal paths. |
+| File system access | Parser runs in the browser (`file.text()`, `file.arrayBuffer()`). No server-side `fs` operations. |
+| Deserialization | `JSON.parse` used on OpenRouter response (server-side) and `sessionStorage` (same-origin). No unsafe deserialization. |
+| Eval / dynamic code | No `eval()`, `new Function()`, `document.write()`, or `innerHTML` assignments. |
+| Prototype pollution | No `Object.assign` with user input, no `__proto__` access. |
+| `next.config.js` | Empty. No env var forwarding or exposure. |
+| Hardcoded secrets | None found. All credentials read from `process.env`. |

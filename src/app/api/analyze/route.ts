@@ -1,8 +1,17 @@
 import { NextResponse } from 'next/server'
 import { analyzeContract } from '@/lib/analysis/engine'
 import type { Rule } from '@/lib/rules/types'
+import { apiLimiter } from '@/lib/rate-limit'
 
 export async function POST(request: Request) {
+  const ip = request.headers.get('x-real-ip') ?? request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ?? 'unknown'
+  if (!apiLimiter.check(ip)) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait a minute and try again.' },
+      { status: 429 }
+    )
+  }
+
   // Check that the API key is configured before doing anything else
   if (!process.env.OPENROUTER_API_KEY) {
     return NextResponse.json(
@@ -44,11 +53,12 @@ export async function POST(request: Request) {
     const message =
       err instanceof Error ? err.message : 'Analysis failed unexpectedly.'
 
-    // Surface config errors as 503, everything else as 500
+    // Config errors → 503; upstream/model errors → 502; unknown → 500
     const isConfigError =
       message.includes('OPENROUTER_API_KEY') ||
       message.includes('OPENROUTER_MODEL')
-    const status = isConfigError ? 503 : 500
+    const isUpstreamError = message.includes('analysis service')
+    const status = isConfigError ? 503 : isUpstreamError ? 502 : 500
 
     return NextResponse.json({ error: message }, { status })
   }
