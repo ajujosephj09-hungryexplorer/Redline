@@ -224,3 +224,55 @@ Fixed during this test session by creating a new key and redeploying.
 - **Input validation:** Empty text, wrong types, empty questions, and GET on POST-only endpoints all return correct 4xx errors
 - **Concurrent requests:** Two simultaneous analyses complete independently without errors or data mixing
 - **Landing page:** Accurate demo, honest about product stage ("no prices, no testimonials"), includes legal advice disclaimer
+
+---
+
+## Security review
+
+**Date:** 2026-10-18
+**Scope:** Full codebase, treating every file as new. Followed the method and confidence bar from `anthropics/claude-code-security-review`.
+**Reviewed:** 5 Supabase migrations, 2 API route handlers, auth callback, middleware, login/signup pages, Supabase client/server/config modules, analysis engine, OpenRouter client, question answering, parser, rules CRUD, all page components.
+**Skipped:** node_modules, tests, fixtures, lock files.
+
+---
+
+## 8. API routes accept unauthenticated requests that consume paid upstream credits
+
+**File:** `src/app/api/analyze/route.ts:5`, `src/app/api/question/route.ts:5`
+
+Neither POST handler checks for a session or any form of authentication. The middleware (`src/middleware.ts:9`) only protects paths starting with `/dashboard`; the `/api/*` routes are outside that list. Any anonymous HTTP client can call the endpoints directly.
+
+**How someone would use it:**
+```bash
+while true; do
+  curl -s -X POST https://redline-kappa-umber.vercel.app/api/analyze \
+    -H 'Content-Type: application/json' \
+    -d '{"text":"test","rules":[]}' &
+done
+```
+Each request forwards to OpenRouter and costs real money. There is no session check, no CSRF token, no origin restriction, and no per-IP throttle. An attacker burns the operator's API budget with a trivial script.
+
+The anonymous analysis path at `/analyze` was an intentional product decision (BUILD-REPORT item 5), so the UI needs these endpoints open. But nothing prevents automated abuse from outside the app.
+
+**Severity:** Medium. The exploit is trivial and the impact is direct financial cost, but it does not expose user data or compromise the system.
+
+---
+
+## What the security review found clean
+
+| Area | Result |
+|------|--------|
+| Supabase RLS | All 4 tables have RLS enabled. SELECT/INSERT/UPDATE/DELETE policies scoped to `auth.uid() = user_id`. No cross-user access path. |
+| SQL injection | All Supabase queries use parameterized `.eq()` calls. No dynamic SQL or `EXECUTE` in migrations. |
+| SECURITY DEFINER functions | Two trigger functions (`handle_new_user`, `seed_default_rules`) both set `search_path = ''`. Triggered only by `auth.users` inserts. |
+| XSS | No `dangerouslySetInnerHTML` anywhere in the codebase. All user content rendered via JSX auto-escaping. |
+| Secrets in client bundles | `OPENROUTER_API_KEY` and `OPENROUTER_MODEL` only read in server-side files. Only `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` reach the browser, by design. |
+| Secrets in error messages | Fixed in finding 6. Error messages are now generic; raw upstream details go to `console.error` only. |
+| Auth callback | Uses `origin` from `request.url` (server-controlled). No open redirect. |
+| Open redirects | All `href` values and `router.push()` calls use hardcoded internal paths. |
+| File system access | Parser runs in the browser (`file.text()`, `file.arrayBuffer()`). No server-side `fs` operations. |
+| Deserialization | `JSON.parse` used on OpenRouter response (server-side) and `sessionStorage` (same-origin). No unsafe deserialization. |
+| Eval / dynamic code | No `eval()`, `new Function()`, `document.write()`, or `innerHTML` assignments. |
+| Prototype pollution | No `Object.assign` with user input, no `__proto__` access. |
+| `next.config.js` | Empty. No env var forwarding or exposure. |
+| Hardcoded secrets | None found. All credentials read from `process.env`. |
