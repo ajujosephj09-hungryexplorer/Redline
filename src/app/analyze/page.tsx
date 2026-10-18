@@ -2,12 +2,42 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import AnalysisView from '@/app/(app)/dashboard/documents/[id]/AnalysisView'
 import { getLocalRules } from '@/lib/rules/local'
 
 interface PendingDoc {
   title: string
   text: string
+}
+
+function AnalyzeHeader() {
+  return (
+    <nav className="border-b border-slate-200">
+      <div className="max-w-3xl mx-auto px-6 flex items-center justify-between h-14">
+        <Link
+          href="/"
+          className="text-navy font-bold text-base tracking-tight"
+        >
+          Redline
+        </Link>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/login"
+            className="text-sm text-slate-600 hover:text-navy transition-colors"
+          >
+            Sign in
+          </Link>
+          <Link
+            href="/signup"
+            className="text-sm bg-navy text-white font-semibold px-4 py-1.5 rounded-md hover:bg-slate-700 transition-colors"
+          >
+            Sign up
+          </Link>
+        </div>
+      </div>
+    </nav>
+  )
 }
 
 export default function AnalyzePage() {
@@ -35,36 +65,45 @@ export default function AnalyzePage() {
 
   if (missing) {
     return (
-      <div className="max-w-3xl mx-auto px-6 py-10">
-        <h1 className="text-2xl font-bold text-navy">Nothing to analyze</h1>
-        <p className="text-slate-600 mt-2 leading-relaxed">
-          Upload or paste a contract first so Redline has something to work with.
-        </p>
-        <button
-          onClick={() => router.push('/upload')}
-          className="mt-6 bg-navy text-white font-semibold text-sm px-8 py-3.5 rounded-md hover:bg-slate-700 transition-colors"
-        >
-          Go to Upload
-        </button>
+      <div className="min-h-screen">
+        <AnalyzeHeader />
+        <div className="max-w-3xl mx-auto px-6 py-10">
+          <h1 className="text-2xl font-bold text-navy">Nothing to analyze</h1>
+          <p className="text-slate-600 mt-2 leading-relaxed">
+            Upload or paste a contract first so Redline has something to work with.
+          </p>
+          <button
+            onClick={() => router.push('/upload')}
+            className="mt-6 bg-navy text-white font-semibold text-sm px-8 py-3.5 rounded-md hover:bg-slate-700 transition-colors"
+          >
+            Go to Upload
+          </button>
+        </div>
       </div>
     )
   }
 
   if (!doc) {
     return (
-      <div className="max-w-3xl mx-auto px-6 py-10">
-        <p className="text-sm text-slate-500">Loading...</p>
+      <div className="min-h-screen">
+        <AnalyzeHeader />
+        <div className="max-w-3xl mx-auto px-6 py-10">
+          <p className="text-sm text-slate-500">Loading...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
-      <AnalysisView
-        documentText={doc.text}
-        documentTitle={doc.title}
-        rules={getLocalRules()}
-      />
+    <div className="min-h-screen">
+      <AnalyzeHeader />
+      <div className="max-w-3xl mx-auto px-6 py-10">
+        <AnalysisView
+          documentText={doc.text}
+          documentTitle={doc.title}
+          rules={getLocalRules()}
+        />
+      </div>
     </div>
   )
 }
