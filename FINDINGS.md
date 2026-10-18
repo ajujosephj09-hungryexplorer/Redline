@@ -131,6 +131,8 @@ Verified via two separate fetches of the landing page; both CTAs confirmed linki
 
 **Severity:** Stops a reader. A freelancer who arrives and wants to try it must create an account first.
 
+**Status:** Fixed. Both CTA buttons now link to `/analyze`.
+
 ---
 
 ## 6. API error exposes raw upstream service details to the end user
