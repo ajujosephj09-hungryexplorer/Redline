@@ -245,7 +245,7 @@ export default function UploadPage() {
 
       {/* ---- Error ---- */}
       {error && (
-        <p className="mt-4 text-sm font-semibold text-navy">
+        <p className="mt-4 text-sm font-semibold text-severity-critical">
           {error}
         </p>
       )}

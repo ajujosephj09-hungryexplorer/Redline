@@ -245,6 +245,31 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
   const [status, setStatus] = useState<Status>('idle')
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
+  const [loadingMsgIndex, setLoadingMsgIndex] = useState(0)
+
+  const loadingMessages = [
+    'Reading the contract...',
+    'Checking each clause against your rules...',
+    'Identifying risks and missing protections...',
+    'Drafting counter offers for flagged clauses...',
+    'Wrapping up the analysis...',
+  ]
+
+  useEffect(() => {
+    if (status !== 'loading') {
+      setLoadingMsgIndex(0)
+      return
+    }
+
+    // Last message sticks — don't cycle past it
+    if (loadingMsgIndex >= loadingMessages.length - 1) return
+
+    const timer = setTimeout(() => {
+      setLoadingMsgIndex((i) => Math.min(i + 1, loadingMessages.length - 1))
+    }, 4000)
+
+    return () => clearTimeout(timer)
+  }, [status, loadingMsgIndex, loadingMessages.length])
 
   useEffect(() => {
     let cancelled = false
@@ -296,8 +321,11 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
         <h1 className="text-2xl font-bold text-navy">{documentTitle}</h1>
         <div className="mt-6 flex items-center gap-3">
           <div className="h-5 w-5 border-2 border-navy border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-slate-600">
-            Reading the contract and checking each clause...
+          <p
+            key={loadingMsgIndex}
+            className="text-sm text-slate-600 animate-fadeIn"
+          >
+            {loadingMessages[loadingMsgIndex]}
           </p>
         </div>
       </div>
@@ -339,6 +367,13 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
         </p>
       </div>
 
+      {/* Guidance for users with findings */}
+      {!isClean && (
+        <p className="mt-3 text-sm text-slate-500">
+          Expand each finding below to see the exact contract language and a counter-offer you can send back.
+        </p>
+      )}
+
       {/* Clean contract message */}
       {isClean && (
         <div className="mt-4 bg-white border border-slate-200 rounded-md shadow-sm p-5">
@@ -377,6 +412,13 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
         </div>
       )}
 
+      {/* Severity legend */}
+      {(flags.length > 0 || gaps.length > 0) && (
+        <p className="mt-2 text-xs text-slate-400">
+          Critical: language that could cost you money or rights. Moderate: terms worth pushing back on. Clear: checked and looks fair.
+        </p>
+      )}
+
       {/* Findings */}
       {flags.length > 0 && (
         <div className="mt-4 space-y-3">
@@ -396,13 +438,13 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
         </div>
       )}
 
-      {/* Rules checklist */}
-      <RulesChecklist items={checklist} />
-
-      {/* Question box — only shown after analysis completes */}
+      {/* Question box — ask about this contract */}
       {result && (
         <QuestionBox documentText={documentText} analysisResult={result} />
       )}
+
+      {/* Rules checklist */}
+      <RulesChecklist items={checklist} />
     </div>
   )
 }
