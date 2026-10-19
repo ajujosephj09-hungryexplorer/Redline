@@ -62,7 +62,7 @@ function FindingRow({ flag }: { flag: RiskFlag }) {
         <span className="text-sm font-semibold text-navy flex-1 min-w-0">
           {flag.ruleName}
         </span>
-        <span className="text-sm text-slate-600 truncate max-w-[50%] hidden sm:block">
+        <span className="text-sm text-slate-600 truncate max-w-[50%]">
           {flag.problem}
         </span>
         <svg
@@ -85,9 +85,6 @@ function FindingRow({ flag }: { flag: RiskFlag }) {
       >
         <div className="overflow-hidden">
           <div className="px-4 pb-4 space-y-3">
-            {/* Problem (visible on mobile since truncated above) */}
-            <p className="text-sm text-slate-700 sm:hidden">{flag.problem}</p>
-
             {/* Citation block */}
             <div>
               <p className="uppercase text-xs tracking-wider font-semibold text-slate-500 mb-1.5">
@@ -400,7 +397,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
             </span>
           )}
           {moderateCount > 0 && (
-            <span className="text-severity-moderate font-semibold">
+            <span className="text-amber-700 font-semibold">
               {moderateCount} moderate
             </span>
           )}
