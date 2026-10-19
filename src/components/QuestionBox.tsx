@@ -13,6 +13,8 @@ interface ConversationTurn {
   content: string
 }
 
+const MAX_QUESTION_LENGTH = 500
+
 export default function QuestionBox({ documentText, analysisResult }: Props) {
   const [input, setInput] = useState('')
   const [conversation, setConversation] = useState<ConversationTurn[]>([])
@@ -135,10 +137,11 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
             ref={inputRef}
             type="text"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => setInput(e.target.value.slice(0, MAX_QUESTION_LENGTH))}
             onKeyDown={handleKeyDown}
             placeholder="What does the termination clause say?"
             disabled={loading}
+            maxLength={MAX_QUESTION_LENGTH}
             className="flex-1 text-sm border border-slate-300 rounded-md px-3 py-2.5 text-navy placeholder:text-slate-400 focus:outline-none focus:border-navy focus:ring-1 focus:ring-navy disabled:opacity-60"
           />
           <button

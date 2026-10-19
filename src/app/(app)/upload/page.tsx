@@ -8,6 +8,15 @@ import { isSupabaseConfigured } from '@/lib/supabase/config'
 
 type Mode = 'paste' | 'upload'
 
+const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2 MB
+
+function validateFile(file: File): string | null {
+  if (file.size > MAX_FILE_SIZE) {
+    return `File is too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum size is 2 MB.`
+  }
+  return null
+}
+
 interface ParsedDoc {
   title: string
   text: string
@@ -38,10 +47,26 @@ export default function UploadPage() {
 
     try {
       if (mode === 'paste') {
+        if (pasteText.trim().length < 50) {
+          setError('Contract text must be at least 50 characters. A single clause is longer than this.')
+          setParsing(false)
+          return
+        }
         const result = parseText(pasteText, pasteTitle)
         setParsed(result)
       } else if (selectedFile) {
+        const sizeError = validateFile(selectedFile)
+        if (sizeError) {
+          setError(sizeError)
+          setParsing(false)
+          return
+        }
         const result = await parseDocument(selectedFile)
+        if (result.text.trim().length < 50) {
+          setError('The file does not contain enough text to analyze. A contract needs at least a few sentences.')
+          setParsing(false)
+          return
+        }
         setParsed(result)
       } else {
         setError('Pick a file first.')
@@ -119,6 +144,11 @@ export default function UploadPage() {
     setDragOver(false)
     const file = e.dataTransfer.files?.[0]
     if (file) {
+      const sizeError = validateFile(file)
+      if (sizeError) {
+        setError(sizeError)
+        return
+      }
       setSelectedFile(file)
       setParsed(null)
       setError(null)
@@ -127,6 +157,14 @@ export default function UploadPage() {
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null
+    if (file) {
+      const sizeError = validateFile(file)
+      if (sizeError) {
+        setError(sizeError)
+        setSelectedFile(null)
+        return
+      }
+    }
     setSelectedFile(file)
     setParsed(null)
     setError(null)

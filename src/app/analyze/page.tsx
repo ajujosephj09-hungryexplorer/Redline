@@ -1,45 +1,25 @@
 'use client'
 
 import { useEffect, useState, useRef, useCallback } from 'react'
-import Link from 'next/link'
+import NavBar from '@/components/NavBar'
 import AnalysisView from '@/app/(app)/dashboard/documents/[id]/AnalysisView'
 import { getLocalRules } from '@/lib/rules/local'
 import { parseDocument, parseText } from '@/lib/parser'
 
 type UploadMode = 'upload' | 'paste'
 
+const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2 MB
+
 interface PendingDoc {
   title: string
   text: string
 }
 
-function AnalyzeHeader() {
-  return (
-    <nav className="border-b border-slate-200">
-      <div className="max-w-3xl mx-auto px-6 flex items-center justify-between h-14">
-        <Link
-          href="/"
-          className="text-navy font-bold text-base tracking-tight"
-        >
-          Redline
-        </Link>
-        <div className="flex items-center gap-4">
-          <Link
-            href="/login"
-            className="text-sm text-slate-600 hover:text-navy transition-colors"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/signup"
-            className="text-sm bg-navy text-white font-semibold px-4 py-1.5 rounded-md hover:bg-slate-700 transition-colors"
-          >
-            Sign up
-          </Link>
-        </div>
-      </div>
-    </nav>
-  )
+function validateFile(file: File): string | null {
+  if (file.size > MAX_FILE_SIZE) {
+    return `File is too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum size is 2 MB.`
+  }
+  return null
 }
 
 function InlineUploadForm({ onAnalyze }: { onAnalyze: (doc: PendingDoc) => void }) {
@@ -60,10 +40,26 @@ function InlineUploadForm({ onAnalyze }: { onAnalyze: (doc: PendingDoc) => void 
 
     try {
       if (mode === 'paste') {
+        if (pasteText.trim().length < 50) {
+          setError('Contract text must be at least 50 characters. A single clause is longer than this.')
+          setParsing(false)
+          return
+        }
         const result = parseText(pasteText, pasteTitle)
         setParsed(result)
       } else if (selectedFile) {
+        const sizeError = validateFile(selectedFile)
+        if (sizeError) {
+          setError(sizeError)
+          setParsing(false)
+          return
+        }
         const result = await parseDocument(selectedFile)
+        if (result.text.trim().length < 50) {
+          setError('The file does not contain enough text to analyze. A contract needs at least a few sentences.')
+          setParsing(false)
+          return
+        }
         setParsed(result)
       } else {
         setError('Pick a file first.')
@@ -90,6 +86,11 @@ function InlineUploadForm({ onAnalyze }: { onAnalyze: (doc: PendingDoc) => void 
     setDragOver(false)
     const file = e.dataTransfer.files?.[0]
     if (file) {
+      const sizeError = validateFile(file)
+      if (sizeError) {
+        setError(sizeError)
+        return
+      }
       setSelectedFile(file)
       setParsed(null)
       setError(null)
@@ -98,6 +99,14 @@ function InlineUploadForm({ onAnalyze }: { onAnalyze: (doc: PendingDoc) => void 
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null
+    if (file) {
+      const sizeError = validateFile(file)
+      if (sizeError) {
+        setError(sizeError)
+        setSelectedFile(null)
+        return
+      }
+    }
     setSelectedFile(file)
     setParsed(null)
     setError(null)
@@ -272,7 +281,7 @@ export default function AnalyzePage() {
   if (missing) {
     return (
       <div className="min-h-screen">
-        <AnalyzeHeader />
+        <NavBar />
         <div className="max-w-3xl mx-auto px-6 py-10">
           <InlineUploadForm onAnalyze={handleAnalyze} />
         </div>
@@ -283,7 +292,7 @@ export default function AnalyzePage() {
   if (!doc) {
     return (
       <div className="min-h-screen">
-        <AnalyzeHeader />
+        <NavBar />
         <div className="max-w-3xl mx-auto px-6 py-10">
           <p className="text-sm text-slate-500">Loading...</p>
         </div>
@@ -293,7 +302,7 @@ export default function AnalyzePage() {
 
   return (
     <div className="min-h-screen">
-      <AnalyzeHeader />
+      <NavBar />
       <div className="max-w-3xl mx-auto px-6 py-10">
         <AnalysisView
           documentText={doc.text}

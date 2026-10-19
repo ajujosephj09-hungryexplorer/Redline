@@ -310,7 +310,7 @@ function RuleRow({
                 onSave={handleNameSave}
                 className="font-semibold text-navy text-sm"
               />
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 border border-slate-200 rounded-sm px-1.5 py-0.5 shrink-0">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 border border-slate-200 rounded-sm px-1.5 py-0.5 shrink-0">
                 {rule.is_default ? 'Default' : 'Custom'}
               </span>
             </div>
@@ -358,7 +358,7 @@ function ReadOnlyRuleRow({ rule }: { rule: Rule }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <p className="font-semibold text-navy text-sm">{rule.name}</p>
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 border border-slate-200 rounded-sm px-1.5 py-0.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 border border-slate-200 rounded-sm px-1.5 py-0.5">
               Default
             </span>
           </div>
