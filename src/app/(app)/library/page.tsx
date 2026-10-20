@@ -121,7 +121,22 @@ export default function LibraryPage() {
     return (
       <div>
         <h1 className="text-2xl font-bold text-navy">Your contracts</h1>
-        <p className="text-slate-600 mt-2">Loading...</p>
+        <div className="mt-6 border border-slate-200 rounded-md divide-y divide-slate-200">
+          {[0, 1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="px-5 py-3.5 flex items-center justify-between gap-4 animate-pulse"
+            >
+              <div className="min-w-0 flex-1 space-y-2">
+                <div className="h-3.5 bg-slate-200 rounded w-2/5" />
+                <div className="h-2.5 bg-slate-200 rounded w-1/4" />
+              </div>
+              <div className="flex-shrink-0">
+                <div className="h-2.5 bg-slate-200 rounded w-8" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     )
   }
