@@ -19,9 +19,9 @@ interface Props {
 function severityPill(severity: Severity) {
   switch (severity) {
     case 'critical':
-      return 'bg-severity-critical text-white text-xs font-semibold px-2.5 py-0.5 rounded-full'
+      return 'bg-severity-critical text-white text-xs font-semibold px-2.5 py-0.5 rounded-sm'
     case 'moderate':
-      return 'bg-severity-moderate text-navy text-xs font-semibold px-2.5 py-0.5 rounded-full'
+      return 'bg-severity-moderate text-navy text-xs font-semibold px-2.5 py-0.5 rounded-sm'
     case 'low':
       return 'text-severity-clear text-xs font-semibold'
   }
@@ -110,7 +110,7 @@ function FindingRow({ flag }: { flag: RiskFlag }) {
                   {copied ? 'Copied' : 'Copy'}
                 </button>
               </div>
-              <div className="bg-emerald-50 border-l-4 border-green-600 rounded-r-md p-3">
+              <div className="bg-emerald-50 border-l-4 border-severity-clear rounded-r-md p-3">
                 <p className="text-sm text-navy leading-relaxed whitespace-pre-wrap">
                   {flag.counterOffer}
                 </p>
@@ -171,7 +171,7 @@ function GapCard({ gap }: { gap: Gap }) {
               {copied ? 'Copied' : 'Copy'}
             </button>
           </div>
-          <div className="bg-emerald-50 border-l-4 border-green-600 rounded-r-md p-3">
+          <div className="bg-emerald-50 border-l-4 border-severity-clear rounded-r-md p-3">
             <p className="text-sm text-navy leading-relaxed whitespace-pre-wrap">
               {gap.counterOffer}
             </p>
@@ -381,7 +381,10 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
       {/* Clean contract message */}
       {isClean && (
         <div className="mt-4 bg-white border border-slate-200 rounded-md shadow-sm p-5">
-          <p className="text-sm text-severity-clear font-semibold">
+          <p className="text-sm text-severity-clear font-semibold flex items-center gap-1.5">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M2.5 7l3.5 3.5 5.5-6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
             No issues found
           </p>
           <p className="text-sm text-slate-600 mt-1">

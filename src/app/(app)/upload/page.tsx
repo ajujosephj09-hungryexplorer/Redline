@@ -267,6 +267,11 @@ export default function UploadPage() {
                 placeholder="Paste the full contract text here..."
                 className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm text-navy placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy resize-y"
               />
+              {pasteText.length < 80 && pasteText.length > 0 && (
+                <p className="text-xs text-slate-400 mt-1">
+                  {pasteText.length} characters (minimum 50)
+                </p>
+              )}
             </div>
             {!parsed && (
               <button
