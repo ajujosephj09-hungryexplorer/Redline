@@ -243,6 +243,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0)
+  const [retryCount, setRetryCount] = useState(0)
 
   const loadingMessages = [
     'Reading the contract...',
@@ -309,12 +310,12 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
 
     run()
     return () => { cancelled = true }
-  }, [documentText, externalRules])
+  }, [documentText, externalRules, retryCount])
 
   // ---- Loading ----
   if (status === 'idle' || status === 'loading') {
     return (
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl mx-auto" role="status" aria-live="polite">
         <h1 className="text-2xl font-bold text-navy">{documentTitle}</h1>
         <div className="mt-6 flex items-center gap-3">
           <div className="h-5 w-5 border-2 border-navy border-t-transparent rounded-full animate-spin" />
@@ -334,9 +335,15 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
     return (
       <div className="max-w-3xl mx-auto">
         <h1 className="text-2xl font-bold text-navy">{documentTitle}</h1>
-        <div className="mt-6 border border-slate-200 rounded-md p-5">
+        <div className="mt-6 border border-slate-200 rounded-md p-5" role="alert" aria-live="assertive">
           <p className="text-sm font-semibold text-navy">Analysis could not be completed</p>
           <p className="text-sm text-slate-600 mt-1">{errorMsg}</p>
+          <button
+            onClick={() => setRetryCount((c) => c + 1)}
+            className="mt-4 text-sm font-semibold text-navy underline underline-offset-2 hover:opacity-70 transition-opacity"
+          >
+            Try again
+          </button>
         </div>
       </div>
     )
@@ -439,6 +446,17 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
       {result && (
         <QuestionBox documentText={documentText} analysisResult={result} />
       )}
+
+      {/* What's next? */}
+      <div className="mt-6 border border-slate-200 rounded-md p-5">
+        <p className="text-sm font-semibold text-navy mb-2">What&apos;s next?</p>
+        <a
+          href="/upload"
+          className="text-sm text-navy underline underline-offset-2 hover:opacity-70 transition-opacity"
+        >
+          Analyze another contract
+        </a>
+      </div>
 
       {/* Rules checklist */}
       <RulesChecklist items={checklist} />
