@@ -82,9 +82,20 @@ function InlineEdit({
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className={`${className} text-left hover:bg-slate-50 rounded px-1 -mx-1 transition-colors cursor-text`}
+        className={`${className} group text-left hover:bg-slate-50 rounded px-1 -mx-1 transition-colors cursor-text inline-flex items-center gap-1`}
       >
         {value}
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          className="shrink-0 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <path d="M8.5 1.5l2 2L4 10H2v-2L8.5 1.5z" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
       </button>
     )
   }
