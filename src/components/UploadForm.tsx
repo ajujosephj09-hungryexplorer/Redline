@@ -1,0 +1,264 @@
+'use client'
+
+import { useState, useRef, useCallback } from 'react'
+import { parseDocument, parseText } from '@/lib/parser'
+
+type Mode = 'upload' | 'paste'
+
+const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2 MB
+
+function validateFile(file: File): string | null {
+  if (file.size > MAX_FILE_SIZE) {
+    return `File is too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum size is 2 MB.`
+  }
+  return null
+}
+
+interface ParsedDoc {
+  title: string
+  text: string
+}
+
+export interface UploadFormProps {
+  onParsed: (doc: { title: string; text: string }) => void
+  submitLabel: string
+}
+
+export default function UploadForm({ onParsed, submitLabel }: UploadFormProps) {
+  const [mode, setMode] = useState<Mode>('upload')
+  const [pasteTitle, setPasteTitle] = useState('')
+  const [pasteText, setPasteText] = useState('')
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [parsed, setParsed] = useState<ParsedDoc | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [parsing, setParsing] = useState(false)
+  const [dragOver, setDragOver] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  async function handleParse() {
+    setError(null)
+    setParsed(null)
+    setParsing(true)
+
+    try {
+      if (mode === 'paste') {
+        if (pasteText.trim().length < 50) {
+          setError('Contract text must be at least 50 characters. A single clause is longer than this.')
+          setParsing(false)
+          return
+        }
+        const result = parseText(pasteText, pasteTitle)
+        setParsed(result)
+      } else if (selectedFile) {
+        const sizeError = validateFile(selectedFile)
+        if (sizeError) {
+          setError(sizeError)
+          setParsing(false)
+          return
+        }
+        const result = await parseDocument(selectedFile)
+        if (result.text.trim().length < 50) {
+          setError('The file does not contain enough text to analyze. A contract needs at least a few sentences.')
+          setParsing(false)
+          return
+        }
+        setParsed(result)
+      } else {
+        setError('Pick a file first.')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong while reading the file.')
+    } finally {
+      setParsing(false)
+    }
+  }
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setDragOver(true)
+  }, [])
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setDragOver(false)
+  }, [])
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setDragOver(false)
+    const file = e.dataTransfer.files?.[0]
+    if (file) {
+      const sizeError = validateFile(file)
+      if (sizeError) {
+        setError(sizeError)
+        return
+      }
+      setSelectedFile(file)
+      setParsed(null)
+      setError(null)
+    }
+  }, [])
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null
+    if (file) {
+      const sizeError = validateFile(file)
+      if (sizeError) {
+        setError(sizeError)
+        setSelectedFile(null)
+        return
+      }
+    }
+    setSelectedFile(file)
+    setParsed(null)
+    setError(null)
+  }
+
+  function handleDropZoneKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      fileInputRef.current?.click()
+    }
+  }
+
+  const tabClass = (t: Mode) =>
+    `px-4 py-2 text-sm font-medium rounded-t-md transition-colors ${
+      mode === t
+        ? 'bg-white text-navy border border-b-0 border-slate-200'
+        : 'text-slate-500 hover:text-navy'
+    }`
+
+  return (
+    <div>
+      {/* Tab bar */}
+      <div className="mt-6 flex gap-1 border-b border-slate-200">
+        <button className={tabClass('upload')} onClick={() => { setMode('upload'); setParsed(null); setError(null) }}>
+          Upload file
+        </button>
+        <button className={tabClass('paste')} onClick={() => { setMode('paste'); setParsed(null); setError(null) }}>
+          Paste text
+        </button>
+      </div>
+
+      <div className="mt-4">
+        {/* ---- Upload mode ---- */}
+        {mode === 'upload' && (
+          <div>
+            <div
+              role="button"
+              tabIndex={0}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              onKeyDown={handleDropZoneKeyDown}
+              className={`border-2 border-dashed rounded-md p-10 text-center cursor-pointer transition-colors ${
+                dragOver
+                  ? 'border-navy bg-slate-50'
+                  : 'border-slate-300 hover:border-slate-400'
+              }`}
+            >
+              <p className="text-sm text-slate-600">
+                {selectedFile
+                  ? selectedFile.name
+                  : 'Drop a .txt, .pdf, or .docx file here, or click to browse'}
+              </p>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".txt,.pdf,.docx"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </div>
+
+            {selectedFile && !parsed && (
+              <button
+                onClick={handleParse}
+                disabled={parsing}
+                className="mt-4 bg-navy text-white font-semibold text-sm px-8 py-3.5 rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50"
+              >
+                {parsing ? 'Reading...' : 'Read file'}
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* ---- Paste mode ---- */}
+        {mode === 'paste' && (
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="upload-form-paste-title" className="block text-sm font-medium text-navy mb-1">
+                Title (optional)
+              </label>
+              <input
+                id="upload-form-paste-title"
+                type="text"
+                value={pasteTitle}
+                onChange={(e) => setPasteTitle(e.target.value)}
+                placeholder="e.g. Freelance agreement with Acme"
+                className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm text-navy placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy"
+              />
+            </div>
+            <div>
+              <label htmlFor="upload-form-paste-text" className="block text-sm font-medium text-navy mb-1">
+                Contract text
+              </label>
+              <textarea
+                id="upload-form-paste-text"
+                rows={12}
+                value={pasteText}
+                onChange={(e) => setPasteText(e.target.value)}
+                placeholder="Paste the full contract text here..."
+                className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm text-navy placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy resize-y"
+              />
+              {pasteText.length < 80 && pasteText.length > 0 && (
+                <p aria-live="polite" className="text-xs text-slate-400 mt-1">
+                  {pasteText.length} characters (minimum 50)
+                </p>
+              )}
+            </div>
+            {!parsed && (
+              <button
+                onClick={handleParse}
+                disabled={parsing}
+                className="bg-navy text-white font-semibold text-sm px-8 py-3.5 rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50"
+              >
+                {parsing ? 'Reading...' : 'Read text'}
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* ---- Error ---- */}
+      {error && (
+        <p className="mt-4 text-sm font-semibold text-severity-critical">
+          {error}
+        </p>
+      )}
+
+      {/* ---- Preview ---- */}
+      {parsed && (
+        <div className="mt-6 border border-slate-200 rounded-md p-5">
+          <h2 className="text-lg font-bold text-navy">{parsed.title}</h2>
+          <p className="mt-2 text-sm text-slate-600 whitespace-pre-wrap leading-relaxed">
+            {parsed.text.length > 500
+              ? parsed.text.slice(0, 500) + '...'
+              : parsed.text}
+          </p>
+          <p className="mt-2 text-xs text-slate-400">
+            {parsed.text.length.toLocaleString()} characters total
+          </p>
+
+          <button
+            onClick={() => onParsed({ title: parsed.title, text: parsed.text })}
+            className="mt-4 bg-navy text-white font-semibold text-sm px-8 py-3.5 rounded-md hover:bg-slate-700 transition-colors"
+          >
+            {submitLabel}
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
