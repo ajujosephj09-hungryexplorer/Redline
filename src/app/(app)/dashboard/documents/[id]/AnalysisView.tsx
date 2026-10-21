@@ -12,6 +12,23 @@ interface Props {
   rules?: Rule[]
   isAnonymous?: boolean
   onReset?: () => void
+  initialResult?: AnalysisResult
+  analysedAt?: string
+  onAnalysisComplete?: (result: AnalysisResult) => void
+}
+
+function formatRelativeDate(iso: string): string {
+  const date = new Date(iso)
+  const diffMs = Date.now() - date.getTime()
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  if (diffDays === 0) return 'today'
+  if (diffDays === 1) return 'yesterday'
+  if (diffDays < 7) return `${diffDays} days ago`
+  if (diffDays < 30) {
+    const weeks = Math.floor(diffDays / 7)
+    return `${weeks} week${weeks > 1 ? 's' : ''} ago`
+  }
+  return date.toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 // ---------------------------------------------------------------------------
@@ -248,9 +265,10 @@ function RulesChecklist({ items }: { items: ChecklistItem[] }) {
 
 type Status = 'idle' | 'loading' | 'done' | 'error'
 
-export default function AnalysisView({ documentText, documentTitle, rules: externalRules, isAnonymous, onReset }: Props) {
-  const [status, setStatus] = useState<Status>('idle')
-  const [result, setResult] = useState<AnalysisResult | null>(null)
+export default function AnalysisView({ documentText, documentTitle, rules: externalRules, isAnonymous, onReset, initialResult, analysedAt, onAnalysisComplete }: Props) {
+  const [status, setStatus] = useState<Status>(() => initialResult ? 'done' : 'idle')
+  const [result, setResult] = useState<AnalysisResult | null>(() => initialResult ?? null)
+  const [isFromCache, setIsFromCache] = useState(() => !!initialResult)
   const [errorMsg, setErrorMsg] = useState('')
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0)
   const [retryCount, setRetryCount] = useState(0)
@@ -280,10 +298,14 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
   }, [status, loadingMsgIndex, loadingMessages.length])
 
   useEffect(() => {
+    // Use the cached result on first load; only re-run if the user requests it
+    if (initialResult && retryCount === 0) return
+
     let cancelled = false
 
     async function run() {
       setStatus('loading')
+      setIsFromCache(false)
       setErrorMsg('')
 
       const rules = externalRules ?? getLocalRules()
@@ -309,6 +331,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
 
         setResult(data)
         setStatus('done')
+        onAnalysisComplete?.(data)
       } catch (err) {
         if (cancelled) return
         setErrorMsg(
@@ -320,6 +343,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
 
     run()
     return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [documentText, externalRules, retryCount])
 
   // ---- Loading ----
@@ -377,6 +401,25 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
         >
           ← Analyze a different contract
         </button>
+      )}
+
+      {/* Cache status line */}
+      {status === 'done' && (
+        <div className="flex items-center gap-3 mt-1">
+          {isFromCache && analysedAt && (
+            <span className="text-xs text-slate-400">
+              Analyzed {formatRelativeDate(analysedAt)}
+            </span>
+          )}
+          {isFromCache && (
+            <button
+              onClick={() => setRetryCount((c) => c + 1)}
+              className="text-xs text-slate-400 hover:text-navy underline underline-offset-2 transition-colors"
+            >
+              Re-analyze
+            </button>
+          )}
+        </div>
       )}
 
       {/* Summary card */}

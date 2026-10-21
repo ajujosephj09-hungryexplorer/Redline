@@ -1,9 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { fetchRules } from '@/lib/rules/actions'
+import { fetchAnalysis, saveAnalysis } from '@/lib/analyses/actions'
 import type { Rule } from '@/lib/rules/types'
+import type { AnalysisResult } from '@/lib/analysis/types'
 import AnalysisView from './AnalysisView'
 
 interface Props {
@@ -19,6 +21,8 @@ interface Document {
 export default function DocumentAnalysisClient({ documentId }: Props) {
   const [doc, setDoc] = useState<Document | null>(null)
   const [rules, setRules] = useState<Rule[] | undefined>(undefined)
+  const [cachedResult, setCachedResult] = useState<AnalysisResult | null>(null)
+  const [analysedAt, setAnalysedAt] = useState<string | undefined>(undefined)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -33,13 +37,14 @@ export default function DocumentAnalysisClient({ documentId }: Props) {
         return
       }
 
-      const [docResult, userRules] = await Promise.all([
+      const [docResult, userRules, cached] = await Promise.all([
         supabase
           .from('documents')
           .select('id, title, plain_text')
           .eq('id', documentId)
           .single(),
         fetchRules(supabase).catch(() => undefined),
+        fetchAnalysis(supabase, documentId).catch(() => null),
       ])
 
       if (cancelled) return
@@ -52,11 +57,22 @@ export default function DocumentAnalysisClient({ documentId }: Props) {
 
       setDoc(docResult.data as Document)
       if (userRules && userRules.length > 0) setRules(userRules)
+      if (cached) {
+        setCachedResult(cached.result)
+        setAnalysedAt(cached.createdAt)
+      }
       setLoading(false)
     }
 
     load()
     return () => { cancelled = true }
+  }, [documentId])
+
+  const handleAnalysisComplete = useCallback(async (result: AnalysisResult) => {
+    const supabase = createClient()
+    if (!supabase) return
+    await saveAnalysis(supabase, documentId, result)
+    setAnalysedAt(new Date().toISOString())
   }, [documentId])
 
   if (loading) {
@@ -82,6 +98,9 @@ export default function DocumentAnalysisClient({ documentId }: Props) {
       documentText={doc.plain_text}
       documentTitle={doc.title}
       rules={rules}
+      initialResult={cachedResult ?? undefined}
+      analysedAt={analysedAt}
+      onAnalysisComplete={handleAnalysisComplete}
     />
   )
 }
