@@ -206,7 +206,7 @@ export default function UploadForm({ onParsed, submitLabel }: UploadFormProps) {
               </label>
               <textarea
                 id="upload-form-paste-text"
-                rows={12}
+                rows={6}
                 value={pasteText}
                 onChange={(e) => setPasteText(e.target.value)}
                 placeholder="Paste the full contract text here..."

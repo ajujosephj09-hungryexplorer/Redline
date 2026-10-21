@@ -201,7 +201,7 @@ function AddRuleForm({
           onChange={(e) => setProducesGap(e.target.checked)}
           className="rounded border-slate-300"
         />
-        Check for missing clause (gap analysis)
+        Check for missing clause
       </label>
       <div className="flex items-center gap-3 pt-1">
         <button

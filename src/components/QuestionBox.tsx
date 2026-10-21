@@ -169,9 +169,12 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
   return (
     <div className="mt-8 border border-slate-200 rounded-md bg-white shadow-sm">
       <div className="px-5 py-4">
-        <h2 className="text-sm uppercase tracking-wider font-semibold text-slate-500 mb-3">
+        <h2 className="text-sm uppercase tracking-wider font-semibold text-slate-500 mb-1">
           Ask about this contract
         </h2>
+        <p className="text-xs text-slate-400 mb-3">
+          Answers only from this document — ask about specific clauses, risks, or terms.
+        </p>
 
         {/* Conversation area */}
         {conversation.length > 0 && (
