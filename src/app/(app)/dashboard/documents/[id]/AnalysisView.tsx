@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import type { AnalysisResult, RiskFlag, Gap, ChecklistItem, Severity } from '@/lib/analysis/types'
 import type { Rule } from '@/lib/rules/types'
 import { getLocalRules } from '@/lib/rules/local'
@@ -54,25 +54,27 @@ function severityLabel(severity: Severity) {
 // FindingRow — expandable risk flag
 // ---------------------------------------------------------------------------
 
-function FindingRow({ flag }: { flag: RiskFlag }) {
-  const [open, setOpen] = useState(false)
+function FindingRow({ flag, open, onToggle }: { flag: RiskFlag; open: boolean; onToggle: () => void }) {
   const [copied, setCopied] = useState(false)
+  const [counterText, setCounterText] = useState(flag.counterOffer)
+  const [editingCounter, setEditingCounter] = useState(false)
+  const counterRef = useRef<HTMLTextAreaElement>(null)
 
   const copyCounter = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(flag.counterOffer)
+      await navigator.clipboard.writeText(counterText)
       setCopied(true)
       setTimeout(() => setCopied(false), 1500)
     } catch {
       // Clipboard API may not be available in all contexts
     }
-  }, [flag.counterOffer])
+  }, [counterText])
 
   return (
     <div className="border border-slate-200 rounded-md bg-white shadow-sm">
       {/* Header row */}
       <button
-        onClick={() => setOpen(!open)}
+        onClick={onToggle}
         className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors rounded-md"
       >
         <span className={severityPill(flag.severity)}>
@@ -122,22 +124,63 @@ function FindingRow({ flag }: { flag: RiskFlag }) {
                 <p className="uppercase text-xs tracking-wider font-semibold text-slate-500">
                   Counter-offer
                 </p>
-                <button
-                  onClick={copyCounter}
-                  className={`text-xs font-semibold border rounded px-2 py-0.5 transition-colors ${
-                    copied
-                      ? 'border-severity-clear text-severity-clear'
-                      : 'border-slate-200 text-slate-500 hover:border-navy hover:text-navy'
-                  }`}
-                >
-                  {copied ? 'Copied' : 'Copy'}
-                </button>
+                <div className="flex items-center gap-2">
+                  {!editingCounter && (
+                    <button
+                      onClick={() => setEditingCounter(true)}
+                      className="text-xs font-semibold border rounded px-2 py-0.5 transition-colors border-slate-200 text-slate-500 hover:border-navy hover:text-navy"
+                    >
+                      Edit
+                    </button>
+                  )}
+                  <button
+                    onClick={copyCounter}
+                    className={`text-xs font-semibold border rounded px-2 py-0.5 transition-colors ${
+                      copied
+                        ? 'border-severity-clear text-severity-clear'
+                        : 'border-slate-200 text-slate-500 hover:border-navy hover:text-navy'
+                    }`}
+                  >
+                    {copied ? 'Copied' : 'Copy'}
+                  </button>
+                </div>
               </div>
-              <div className="bg-emerald-50 border-l-4 border-severity-clear rounded-r-md p-3">
-                <p className="text-sm text-navy leading-relaxed whitespace-pre-wrap">
-                  {flag.counterOffer}
-                </p>
-              </div>
+              {editingCounter ? (
+                <div>
+                  <textarea
+                    ref={counterRef}
+                    defaultValue={counterText}
+                    rows={4}
+                    autoFocus
+                    onKeyDown={(e) => { if (e.key === 'Escape') setEditingCounter(false) }}
+                    className="w-full text-sm text-navy border border-slate-300 rounded-md p-3 focus:outline-none focus:ring-1 focus:ring-navy resize-y leading-relaxed"
+                  />
+                  <div className="flex items-center gap-3 mt-1.5">
+                    <button
+                      onClick={() => {
+                        const trimmed = counterRef.current?.value.trim()
+                        if (trimmed) setCounterText(trimmed)
+                        setEditingCounter(false)
+                      }}
+                      className="text-xs font-semibold text-navy hover:opacity-70 transition-opacity"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingCounter(false)}
+                      className="text-xs text-slate-400 hover:text-navy transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-emerald-50 border-l-4 border-severity-clear rounded-r-md p-3">
+                  <p className="text-sm text-navy leading-relaxed whitespace-pre-wrap">
+                    {counterText}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -152,16 +195,19 @@ function FindingRow({ flag }: { flag: RiskFlag }) {
 
 function GapCard({ gap }: { gap: Gap }) {
   const [copied, setCopied] = useState(false)
+  const [counterText, setCounterText] = useState(gap.counterOffer)
+  const [editingCounter, setEditingCounter] = useState(false)
+  const counterRef = useRef<HTMLTextAreaElement>(null)
 
   const copyCounter = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(gap.counterOffer)
+      await navigator.clipboard.writeText(counterText)
       setCopied(true)
       setTimeout(() => setCopied(false), 1500)
     } catch {
       // Clipboard API may not be available in all contexts
     }
-  }, [gap.counterOffer])
+  }, [counterText])
 
   return (
     <div className="bg-amber-50 border border-amber-200 rounded-md">
@@ -187,22 +233,63 @@ function GapCard({ gap }: { gap: Gap }) {
             <p className="uppercase text-xs tracking-wider font-semibold text-slate-500">
               Suggested language
             </p>
-            <button
-              onClick={copyCounter}
-              className={`text-xs font-semibold border rounded px-2 py-0.5 transition-colors ${
-                copied
-                  ? 'border-severity-clear text-severity-clear'
-                  : 'border-slate-200 text-slate-500 hover:border-navy hover:text-navy'
-              }`}
-            >
-              {copied ? 'Copied' : 'Copy'}
-            </button>
+            <div className="flex items-center gap-2">
+              {!editingCounter && (
+                <button
+                  onClick={() => setEditingCounter(true)}
+                  className="text-xs font-semibold border rounded px-2 py-0.5 transition-colors border-slate-200 text-slate-500 hover:border-navy hover:text-navy"
+                >
+                  Edit
+                </button>
+              )}
+              <button
+                onClick={copyCounter}
+                className={`text-xs font-semibold border rounded px-2 py-0.5 transition-colors ${
+                  copied
+                    ? 'border-severity-clear text-severity-clear'
+                    : 'border-slate-200 text-slate-500 hover:border-navy hover:text-navy'
+                }`}
+              >
+                {copied ? 'Copied' : 'Copy'}
+              </button>
+            </div>
           </div>
-          <div className="bg-emerald-50 border-l-4 border-severity-clear rounded-r-md p-3">
-            <p className="text-sm text-navy leading-relaxed whitespace-pre-wrap">
-              {gap.counterOffer}
-            </p>
-          </div>
+          {editingCounter ? (
+            <div>
+              <textarea
+                ref={counterRef}
+                defaultValue={counterText}
+                rows={4}
+                autoFocus
+                onKeyDown={(e) => { if (e.key === 'Escape') setEditingCounter(false) }}
+                className="w-full text-sm text-navy border border-slate-300 rounded-md p-3 focus:outline-none focus:ring-1 focus:ring-navy resize-y leading-relaxed"
+              />
+              <div className="flex items-center gap-3 mt-1.5">
+                <button
+                  onClick={() => {
+                    const trimmed = counterRef.current?.value.trim()
+                    if (trimmed) setCounterText(trimmed)
+                    setEditingCounter(false)
+                  }}
+                  className="text-xs font-semibold text-navy hover:opacity-70 transition-opacity"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setEditingCounter(false)}
+                  className="text-xs text-slate-400 hover:text-navy transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-emerald-50 border-l-4 border-severity-clear rounded-r-md p-3">
+              <p className="text-sm text-navy leading-relaxed whitespace-pre-wrap">
+                {counterText}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -235,14 +322,21 @@ function checklistStatusLabel(status: ChecklistItem['status']) {
   }
 }
 
-function RulesChecklist({ items }: { items: ChecklistItem[] }) {
+function RulesChecklist({ items, isAnonymous }: { items: ChecklistItem[]; isAnonymous?: boolean }) {
   if (items.length === 0) return null
 
   return (
     <div className="mt-6">
-      <h2 className="text-sm uppercase tracking-wider font-semibold text-slate-500 mb-2">
-        What was checked
-      </h2>
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-sm uppercase tracking-wider font-semibold text-slate-500">
+          What was checked
+        </h2>
+        {!isAnonymous && (
+          <a href="/rules" className="text-xs text-slate-400 hover:text-navy transition-colors">
+            Edit rules →
+          </a>
+        )}
+      </div>
       <div className="border border-slate-200 rounded-md divide-y divide-slate-200">
         {items.map((item, i) => (
           <div key={i} className="flex items-center justify-between px-5 py-3.5">
@@ -272,6 +366,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
   const [errorMsg, setErrorMsg] = useState('')
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0)
   const [retryCount, setRetryCount] = useState(0)
+  const [openFlagIndices, setOpenFlagIndices] = useState<Set<number>>(new Set())
 
   const loadingMessages = [
     'Reading the contract...',
@@ -346,6 +441,25 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [documentText, externalRules, retryCount])
 
+  // Auto-expand first critical finding when result loads
+  useEffect(() => {
+    if (!result) return
+    if (result.flags.length > 0 && result.flags[0].severity === 'critical') {
+      setOpenFlagIndices(new Set([0]))
+    } else {
+      setOpenFlagIndices(new Set())
+    }
+  }, [result])
+
+  function toggleFlag(index: number) {
+    setOpenFlagIndices((prev) => {
+      const next = new Set(prev)
+      if (next.has(index)) next.delete(index)
+      else next.add(index)
+      return next
+    })
+  }
+
   // ---- Loading ----
   if (status === 'idle' || status === 'loading') {
     return (
@@ -391,6 +505,19 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
   const moderateCount = flags.filter((f) => f.severity === 'moderate').length
   const isClean = flags.length === 0 && gaps.length === 0
 
+  function expandAll() {
+    setOpenFlagIndices(new Set(flags.map((_, i) => i)))
+  }
+
+  function collapseAll() {
+    setOpenFlagIndices(new Set())
+  }
+
+  const criticalFlags = flags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'critical')
+  const moderateFlags = flags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'moderate')
+  const lowFlags = flags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'low')
+  const allExpanded = flags.length > 0 && openFlagIndices.size === flags.length
+
   return (
     <div className="max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold text-navy">{documentTitle}</h1>
@@ -432,9 +559,17 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
 
       {/* Guidance for users with findings */}
       {!isClean && (
-        <p className="mt-3 text-sm text-slate-500">
-          Expand each finding below to see the exact contract language and a counter-offer you can send back.
-        </p>
+        <>
+          <p className="mt-3 text-sm text-slate-500">
+            Expand each finding below to see the exact contract language and a counter-offer you can send back.
+          </p>
+          <a
+            href="#question-box"
+            className="mt-1 text-xs text-slate-400 hover:text-navy transition-colors sm:hidden inline-block"
+          >
+            Skip to questions ↓
+          </a>
+        </>
       )}
 
       {/* Clean contract message */}
@@ -452,43 +587,119 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
         </div>
       )}
 
-      {/* Stats bar */}
+      {/* Stats bar + expand controls */}
       {(flags.length > 0 || gaps.length > 0) && (
-        <div className="mt-4 flex items-center gap-4 text-sm">
-          {flags.length > 0 && (
-            <span className="text-slate-600">
-              {flags.length} {flags.length === 1 ? 'finding' : 'findings'}
-            </span>
-          )}
-          {criticalCount > 0 && (
-            <span className="text-severity-critical font-semibold">
-              {criticalCount} critical
-            </span>
-          )}
-          {moderateCount > 0 && (
-            <span className="text-amber-700 font-semibold">
-              {moderateCount} moderate
-            </span>
-          )}
-          {gaps.length > 0 && (
-            <span className="text-amber-600 font-semibold">
-              {gaps.length} missing
-            </span>
+        <div className="mt-4 flex items-center justify-between flex-wrap gap-y-2">
+          <div className="flex items-center gap-4 text-sm flex-wrap">
+            {flags.length > 0 && (
+              <span className="text-slate-600">
+                {flags.length} {flags.length === 1 ? 'finding' : 'findings'}
+              </span>
+            )}
+            {criticalCount > 0 && (
+              <span className="text-severity-critical font-semibold">{criticalCount} critical</span>
+            )}
+            {moderateCount > 0 && (
+              <span className="text-amber-700 font-semibold">{moderateCount} moderate</span>
+            )}
+            {gaps.length > 0 && (
+              <span className="text-amber-600 font-semibold">{gaps.length} missing</span>
+            )}
+          </div>
+          {flags.length > 1 && (
+            <div className="flex items-center gap-3 text-xs text-slate-400">
+              <button
+                onClick={expandAll}
+                disabled={allExpanded}
+                className="hover:text-navy transition-colors disabled:opacity-40"
+              >
+                Expand all
+              </button>
+              <span className="text-slate-200">|</span>
+              <button
+                onClick={collapseAll}
+                disabled={openFlagIndices.size === 0}
+                className="hover:text-navy transition-colors disabled:opacity-40"
+              >
+                Collapse all
+              </button>
+            </div>
           )}
         </div>
       )}
 
-      {/* Severity legend */}
-      {(flags.length > 0 || gaps.length > 0) && (
-        <p className="mt-2 text-xs text-slate-400">
-          Critical: language that could cost you money or rights. Moderate: terms worth pushing back on. Clear: checked and looks fair.
-        </p>
+      {/* Severity key */}
+      {flags.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1">
+          <span className="text-xs text-slate-500 flex items-center gap-1.5">
+            <span className="inline-block w-2 h-2 rounded-full bg-severity-critical shrink-0" />
+            <span><strong className="font-semibold">Critical</strong> — could cost you money or rights</span>
+          </span>
+          <span className="text-xs text-slate-500 flex items-center gap-1.5">
+            <span className="inline-block w-2 h-2 rounded-full bg-severity-moderate shrink-0" />
+            <span><strong className="font-semibold">Moderate</strong> — worth pushing back on</span>
+          </span>
+          <span className="text-xs text-slate-500 flex items-center gap-1.5">
+            <span className="inline-block w-2 h-2 rounded-full bg-severity-clear shrink-0" />
+            <span><strong className="font-semibold">Clear</strong> — checked and looks fair</span>
+          </span>
+        </div>
       )}
 
-      {/* Findings */}
+      {/* Grouped findings */}
       {flags.length > 0 && (
-        <div className="mt-4 space-y-3">
-          {flags.map((flag, i) => <FindingRow key={i} flag={flag} />)}
+        <div className="mt-4 space-y-5">
+          {criticalFlags.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-severity-critical mb-2">
+                Critical
+              </p>
+              <div className="space-y-3">
+                {criticalFlags.map(({ flag, index }) => (
+                  <FindingRow
+                    key={index}
+                    flag={flag}
+                    open={openFlagIndices.has(index)}
+                    onToggle={() => toggleFlag(index)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+          {moderateFlags.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-amber-700 mb-2">
+                Moderate
+              </p>
+              <div className="space-y-3">
+                {moderateFlags.map(({ flag, index }) => (
+                  <FindingRow
+                    key={index}
+                    flag={flag}
+                    open={openFlagIndices.has(index)}
+                    onToggle={() => toggleFlag(index)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+          {lowFlags.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-severity-clear mb-2">
+                Clear
+              </p>
+              <div className="space-y-3">
+                {lowFlags.map(({ flag, index }) => (
+                  <FindingRow
+                    key={index}
+                    flag={flag}
+                    open={openFlagIndices.has(index)}
+                    onToggle={() => toggleFlag(index)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -511,7 +722,9 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
 
       {/* Question box — ask about this contract */}
       {result && (
-        <QuestionBox documentText={documentText} analysisResult={result} />
+        <div id="question-box">
+          <QuestionBox documentText={documentText} analysisResult={result} />
+        </div>
       )}
 
       <hr className="border-t border-slate-200 my-8" />
@@ -531,7 +744,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
       )}
 
       {/* Rules checklist */}
-      <RulesChecklist items={checklist} />
+      <RulesChecklist items={checklist} isAnonymous={isAnonymous} />
     </div>
   )
 }
