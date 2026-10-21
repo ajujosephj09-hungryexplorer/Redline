@@ -403,22 +403,20 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
         </button>
       )}
 
-      {/* Cache status line */}
-      {status === 'done' && (
+      {/* Cache status line — shown for all saved documents, not anonymous */}
+      {status === 'done' && !isAnonymous && (
         <div className="flex items-center gap-3 mt-1">
           {isFromCache && analysedAt && (
             <span className="text-xs text-slate-400">
               Analyzed {formatRelativeDate(analysedAt)}
             </span>
           )}
-          {isFromCache && (
-            <button
-              onClick={() => setRetryCount((c) => c + 1)}
-              className="text-xs text-slate-400 hover:text-navy underline underline-offset-2 transition-colors"
-            >
-              Re-analyze
-            </button>
-          )}
+          <button
+            onClick={() => setRetryCount((c) => c + 1)}
+            className="text-xs text-slate-400 hover:text-navy underline underline-offset-2 transition-colors"
+          >
+            Re-analyze
+          </button>
         </div>
       )}
 
