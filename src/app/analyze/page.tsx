@@ -259,7 +259,6 @@ function InlineUploadForm({ onAnalyze }: { onAnalyze: (doc: PendingDoc) => void 
 export default function AnalyzePage() {
   const [doc, setDoc] = useState<PendingDoc | null>(null)
   const [missing, setMissing] = useState(false)
-  const [bannerDismissed, setBannerDismissed] = useState(false)
 
   useEffect(() => {
     const raw = sessionStorage.getItem('redline_pending_document')
@@ -309,29 +308,12 @@ export default function AnalyzePage() {
   return (
     <div className="min-h-screen">
       <NavBar />
-      {!bannerDismissed && (
-        <div className="bg-slate-50 border-b border-slate-200 px-6 py-2.5 flex items-center justify-between gap-4">
-          <p className="text-sm text-slate-600">
-            Your analysis isn&apos;t saved.{' '}
-            <a href="/signup" className="text-navy hover:underline">
-              Create an account
-            </a>{' '}
-            to save it and access it later.
-          </p>
-          <button
-            onClick={() => setBannerDismissed(true)}
-            className="text-sm text-slate-400 hover:text-slate-600 shrink-0"
-            aria-label="Dismiss"
-          >
-            &times;
-          </button>
-        </div>
-      )}
       <div className="max-w-3xl mx-auto px-6 py-10">
         <AnalysisView
           documentText={doc.text}
           documentTitle={doc.title}
           rules={getLocalRules()}
+          isAnonymous
         />
       </div>
     </div>

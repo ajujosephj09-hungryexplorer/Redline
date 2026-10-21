@@ -10,6 +10,7 @@ interface Props {
   documentText: string
   documentTitle: string
   rules?: Rule[]
+  isAnonymous?: boolean
 }
 
 // ---------------------------------------------------------------------------
@@ -238,7 +239,7 @@ function RulesChecklist({ items }: { items: ChecklistItem[] }) {
 
 type Status = 'idle' | 'loading' | 'done' | 'error'
 
-export default function AnalysisView({ documentText, documentTitle, rules: externalRules }: Props) {
+export default function AnalysisView({ documentText, documentTitle, rules: externalRules, isAnonymous }: Props) {
   const [status, setStatus] = useState<Status>('idle')
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
@@ -450,16 +451,19 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
         <QuestionBox documentText={documentText} analysisResult={result} />
       )}
 
-      {/* What's next? */}
-      <div className="mt-6 border border-slate-200 rounded-md p-5">
-        <p className="text-sm font-semibold text-navy mb-2">What&apos;s next?</p>
-        <a
-          href="/upload"
-          className="text-sm text-navy underline underline-offset-2 hover:opacity-70 transition-opacity"
-        >
-          Analyze another contract
-        </a>
-      </div>
+      {/* Save prompt for anonymous users */}
+      {isAnonymous && (
+        <div className="mt-8 border border-slate-200 rounded-md p-5">
+          <p className="text-sm font-semibold text-navy mb-1">Save this analysis</p>
+          <p className="text-sm text-slate-600 mb-3">
+            This analysis disappears when you close the tab.{' '}
+            <a href="/signup" className="text-navy underline underline-offset-2 hover:opacity-70 transition-opacity">
+              Create a free account
+            </a>{' '}
+            to save it and access it later.
+          </p>
+        </div>
+      )}
 
       {/* Rules checklist */}
       <RulesChecklist items={checklist} />
