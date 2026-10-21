@@ -36,7 +36,7 @@ export default function NavBar() {
   }
 
   return (
-    <nav className="border-b border-slate-200">
+    <nav aria-busy={authed === null} className="border-b border-slate-200">
       <div className="max-w-3xl mx-auto px-6 flex items-center justify-between h-14">
         <div className="flex items-center gap-6">
           <Link

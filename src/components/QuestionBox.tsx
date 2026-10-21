@@ -142,6 +142,7 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
             placeholder="e.g. What does the termination clause say?"
             disabled={loading}
             maxLength={MAX_QUESTION_LENGTH}
+            aria-describedby="question-char-count"
             className="flex-1 text-sm border border-slate-300 rounded-md px-3 py-2.5 text-navy placeholder:text-slate-400 focus:outline-none focus:border-navy focus:ring-1 focus:ring-navy disabled:opacity-60"
           />
           <button
@@ -152,11 +153,14 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
             Send
           </button>
         </div>
-        {input.length > 400 && (
-          <p className="text-xs text-slate-400 text-right mt-1">
-            {input.length}/500
-          </p>
-        )}
+        <span
+          id="question-char-count"
+          aria-live="polite"
+          aria-atomic="true"
+          className="text-xs text-slate-400 text-right mt-1 block"
+        >
+          {input.length > 400 ? `${input.length}/500` : ''}
+        </span>
       </div>
     </div>
   )

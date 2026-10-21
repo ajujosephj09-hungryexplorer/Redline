@@ -85,6 +85,7 @@ function InlineEdit({
         className={`${className} group text-left hover:bg-slate-50 rounded px-1 -mx-1 transition-colors cursor-text inline-flex items-center gap-1`}
       >
         {value}
+        <span className="sr-only"> (click to edit)</span>
         <svg
           width="12"
           height="12"
