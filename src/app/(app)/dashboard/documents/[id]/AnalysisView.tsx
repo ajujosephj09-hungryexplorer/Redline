@@ -11,6 +11,7 @@ interface Props {
   documentTitle: string
   rules?: Rule[]
   isAnonymous?: boolean
+  onReset?: () => void
 }
 
 // ---------------------------------------------------------------------------
@@ -106,7 +107,11 @@ function FindingRow({ flag }: { flag: RiskFlag }) {
                 </p>
                 <button
                   onClick={copyCounter}
-                  className="text-xs text-slate-500 hover:text-navy transition-colors"
+                  className={`text-xs font-semibold border rounded px-2 py-0.5 transition-colors ${
+                    copied
+                      ? 'border-severity-clear text-severity-clear'
+                      : 'border-slate-200 text-slate-500 hover:border-navy hover:text-navy'
+                  }`}
                 >
                   {copied ? 'Copied' : 'Copy'}
                 </button>
@@ -142,7 +147,7 @@ function GapCard({ gap }: { gap: Gap }) {
   }, [gap.counterOffer])
 
   return (
-    <div className="border border-dashed border-slate-300 rounded-md bg-white">
+    <div className="bg-amber-50 border border-amber-200 rounded-md">
       <div className="px-4 py-3 space-y-3">
         {/* Header */}
         <div className="flex items-center gap-3">
@@ -167,7 +172,11 @@ function GapCard({ gap }: { gap: Gap }) {
             </p>
             <button
               onClick={copyCounter}
-              className="text-xs text-slate-500 hover:text-navy transition-colors"
+              className={`text-xs font-semibold border rounded px-2 py-0.5 transition-colors ${
+                copied
+                  ? 'border-severity-clear text-severity-clear'
+                  : 'border-slate-200 text-slate-500 hover:border-navy hover:text-navy'
+              }`}
             >
               {copied ? 'Copied' : 'Copy'}
             </button>
@@ -239,7 +248,7 @@ function RulesChecklist({ items }: { items: ChecklistItem[] }) {
 
 type Status = 'idle' | 'loading' | 'done' | 'error'
 
-export default function AnalysisView({ documentText, documentTitle, rules: externalRules, isAnonymous }: Props) {
+export default function AnalysisView({ documentText, documentTitle, rules: externalRules, isAnonymous, onReset }: Props) {
   const [status, setStatus] = useState<Status>('idle')
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
@@ -361,6 +370,14 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
   return (
     <div className="max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold text-navy">{documentTitle}</h1>
+      {onReset && (
+        <button
+          onClick={onReset}
+          className="text-xs text-slate-400 hover:text-navy transition-colors mt-1"
+        >
+          ← Analyze a different contract
+        </button>
+      )}
 
       {/* Summary card */}
       <div className="mt-6 bg-white border border-slate-200 rounded-md shadow-sm p-5">
@@ -434,22 +451,29 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
         </div>
       )}
 
+      <hr className="border-t border-slate-200 my-8" />
+
       {/* Gaps */}
       {gaps.length > 0 && (
-        <div className="mt-6">
+        <div>
           <h2 className="text-sm uppercase tracking-wider font-semibold text-slate-500 mb-2">
             Missing from this contract
           </h2>
+          <p className="text-xs text-slate-500 mb-3">Protections that aren't in this contract but should be.</p>
           <div className="space-y-3">
             {gaps.map((gap, i) => <GapCard key={i} gap={gap} />)}
           </div>
         </div>
       )}
 
+      <hr className="border-t border-slate-200 my-8" />
+
       {/* Question box — ask about this contract */}
       {result && (
         <QuestionBox documentText={documentText} analysisResult={result} />
       )}
+
+      <hr className="border-t border-slate-200 my-8" />
 
       {/* Save prompt for anonymous users */}
       {isAnonymous && (
