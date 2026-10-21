@@ -15,6 +15,89 @@ interface ConversationTurn {
 
 const MAX_QUESTION_LENGTH = 500
 
+// ---------------------------------------------------------------------------
+// Markdown renderer — handles bold, unordered lists, ordered lists
+// No dependencies; safe (builds React elements, no innerHTML)
+// ---------------------------------------------------------------------------
+
+function renderInline(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*)/)
+  if (parts.length === 1) return text
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.startsWith('**') && part.endsWith('**') ? (
+          <strong key={i} className="font-semibold text-navy">
+            {part.slice(2, -2)}
+          </strong>
+        ) : (
+          part
+        )
+      )}
+    </>
+  )
+}
+
+function renderAnswer(text: string): React.ReactNode {
+  const lines = text.split('\n')
+  const blocks: React.ReactNode[] = []
+  let i = 0
+
+  while (i < lines.length) {
+    const trimmed = lines[i].trim()
+
+    if (!trimmed) { i++; continue }
+
+    // Unordered list block
+    if (trimmed.startsWith('- ')) {
+      const items: string[] = []
+      while (i < lines.length && lines[i].trim().startsWith('- ')) {
+        items.push(lines[i].trim().slice(2))
+        i++
+      }
+      blocks.push(
+        <ul key={blocks.length} className="list-disc pl-4 space-y-1">
+          {items.map((item, j) => (
+            <li key={j} className="text-sm text-slate-700 leading-relaxed">
+              {renderInline(item)}
+            </li>
+          ))}
+        </ul>
+      )
+      continue
+    }
+
+    // Ordered list block
+    if (/^\d+\.\s/.test(trimmed)) {
+      const items: string[] = []
+      while (i < lines.length && /^\d+\.\s/.test(lines[i].trim())) {
+        items.push(lines[i].trim().replace(/^\d+\.\s+/, ''))
+        i++
+      }
+      blocks.push(
+        <ol key={blocks.length} className="list-decimal pl-4 space-y-1">
+          {items.map((item, j) => (
+            <li key={j} className="text-sm text-slate-700 leading-relaxed">
+              {renderInline(item)}
+            </li>
+          ))}
+        </ol>
+      )
+      continue
+    }
+
+    // Regular paragraph
+    blocks.push(
+      <p key={blocks.length} className="text-sm text-slate-700 leading-relaxed">
+        {renderInline(trimmed)}
+      </p>
+    )
+    i++
+  }
+
+  return <div className="space-y-2">{blocks}</div>
+}
+
 export default function QuestionBox({ documentText, analysisResult }: Props) {
   const [input, setInput] = useState('')
   const [conversation, setConversation] = useState<ConversationTurn[]>([])
@@ -94,20 +177,18 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
         {conversation.length > 0 && (
           <div
             ref={scrollRef}
-            className="max-h-80 overflow-y-auto space-y-3 mb-4 pr-1"
+            className="max-h-96 overflow-y-auto space-y-4 mb-4 pr-1"
           >
             {conversation.map((turn, i) => (
               <div key={i}>
-                <p className="text-xs font-semibold text-slate-500 mb-0.5">
+                <p className="text-xs font-semibold text-slate-500 mb-1">
                   {turn.role === 'user' ? 'You' : 'Redline'}
                 </p>
-                <p
-                  className={`text-sm leading-relaxed ${
-                    turn.role === 'user' ? 'text-navy' : 'text-slate-700'
-                  }`}
-                >
-                  {turn.content}
-                </p>
+                {turn.role === 'user' ? (
+                  <p className="text-sm leading-relaxed text-navy">{turn.content}</p>
+                ) : (
+                  renderAnswer(turn.content)
+                )}
               </div>
             ))}
 
