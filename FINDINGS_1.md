@@ -336,4 +336,15 @@ All issues tracked here until closed. Status: Open unless marked Fixed.
 - **What:** The destructive "Confirm" label uses `text-severity-critical` styling without button visual affordance — reads the same weight as the "Cancel" text beside it.
 - **Fix:** Style "Confirm" as a proper button (border, background, or underline) so its affordance communicates the destructive action.
 - **Test:** Render the delete-confirm UI, assert the Confirm element is a `<button>` with distinct visual styling from Cancel.
-- **Status:** Open
+- **Status:** Fixed — commit f743057
+
+---
+
+## Post-deploy issues
+
+### F-046 [BUG] useMemo hooks placed after early returns — crashes on re-analyze
+- **File:** `src/app/(app)/dashboard/documents/[id]/AnalysisView.tsx`
+- **What:** The three `useMemo` calls for `criticalFlags`, `moderateFlags`, and `lowFlags` were added (F-028) after the loading/error early returns. React requires all hooks to be called unconditionally on every render. When the component returned early (loading/error state), those hooks were skipped; on the next render when status became `'done'`, React saw a different hook call order and threw a client-side exception. Reproduced by clicking re-analyze on the preview deployment.
+- **Fix:** Move the three `useMemo` calls above the first early return, using `result?.flags ?? []` as the source array so they are safe when `result` is null.
+- **Test:** Pre-existing auth-forms.test.ts assertions on `useMemo` presence still pass; build and typecheck pass.
+- **Status:** Fixed — commit f9bd23b
