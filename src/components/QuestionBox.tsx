@@ -217,8 +217,12 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
 
         {/* Input row */}
         <div className="flex gap-2">
+          <label htmlFor="question-input" className="sr-only">
+            Ask a question about this contract
+          </label>
           <input
             ref={inputRef}
+            id="question-input"
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value.slice(0, MAX_QUESTION_LENGTH))}

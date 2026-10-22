@@ -107,6 +107,26 @@ describe('severityPill — low severity label', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-008: QuestionBox input must have an accessible label
+// -------------------------------------------------------------------------
+
+describe('QuestionBox — accessibility', () => {
+  it('question input has an accessible label (not just a placeholder)', () => {
+    render(
+      <AnalysisView
+        documentText="Payment is due within 90 days."
+        documentTitle="Test Contract"
+        initialResult={MODERATE_RESULT}
+      />
+    )
+
+    // Fails before fix: input has no label, so getByRole with a label name throws
+    const input = screen.getByRole('textbox', { name: /ask a question about this contract/i })
+    expect(input).toBeTruthy()
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-004: Anonymous save prompt must appear before the first FindingRow
 // -------------------------------------------------------------------------
 
