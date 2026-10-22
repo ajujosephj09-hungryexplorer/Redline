@@ -68,6 +68,27 @@ describe('FindingRow — accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-013: Problem text must not be hard-truncated at max-w-[50%]
+// -------------------------------------------------------------------------
+
+describe('FindingRow — problem text responsive', () => {
+  it('problem text span does not use max-w-[50%] or truncate', () => {
+    render(
+      <AnalysisView
+        documentText="Payment is due within 90 days."
+        documentTitle="Test Contract"
+        initialResult={MODERATE_RESULT}
+      />
+    )
+
+    const problemText = screen.getByText('90-day payment window.')
+    // Fails before fix: span has truncate max-w-[50%]
+    expect(problemText.className).not.toContain('max-w-[50%]')
+    expect(problemText.className).not.toContain('truncate')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-011: GapCard must not use amber as background (Severity Monopoly Rule)
 // -------------------------------------------------------------------------
 

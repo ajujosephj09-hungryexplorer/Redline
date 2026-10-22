@@ -70,7 +70,7 @@ function FindingRow({ flag, open, onToggle }: { flag: RiskFlag; open: boolean; o
         <span className="text-sm font-semibold text-navy flex-1 min-w-0">
           {flag.ruleName}
         </span>
-        <span className="text-sm text-slate-600 truncate max-w-[50%]">
+        <span className="text-sm text-slate-600 shrink text-right leading-snug">
           {flag.problem}
         </span>
         <svg
