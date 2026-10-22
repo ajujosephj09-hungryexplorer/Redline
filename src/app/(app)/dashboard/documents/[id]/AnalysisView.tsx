@@ -308,6 +308,22 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
     })
   }, [])
 
+  // These must stay above the early returns so hooks are always called in the
+  // same order (React Rules of Hooks).
+  const allFlags = result?.flags ?? []
+  const criticalFlags = useMemo(
+    () => allFlags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'critical'),
+    [allFlags]
+  )
+  const moderateFlags = useMemo(
+    () => allFlags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'moderate'),
+    [allFlags]
+  )
+  const lowFlags = useMemo(
+    () => allFlags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'low'),
+    [allFlags]
+  )
+
   // ---- Loading ----
   if (status === 'idle' || status === 'loading') {
     return (
@@ -346,7 +362,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
   }
 
   // ---- Results ----
-  const flags = result?.flags ?? []
+  const flags = allFlags
   const gaps = result?.gaps ?? []
   const checklist = result?.checklist ?? []
   const criticalCount = flags.filter((f) => f.severity === 'critical').length
@@ -361,18 +377,6 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
     setOpenFlagIndices(new Set())
   }
 
-  const criticalFlags = useMemo(
-    () => flags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'critical'),
-    [flags]
-  )
-  const moderateFlags = useMemo(
-    () => flags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'moderate'),
-    [flags]
-  )
-  const lowFlags = useMemo(
-    () => flags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'low'),
-    [flags]
-  )
   const allExpanded = flags.length > 0 && openFlagIndices.size === flags.length
 
   return (
