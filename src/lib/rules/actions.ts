@@ -26,10 +26,14 @@ export async function toggleRule(
   ruleId: string,
   enabled: boolean
 ): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+
   const { error } = await supabase
     .from('rules')
     .update({ enabled, updated_at: new Date().toISOString() })
     .eq('id', ruleId)
+    .eq('user_id', user.id)
 
   if (error) throw error
 }
@@ -42,10 +46,14 @@ export async function updateRule(
   ruleId: string,
   updates: { name?: string; description?: string }
 ): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+
   const { error } = await supabase
     .from('rules')
     .update({ ...updates, updated_at: new Date().toISOString() })
     .eq('id', ruleId)
+    .eq('user_id', user.id)
 
   if (error) throw error
 }
@@ -84,10 +92,14 @@ export async function deleteRule(
   supabase: SupabaseClient,
   ruleId: string
 ): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+
   const { error } = await supabase
     .from('rules')
     .delete()
     .eq('id', ruleId)
+    .eq('user_id', user.id)
 
   if (error) throw error
 }

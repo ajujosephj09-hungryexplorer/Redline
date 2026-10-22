@@ -80,12 +80,19 @@ function mockSupabase(overrides: {
       }),
       update: vi.fn((data: Record<string, unknown>) => {
         calls.update = data
-        return {
+        const updateResult = { error: updateError }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const eqChain: any = {
           eq: vi.fn((col: string, val: unknown) => {
             calls.eqPairs.push([col, val])
-            return Promise.resolve({ error: updateError })
+            return eqChain
           }),
+          then: (resolve: (v: unknown) => unknown, reject?: (v: unknown) => unknown) =>
+            Promise.resolve(updateResult).then(resolve, reject),
+          catch: (onReject: (v: unknown) => unknown) =>
+            Promise.resolve(updateResult).catch(onReject),
         }
+        return eqChain
       }),
       insert: vi.fn((data: Record<string, unknown>) => {
         calls.insert = data
@@ -99,12 +106,19 @@ function mockSupabase(overrides: {
       }),
       delete: vi.fn(() => {
         calls.delete = true
-        return {
+        const deleteResult = { error: deleteError }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const eqChain: any = {
           eq: vi.fn((col: string, val: unknown) => {
             calls.eqPairs.push([col, val])
-            return Promise.resolve({ error: deleteError })
+            return eqChain
           }),
+          then: (resolve: (v: unknown) => unknown, reject?: (v: unknown) => unknown) =>
+            Promise.resolve(deleteResult).then(resolve, reject),
+          catch: (onReject: (v: unknown) => unknown) =>
+            Promise.resolve(deleteResult).catch(onReject),
         }
+        return eqChain
       }),
     }
   })
@@ -260,6 +274,54 @@ describe('deleteRule', () => {
     })
     await expect(deleteRule(supabase as never, 'rule-xyz')).rejects.toThrow(
       'Delete failed'
+    )
+  })
+})
+
+// ---------------------------------------------------------------------------
+// F-022: BOLA — mutation functions must scope to the authenticated user
+// ---------------------------------------------------------------------------
+
+describe('BOLA: mutation functions scope to the authenticated user', () => {
+  it('toggleRule filters by user_id', async () => {
+    const supabase = mockSupabase({ userId: 'user-abc' })
+    await toggleRule(supabase as never, 'rule-123', true)
+    // Fails before fix: only .eq('id', ...) is called, no user_id filter
+    expect(supabase._calls.eqPairs).toContainEqual(['user_id', 'user-abc'])
+  })
+
+  it('updateRule filters by user_id', async () => {
+    const supabase = mockSupabase({ userId: 'user-abc' })
+    await updateRule(supabase as never, 'rule-123', { name: 'test' })
+    // Fails before fix: only .eq('id', ...) is called
+    expect(supabase._calls.eqPairs).toContainEqual(['user_id', 'user-abc'])
+  })
+
+  it('deleteRule filters by user_id', async () => {
+    const supabase = mockSupabase({ userId: 'user-abc' })
+    await deleteRule(supabase as never, 'rule-123')
+    // Fails before fix: only .eq('id', ...) is called
+    expect(supabase._calls.eqPairs).toContainEqual(['user_id', 'user-abc'])
+  })
+
+  it('toggleRule throws when not authenticated', async () => {
+    const supabase = mockSupabase({ userId: null })
+    await expect(toggleRule(supabase as never, 'rule-123', true)).rejects.toThrow(
+      'Not authenticated'
+    )
+  })
+
+  it('updateRule throws when not authenticated', async () => {
+    const supabase = mockSupabase({ userId: null })
+    await expect(
+      updateRule(supabase as never, 'rule-123', { name: 'x' })
+    ).rejects.toThrow('Not authenticated')
+  })
+
+  it('deleteRule throws when not authenticated', async () => {
+    const supabase = mockSupabase({ userId: null })
+    await expect(deleteRule(supabase as never, 'rule-123')).rejects.toThrow(
+      'Not authenticated'
     )
   })
 })
