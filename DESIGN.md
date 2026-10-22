@@ -12,6 +12,7 @@ colors:
   text-secondary: "#64748b"
   text-tertiary: "#94a3b8"
   counter-offer-bg: "#ecfdf5"
+  scrollbar-thumb: "#cbd5e1"
 typography:
   display:
     fontFamily: "Libre Franklin, sans-serif"
@@ -110,6 +111,7 @@ A deliberately constrained palette: one structural color and three diagnostic si
 - **Text Secondary** (#64748b / slate-500): Label text inside citation and counter-offer blocks.
 - **Text Tertiary** (#94a3b8 / slate-400): Footer text, placeholder text, muted annotations.
 - **Counter-Offer Background** (#ecfdf5 / emerald-50): Background for counter-offer blocks, pairing with the green left border.
+- **Scrollbar Thumb** (#cbd5e1 / slate-300): Custom webkit scrollbar thumb. Neutral, unobtrusive.
 
 ### Named Rules
 **The Severity Monopoly Rule.** Red, amber, and green appear only as severity indicators. They are never used for buttons, backgrounds, links, decorative elements, or branding. Their diagnostic meaning depends on this exclusivity.
