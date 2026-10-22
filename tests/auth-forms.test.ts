@@ -130,6 +130,23 @@ describe('analyze page — loading state accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-035: Middleware must return 503 for protected paths when Supabase is unconfigured in production
+// -------------------------------------------------------------------------
+
+describe('middleware — unconfigured Supabase safety', () => {
+  it('middleware references NODE_ENV to gate the unconfigured pass-through', () => {
+    // Fails before fix: unconditional NextResponse.next() when !isConfigured
+    expect(src('src/middleware.ts')).toContain('NODE_ENV')
+  })
+
+  it('middleware returns a 503 response when Supabase is unconfigured in production', () => {
+    // Fails before fix: only NextResponse.next() is returned for unconfigured state
+    const content = src('src/middleware.ts')
+    expect(content).toContain('503')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-033: GAP_TOPIC_PATTERNS must cover every gap-producing default rule
 // -------------------------------------------------------------------------
 
