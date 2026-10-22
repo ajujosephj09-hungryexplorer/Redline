@@ -150,17 +150,28 @@ export default function LibraryPage() {
     )
   }
 
-  // Empty state
+  // Empty state — F-057: 3-step guide for first-timers
   if (documents.length === 0) {
     return (
       <div>
         <h1 className="text-2xl font-bold text-navy">Your contracts</h1>
-        <p className="text-slate-600 mt-2 leading-relaxed">
-          No contracts yet. Upload one to get started.
-        </p>
+        <ol className="mt-4 space-y-2" data-testid="onboarding-steps">
+          <li className="flex items-start gap-3">
+            <span className="shrink-0 w-5 h-5 rounded-full bg-navy text-white flex items-center justify-center text-xs font-bold">1</span>
+            <p className="text-sm text-slate-600 pt-0.5">Upload your contract</p>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="shrink-0 w-5 h-5 rounded-full bg-navy text-white flex items-center justify-center text-xs font-bold">2</span>
+            <p className="text-sm text-slate-600 pt-0.5">We check 6 risk areas</p>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="shrink-0 w-5 h-5 rounded-full bg-navy text-white flex items-center justify-center text-xs font-bold">3</span>
+            <p className="text-sm text-slate-600 pt-0.5">You get exact citations and counter-offers</p>
+          </li>
+        </ol>
         <Link
           href="/upload"
-          className="inline-block mt-4 bg-navy text-white font-semibold text-sm px-6 py-3 rounded-md hover:bg-navy transition-colors"
+          className="inline-block mt-6 bg-navy text-white font-semibold text-sm px-6 py-3 rounded-md hover:bg-navy transition-colors"
         >
           Upload a contract
         </Link>
