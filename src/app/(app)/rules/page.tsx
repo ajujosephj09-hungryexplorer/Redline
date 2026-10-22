@@ -13,6 +13,7 @@ import {
 } from '@/lib/rules/actions'
 import type { Rule } from '@/lib/rules/types'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { DEFAULT_RULES } from '@/lib/rules/defaults'
 
 // ---------------------------------------------------------------------------
 // Toggle switch
@@ -447,6 +448,25 @@ export default function RulesPage() {
     handleUpdate()
   }
 
+  // F-061: restore any default rules that are missing without replacing custom rules
+  const missingDefaults = DEFAULT_RULES.filter(
+    (d) => !rules.some((r) => r.is_default && r.name === d.name)
+  )
+
+  async function handleRestoreDefaults() {
+    if (!supabase || missingDefaults.length === 0) return
+    await Promise.all(
+      missingDefaults.map((d) =>
+        createRule(supabase!, {
+          name: d.name,
+          description: d.description,
+          produces_gap: d.producesGap,
+        })
+      )
+    )
+    handleUpdate()
+  }
+
   if (loading) {
     return (
       <div>
@@ -484,15 +504,28 @@ export default function RulesPage() {
   // ------ Authenticated mode ------
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         <h1 className="text-2xl font-bold text-navy">Rules</h1>
-        <button
-          type="button"
-          onClick={() => setShowAddForm(true)}
-          className="bg-navy text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-navy transition-colors"
-        >
-          Add rule
-        </button>
+        <div className="flex items-center gap-3">
+          {/* F-061: restore defaults when one or more are missing */}
+          {missingDefaults.length > 0 && (
+            <button
+              type="button"
+              onClick={handleRestoreDefaults}
+              data-testid="restore-defaults"
+              className="text-sm text-slate-500 hover:text-navy transition-colors underline underline-offset-2"
+            >
+              Restore defaults
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => setShowAddForm(true)}
+            className="bg-navy text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-navy transition-colors"
+          >
+            Add rule
+          </button>
+        </div>
       </div>
       <p className="text-slate-600 text-sm mt-2 leading-relaxed">
         These rules tell Redline what to look for in a contract. Toggle them
