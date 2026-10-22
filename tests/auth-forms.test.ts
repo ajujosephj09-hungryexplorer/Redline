@@ -130,6 +130,24 @@ describe('analyze page — loading state accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-033: GAP_TOPIC_PATTERNS must cover every gap-producing default rule
+// -------------------------------------------------------------------------
+
+describe('engine — GAP_TOPIC_PATTERNS coverage', () => {
+  const gapRuleNames = [
+    'IP Assignment (overbroad)',
+    'Payment Terms (unfavorable)',
+    'Termination without guaranteed payment',
+  ]
+
+  for (const name of gapRuleNames) {
+    it(`engine.ts has a GAP_TOPIC_PATTERNS entry for "${name}"`, () => {
+      expect(src('src/lib/analysis/engine.ts')).toContain(name)
+    })
+  }
+})
+
+// -------------------------------------------------------------------------
 // F-031: Library "Analyzed" label must not use severity-clear (green is semantic)
 // -------------------------------------------------------------------------
 
