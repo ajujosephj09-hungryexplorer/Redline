@@ -200,7 +200,7 @@ export default function LibraryPage() {
               <span className="block text-xs text-slate-400 mt-0.5">
                 {formatUploadDate(doc.created_at)}
                 {doc.has_analysis && (
-                  <span className="ml-2 text-severity-clear">Analyzed</span>
+                  <span className="ml-2 text-slate-400">Analyzed</span>
                 )}
               </span>
             </Link>

@@ -130,6 +130,19 @@ describe('analyze page — loading state accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-031: Library "Analyzed" label must not use severity-clear (green is semantic)
+// -------------------------------------------------------------------------
+
+describe('library page — Analyzed label colour', () => {
+  it('Analyzed label uses text-slate-400, not text-severity-clear', () => {
+    // Fails before fix: green severity token misused for a neutral status label
+    const content = src('src/app/(app)/library/page.tsx')
+    expect(content).not.toContain('text-severity-clear')
+    expect(content).toContain('text-slate-400')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-030: Pencil icon should be visible at opacity-40 resting, not opacity-0
 // -------------------------------------------------------------------------
 
