@@ -38,9 +38,9 @@ export class RateLimiter {
     const now = Date.now()
 
     // Prune expired entries so the Map doesn't grow indefinitely
-    for (const [k, e] of this.store) {
+    this.store.forEach((e, k) => {
       if (now >= e.resetAt) this.store.delete(k)
-    }
+    })
 
     const entry = this.store.get(key)
 
