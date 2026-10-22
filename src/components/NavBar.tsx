@@ -45,20 +45,19 @@ export default function NavBar() {
           >
             Redline
           </Link>
-          <div
-            className="flex items-center gap-3 sm:gap-4 overflow-x-auto"
-            style={{ visibility: authed === null || authed === false ? 'hidden' : 'visible' }}
-          >
-            {appLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm text-slate-600 hover:text-navy transition-colors whitespace-nowrap"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
+          {authed === true && (
+            <div className="flex items-center gap-3 sm:gap-4 overflow-x-auto">
+              {appLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm text-slate-600 hover:text-navy transition-colors whitespace-nowrap"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-4 shrink-0">
           {authed === true && (
@@ -69,11 +68,8 @@ export default function NavBar() {
               Sign out
             </button>
           )}
-          {(authed === false || authed === null) && (
-            <span
-              className="flex items-center gap-4"
-              style={{ visibility: authed === null ? 'hidden' : 'visible' }}
-            >
+          {authed === false && (
+            <span className="flex items-center gap-4">
               <Link
                 href="/login"
                 className="text-sm text-slate-600 hover:text-navy transition-colors"

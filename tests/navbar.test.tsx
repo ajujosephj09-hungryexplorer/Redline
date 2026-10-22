@@ -22,6 +22,20 @@ beforeEach(() => {
 })
 
 // -------------------------------------------------------------------------
+// F-010: Nav links must not be hidden with visibility:hidden (stays in tab order)
+// -------------------------------------------------------------------------
+
+describe('NavBar — keyboard accessibility', () => {
+  it('does not use visibility:hidden to hide nav items (keeps them in tab order)', () => {
+    const { readFileSync } = require('fs')
+    const { resolve } = require('path')
+    const source = readFileSync(resolve(__dirname, '../src/components/NavBar.tsx'), 'utf-8')
+    // Fails before fix: visibility: is used to hide links while auth resolves
+    expect(source).not.toContain('visibility:')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-003: Sign up button touch target must be at least 44 px tall
 // -------------------------------------------------------------------------
 
