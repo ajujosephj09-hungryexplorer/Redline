@@ -130,6 +130,24 @@ describe('analyze page — loading state accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-026: globals.css scrollbar track colour and thumb border-radius
+// -------------------------------------------------------------------------
+
+describe('globals.css scrollbar tokens', () => {
+  it('scrollbar track uses #f8fafc (slate-50), not the darker #f1f5f9', () => {
+    // Fails before fix: track is #f1f5f9 (slate-100)
+    expect(src('src/app/globals.css')).not.toContain('#f1f5f9')
+    expect(src('src/app/globals.css')).toContain('#f8fafc')
+  })
+
+  it('scrollbar thumb border-radius is 2px, not 3px', () => {
+    // Fails before fix: border-radius is 3px
+    expect(src('src/app/globals.css')).not.toContain('border-radius: 3px')
+    expect(src('src/app/globals.css')).toContain('border-radius: 2px')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-025: amber-700 hardcodes a colour; use text-severity-moderate-text token
 // -------------------------------------------------------------------------
 
