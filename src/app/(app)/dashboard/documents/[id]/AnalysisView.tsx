@@ -153,7 +153,7 @@ function checklistStatusStyle(status: ChecklistItem['status']) {
     case 'flagged':
       return 'text-severity-critical'
     case 'gap':
-      return 'text-amber-600'
+      return 'text-amber-700'
     case 'clean':
       return 'text-severity-clear'
   }
@@ -466,7 +466,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
               <span className="text-amber-700 font-semibold">{moderateCount} moderate</span>
             )}
             {gaps.length > 0 && (
-              <span className="text-amber-600 font-semibold">{gaps.length} missing</span>
+              <span className="text-amber-700 font-semibold">{gaps.length} missing</span>
             )}
           </div>
           {flags.length > 1 && (

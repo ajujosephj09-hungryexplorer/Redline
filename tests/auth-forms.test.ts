@@ -117,3 +117,14 @@ describe('auth form focus rings', () => {
     expect(src('src/app/(auth)/signup/page.tsx')).toContain('focus:ring-2')
   })
 })
+
+// -------------------------------------------------------------------------
+// F-023: amber-600 lacks contrast on white; all amber text must be amber-700
+// -------------------------------------------------------------------------
+
+describe('AnalysisView — amber text contrast', () => {
+  it('AnalysisView does not use text-amber-600 (insufficient contrast on white)', () => {
+    // Fails before fix: checklistStatusStyle('gap') and the gaps count use amber-600
+    expect(src('src/app/(app)/dashboard/documents/[id]/AnalysisView.tsx')).not.toContain('text-amber-600')
+  })
+})
