@@ -233,7 +233,7 @@ export default function UploadForm({ onParsed, submitLabel }: UploadFormProps) {
 
       {/* ---- Error ---- */}
       {error && (
-        <p className="mt-4 text-sm font-semibold text-severity-critical">
+        <p className="mt-4 text-sm font-semibold text-error">
           {error}
         </p>
       )}

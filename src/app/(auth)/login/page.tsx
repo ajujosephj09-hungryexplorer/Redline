@@ -79,7 +79,7 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <p className="text-sm text-severity-critical">{error}</p>
+            <p className="text-sm text-error">{error}</p>
           )}
 
           <button

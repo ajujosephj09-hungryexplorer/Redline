@@ -8,6 +8,7 @@ export default {
     extend: {
       colors: {
         navy: '#1e293b',
+        error: '#dc2626',
         severity: {
           critical: '#dc2626',
           moderate: '#f59e0b',

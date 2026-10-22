@@ -9,6 +9,27 @@ function src(rel: string) {
 }
 
 // -------------------------------------------------------------------------
+// F-018: text-severity-critical must not appear in generic UI error messages
+// -------------------------------------------------------------------------
+
+describe('UI error messages use text-error token, not text-severity-critical', () => {
+  const errorFiles = [
+    'src/app/(auth)/login/page.tsx',
+    'src/app/(auth)/signup/page.tsx',
+    'src/app/(app)/upload/page.tsx',
+    'src/components/UploadForm.tsx',
+  ]
+
+  for (const file of errorFiles) {
+    it(`${file} does not use text-severity-critical for form errors`, () => {
+      // Fails before fix: severity-critical used for network/form errors
+      expect(src(file)).not.toContain('text-severity-critical')
+      expect(src(file)).toContain('text-error')
+    })
+  }
+})
+
+// -------------------------------------------------------------------------
 // F-017: key={i} on checklist rows and gap cards must use ruleName
 // -------------------------------------------------------------------------
 
