@@ -42,14 +42,31 @@ export async function callOpenRouter(
     reasoning: { effort: 'low' },
   }
 
-  const res = await fetch(OPENROUTER_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify(body),
-  })
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 25_000)
+
+  let res: Response
+  try {
+    res = await fetch(OPENROUTER_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    })
+  } catch (err) {
+    const name = (err as { name?: string }).name
+    if (name === 'AbortError') {
+      throw new Error(
+        'The analysis service timed out. Please try again in a moment.'
+      )
+    }
+    throw err
+  } finally {
+    clearTimeout(timeout)
+  }
 
   if (!res.ok) {
     const text = await res.text().catch(() => '(no body)')

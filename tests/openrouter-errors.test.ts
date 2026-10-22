@@ -137,3 +137,65 @@ describe('openrouter error sanitization', () => {
     expect(thrownMessage).not.toContain('not json at all')
   })
 })
+
+// -------------------------------------------------------------------------
+// F-021: 25-second AbortController timeout on OpenRouter fetch
+// -------------------------------------------------------------------------
+
+describe('openrouter timeout', () => {
+  const originalFetch = globalThis.fetch
+  const originalEnv = { ...process.env }
+
+  beforeEach(() => {
+    process.env.OPENROUTER_API_KEY = 'sk-or-test-key'
+    process.env.OPENROUTER_MODEL = 'test/model'
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+  })
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch
+    process.env.OPENROUTER_API_KEY = originalEnv.OPENROUTER_API_KEY
+    process.env.OPENROUTER_MODEL = originalEnv.OPENROUTER_MODEL
+    vi.restoreAllMocks()
+    vi.useRealTimers()
+  })
+
+  it('throws when the fetch hangs past 25 seconds', async () => {
+    // Fails before fix: no AbortController, fetch hangs indefinitely
+    vi.useFakeTimers()
+
+    globalThis.fetch = vi.fn().mockImplementation((_url: string, init: RequestInit) => {
+      return new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => {
+          reject(new DOMException('The operation was aborted.', 'AbortError'))
+        })
+      })
+    })
+
+    const promise = callOpenRouter([{ role: 'user', content: 'test' }], {})
+    // Suppress unhandled-rejection before expect catches it
+    promise.catch(() => {})
+    await vi.advanceTimersByTimeAsync(25_001)
+    await expect(promise).rejects.toThrow()
+  })
+
+  it('does not abort before 25 seconds', async () => {
+    vi.useFakeTimers()
+
+    let aborted = false
+    globalThis.fetch = vi.fn().mockImplementation((_url: string, init: RequestInit) => {
+      return new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => {
+          aborted = true
+          reject(new DOMException('The operation was aborted.', 'AbortError'))
+        })
+      })
+    })
+
+    // Do not await — we only want to advance time partway, then cancel
+    const promise = callOpenRouter([{ role: 'user', content: 'test' }], {})
+    promise.catch(() => {}) // suppress unhandled rejection when timer fires in cleanup
+    await vi.advanceTimersByTimeAsync(24_999)
+    expect(aborted).toBe(false)
+  })
+})
