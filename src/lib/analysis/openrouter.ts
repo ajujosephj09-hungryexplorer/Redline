@@ -36,7 +36,7 @@ export async function callOpenRouter(
     )
   }
 
-  const body = {
+  const body: Record<string, unknown> = {
     model,
     messages,
     response_format: {
@@ -47,7 +47,12 @@ export async function callOpenRouter(
         schema: jsonSchema,
       },
     },
-    reasoning: { effort: opts.reasoningEffort ?? 'low' },
+  }
+
+  // Only send the reasoning field when the caller explicitly requests it.
+  // Most models do not understand this parameter and will return a 422.
+  if (opts.reasoningEffort) {
+    body.reasoning = { effort: opts.reasoningEffort }
   }
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {

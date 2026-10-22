@@ -348,3 +348,10 @@ All issues tracked here until closed. Status: Open unless marked Fixed.
 - **Fix:** Move the three `useMemo` calls above the first early return, using `result?.flags ?? []` as the source array so they are safe when `result` is null.
 - **Test:** Pre-existing auth-forms.test.ts assertions on `useMemo` presence still pass; build and typecheck pass.
 - **Status:** Fixed — commit f9bd23b
+
+### F-047 [BUG] `reasoning` field always sent — breaks non-reasoning models on OpenRouter
+- **File:** `src/lib/analysis/openrouter.ts:50`
+- **What:** F-040's implementation always appends `reasoning: { effort: 'low' }` to every OpenRouter request, even when no caller passes `reasoningEffort`. This field is only understood by reasoning-capable models (DeepSeek R1, Qwen QwQ, etc.). Non-reasoning models (e.g. Gemini, Claude, GPT-4o) may return a 422 Unprocessable Entity, causing the "analysis service returned an error" message on the preview deployment.
+- **Fix:** Only include `reasoning` in the request body when `opts.reasoningEffort` is explicitly provided. Default `undefined` means the field is omitted entirely.
+- **Test:** Assert request body does not include a `reasoning` key when `callOpenRouter` is called without options; assert it does appear when `reasoningEffort: 'medium'` is passed.
+- **Status:** Open

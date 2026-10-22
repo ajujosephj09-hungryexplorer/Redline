@@ -159,7 +159,9 @@ describe('openrouter reasoningEffort', () => {
     vi.restoreAllMocks()
   })
 
-  it('defaults to reasoning effort "low" when not specified', async () => {
+  it('does not include reasoning field when reasoningEffort is not specified (F-047)', async () => {
+    // Fails before fix (F-047): reasoning: { effort: 'low' } was always sent,
+    // breaking non-reasoning models (Gemini, GPT-4o, etc.) with a 422 error.
     let capturedBody: unknown
     globalThis.fetch = vi.fn().mockImplementation(async (_url: string, init: RequestInit) => {
       capturedBody = JSON.parse(init.body as string)
@@ -170,7 +172,7 @@ describe('openrouter reasoningEffort', () => {
     })
 
     await callOpenRouter([{ role: 'user', content: 'test' }], {})
-    expect((capturedBody as Record<string, unknown>).reasoning).toEqual({ effort: 'low' })
+    expect((capturedBody as Record<string, unknown>).reasoning).toBeUndefined()
   })
 
   it('passes the supplied reasoningEffort in the request body', async () => {
