@@ -130,6 +130,24 @@ describe('analyze page — loading state accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-025: amber-700 hardcodes a colour; use text-severity-moderate-text token
+// -------------------------------------------------------------------------
+
+describe('severity moderate text uses design token', () => {
+  const files = [
+    'src/app/(app)/dashboard/documents/[id]/AnalysisView.tsx',
+    'src/app/page.tsx',
+  ]
+  for (const file of files) {
+    it(`${file} uses text-severity-moderate-text, not text-amber-700`, () => {
+      // Fails before fix: hardcoded amber-700 instead of the token
+      expect(src(file)).not.toContain('text-amber-700')
+      expect(src(file)).toContain('text-severity-moderate-text')
+    })
+  }
+})
+
+// -------------------------------------------------------------------------
 // F-023: amber-600 lacks contrast on white; all amber text must be amber-700
 // -------------------------------------------------------------------------
 

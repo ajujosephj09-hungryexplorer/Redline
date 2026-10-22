@@ -153,7 +153,7 @@ function checklistStatusStyle(status: ChecklistItem['status']) {
     case 'flagged':
       return 'text-severity-critical'
     case 'gap':
-      return 'text-amber-700'
+      return 'text-severity-moderate-text'
     case 'clean':
       return 'text-severity-clear'
   }
@@ -463,10 +463,10 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
               <span className="text-severity-critical font-semibold">{criticalCount} critical</span>
             )}
             {moderateCount > 0 && (
-              <span className="text-amber-700 font-semibold">{moderateCount} moderate</span>
+              <span className="text-severity-moderate-text font-semibold">{moderateCount} moderate</span>
             )}
             {gaps.length > 0 && (
-              <span className="text-amber-700 font-semibold">{gaps.length} missing</span>
+              <span className="text-severity-moderate-text font-semibold">{gaps.length} missing</span>
             )}
           </div>
           {flags.length > 1 && (
@@ -531,7 +531,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
           )}
           {moderateFlags.length > 0 && (
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-amber-700 mb-2">
+              <p className="text-xs font-semibold uppercase tracking-wider text-severity-moderate-text mb-2">
                 Moderate
               </p>
               <div className="space-y-3">

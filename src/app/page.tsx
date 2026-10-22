@@ -286,7 +286,7 @@ export default function LandingPage() {
                     Critical
                   </span>
                 ) : (
-                  <span className="text-xs font-semibold text-amber-700 uppercase tracking-wider">
+                  <span className="text-xs font-semibold text-severity-moderate-text uppercase tracking-wider">
                     Moderate
                   </span>
                 )}

@@ -12,6 +12,7 @@ export default {
         severity: {
           critical: '#dc2626',
           moderate: '#f59e0b',
+          'moderate-text': '#b45309',
           clear: '#16a34a',
         },
       },
