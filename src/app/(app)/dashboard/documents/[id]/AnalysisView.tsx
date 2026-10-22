@@ -207,6 +207,14 @@ function RulesChecklist({ items, isAnonymous }: { items: ChecklistItem[]; isAnon
 
 type Status = 'idle' | 'loading' | 'done' | 'error'
 
+const LOADING_MESSAGES = [
+  'Reading the contract...',
+  'Checking each clause against your rules...',
+  'Identifying risks and missing protections...',
+  'Drafting counter offers for flagged clauses...',
+  'Wrapping up the analysis...',
+]
+
 export default function AnalysisView({ documentText, documentTitle, rules: externalRules, isAnonymous, onReset, initialResult, analysedAt, onAnalysisComplete }: Props) {
   const [status, setStatus] = useState<Status>(() => initialResult ? 'done' : 'idle')
   const [result, setResult] = useState<AnalysisResult | null>(() => initialResult ?? null)
@@ -216,14 +224,6 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
   const [retryCount, setRetryCount] = useState(0)
   const [openFlagIndices, setOpenFlagIndices] = useState<Set<number>>(new Set())
 
-  const loadingMessages = [
-    'Reading the contract...',
-    'Checking each clause against your rules...',
-    'Identifying risks and missing protections...',
-    'Drafting counter offers for flagged clauses...',
-    'Wrapping up the analysis...',
-  ]
-
   useEffect(() => {
     if (status !== 'loading') {
       setLoadingMsgIndex(0)
@@ -231,14 +231,14 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
     }
 
     // Last message sticks — don't cycle past it
-    if (loadingMsgIndex >= loadingMessages.length - 1) return
+    if (loadingMsgIndex >= LOADING_MESSAGES.length - 1) return
 
     const timer = setTimeout(() => {
-      setLoadingMsgIndex((i) => Math.min(i + 1, loadingMessages.length - 1))
+      setLoadingMsgIndex((i) => Math.min(i + 1, LOADING_MESSAGES.length - 1))
     }, 4000)
 
     return () => clearTimeout(timer)
-  }, [status, loadingMsgIndex, loadingMessages.length])
+  }, [status, loadingMsgIndex, LOADING_MESSAGES.length])
 
   useEffect(() => {
     // Use the cached result on first load; only re-run if the user requests it
@@ -319,7 +319,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
             key={loadingMsgIndex}
             className="text-sm text-slate-600 animate-fadeIn"
           >
-            {loadingMessages[loadingMsgIndex]}
+            {LOADING_MESSAGES[loadingMsgIndex]}
           </p>
         </div>
       </div>

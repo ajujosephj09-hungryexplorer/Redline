@@ -9,6 +9,19 @@ function src(rel: string) {
 }
 
 // -------------------------------------------------------------------------
+// F-015: loadingMessages must be defined at module scope, not inside component
+// -------------------------------------------------------------------------
+
+describe('AnalysisView — loadingMessages module scope', () => {
+  it('LOADING_MESSAGES is defined at module scope (not inside the component)', () => {
+    const content = src('src/app/(app)/dashboard/documents/[id]/AnalysisView.tsx')
+    // Fails before fix: array is defined inside the component body (indented const)
+    expect(content).not.toContain('  const loadingMessages')
+    expect(content).toContain('const LOADING_MESSAGES')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-009: Decorative spinners must be aria-hidden
 // -------------------------------------------------------------------------
 
