@@ -558,6 +558,21 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
         </p>
       </div>
 
+      {/* Anonymous save banner — shown immediately after summary so it is seen before findings */}
+      {isAnonymous && (
+        <div className="mt-3 flex items-center justify-between gap-4 border border-slate-200 rounded-md px-4 py-3 bg-white">
+          <p className="text-sm text-slate-600">
+            This analysis disappears when you close the tab.
+          </p>
+          <a
+            href="/signup"
+            className="text-sm font-semibold text-navy underline underline-offset-2 hover:opacity-70 transition-opacity shrink-0"
+          >
+            Save it →
+          </a>
+        </div>
+      )}
+
       {/* Guidance for users with findings */}
       {!isClean && (
         <>
@@ -725,22 +740,6 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
       {result && (
         <div id="question-box">
           <QuestionBox documentText={documentText} analysisResult={result} />
-        </div>
-      )}
-
-      <hr className="border-t border-slate-200 my-8" />
-
-      {/* Save prompt for anonymous users */}
-      {isAnonymous && (
-        <div className="mt-8 border border-slate-200 rounded-md p-5">
-          <p className="text-sm font-semibold text-navy mb-1">Save this analysis</p>
-          <p className="text-sm text-slate-600 mb-3">
-            This analysis disappears when you close the tab.{' '}
-            <a href="/signup" className="text-navy underline underline-offset-2 hover:opacity-70 transition-opacity">
-              Create a free account
-            </a>{' '}
-            to save it and access it later.
-          </p>
         </div>
       )}
 
