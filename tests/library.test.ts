@@ -52,6 +52,42 @@ describe('deriveTitle', () => {
   it('returns "Untitled contract" when text is only whitespace', () => {
     expect(deriveTitle('', '   \n  \n  ')).toBe('Untitled contract')
   })
+
+  // -------------------------------------------------------------------------
+  // F-059: Legal preamble patterns must not be used as the document title
+  // -------------------------------------------------------------------------
+
+  it('returns "Untitled contract" for "THIS AGREEMENT" preamble text (F-059)', () => {
+    expect(
+      deriveTitle(null, 'THIS AGREEMENT, entered into as of the date...')
+    ).toBe('Untitled contract')
+  })
+
+  it('returns "Untitled contract" for "FREELANCE AGREEMENT" preamble text (F-059)', () => {
+    expect(
+      deriveTitle(null, 'FREELANCE AGREEMENT THIS AGREEMENT is made by...')
+    ).toBe('Untitled contract')
+  })
+
+  it('returns "Untitled contract" for "WHEREAS" preamble text (F-059)', () => {
+    expect(
+      deriveTitle(null, 'WHEREAS the parties have agreed to the following...')
+    ).toBe('Untitled contract')
+  })
+
+  it('returns "Untitled contract" for "SERVICES AGREEMENT" preamble text (F-059)', () => {
+    expect(
+      deriveTitle(null, 'Services Agreement entered into as of...')
+    ).toBe('Untitled contract')
+  })
+
+  it('does not suppress a meaningful first line that happens to contain "agreement" (F-059)', () => {
+    // "Service Level Agreement for Acme" — should keep it as title since it does not
+    // match the preamble pattern at the START of the line
+    const result = deriveTitle(null, 'Non-compete and confidentiality agreement\nMore text')
+    // Pattern requires agreement at start; "Non-compete and..." does NOT start with agreement
+    expect(result).toBe('Non-compete and confidentiality agreement')
+  })
 })
 
 describe('formatUploadDate', () => {
