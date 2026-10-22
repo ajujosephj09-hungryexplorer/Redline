@@ -44,7 +44,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <h1 className="text-2xl font-bold text-navy">Sign in to Redline</h1>
         <p className="text-sm text-slate-600 mt-1">
-          Analyze your contracts. Find the risk before you sign.
+          Sign in to access your saved contracts.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">

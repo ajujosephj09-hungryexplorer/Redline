@@ -130,6 +130,21 @@ describe('analyze page — loading state accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-039: Login subtitle must not re-pitch returning users
+// -------------------------------------------------------------------------
+
+describe('login page — subtitle copy', () => {
+  it('subtitle does not contain persuasion copy aimed at new visitors', () => {
+    // Fails before fix: "Find the risk before you sign" re-pitches a returning user
+    expect(src('src/app/(auth)/login/page.tsx')).not.toContain('Find the risk before you sign')
+  })
+
+  it('subtitle addresses the returning user', () => {
+    expect(src('src/app/(auth)/login/page.tsx')).toContain('saved contracts')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-037: x-forwarded-for must use [0] (original client), not .pop() (last proxy)
 // -------------------------------------------------------------------------
 
