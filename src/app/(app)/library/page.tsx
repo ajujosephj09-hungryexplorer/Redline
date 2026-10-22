@@ -211,7 +211,7 @@ export default function LibraryPage() {
                   <button
                     onClick={() => handleDelete(doc.id)}
                     disabled={deletingId === doc.id}
-                    className="text-xs font-medium text-severity-critical hover:underline disabled:opacity-50"
+                    className="text-xs font-semibold bg-severity-critical text-white px-2 py-1 rounded-md hover:opacity-90 transition-opacity disabled:opacity-50"
                   >
                     {deletingId === doc.id ? 'Deleting...' : 'Confirm'}
                   </button>

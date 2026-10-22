@@ -130,6 +130,19 @@ describe('analyze page — loading state accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-045: Library delete Confirm button must have distinct visual affordance
+// -------------------------------------------------------------------------
+
+describe('library page — delete Confirm button affordance', () => {
+  it('Confirm button has a background or border to distinguish it from Cancel', () => {
+    // Fails before fix: both Confirm and Cancel are plain text buttons with no visual distinction
+    const content = src('src/app/(app)/library/page.tsx')
+    // After fix: Confirm should have a rounded-md class (indicating a proper button affordance)
+    expect(content).toMatch(/Confirm[\s\S]{0,200}rounded-md|rounded-md[\s\S]{0,200}Confirm/)
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-044: NavBar must not use overflow-x-auto (creates unexpected scroll strip)
 // -------------------------------------------------------------------------
 
