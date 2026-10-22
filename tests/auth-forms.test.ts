@@ -9,6 +9,19 @@ function src(rel: string) {
 }
 
 // -------------------------------------------------------------------------
+// F-017: key={i} on checklist rows and gap cards must use ruleName
+// -------------------------------------------------------------------------
+
+describe('AnalysisView — stable list keys', () => {
+  it('checklist and gaps are not keyed by array index', () => {
+    const content = src('src/app/(app)/dashboard/documents/[id]/AnalysisView.tsx')
+    // Fails before fix: <div key={i}> and <GapCard key={i}> use index keys
+    // After fix: keys come from ruleName
+    expect(content).not.toContain('key={i}')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-016: toggleFlag must be useCallback-wrapped; FindingRow must be React.memo'd
 // -------------------------------------------------------------------------
 

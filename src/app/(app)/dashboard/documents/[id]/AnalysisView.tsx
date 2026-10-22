@@ -186,8 +186,8 @@ function RulesChecklist({ items, isAnonymous }: { items: ChecklistItem[]; isAnon
         )}
       </div>
       <div className="border border-slate-200 rounded-md divide-y divide-slate-200">
-        {items.map((item, i) => (
-          <div key={i} className="flex items-center justify-between px-5 py-3.5">
+        {items.map((item) => (
+          <div key={item.ruleName} className="flex items-center justify-between px-5 py-3.5">
             <span className="text-sm font-semibold text-navy">{item.ruleName}</span>
             <span
               className={`text-xs font-semibold uppercase tracking-wider ${checklistStatusStyle(item.status)}`}
@@ -576,7 +576,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
           </h2>
           <p className="text-xs text-slate-500 mb-3">Protections that aren't in this contract but should be.</p>
           <div className="space-y-3">
-            {gaps.map((gap, i) => <GapCard key={i} gap={gap} />)}
+            {gaps.map((gap) => <GapCard key={gap.ruleName} gap={gap} />)}
           </div>
         </div>
       )}
