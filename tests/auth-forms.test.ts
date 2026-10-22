@@ -130,6 +130,26 @@ describe('analyze page — loading state accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-037: x-forwarded-for must use [0] (original client), not .pop() (last proxy)
+// -------------------------------------------------------------------------
+
+describe('API routes — x-forwarded-for client IP extraction', () => {
+  const apiRoutes = [
+    'src/app/api/analyze/route.ts',
+    'src/app/api/question/route.ts',
+  ]
+
+  for (const file of apiRoutes) {
+    it(`${file} uses split(',')[0] not .pop() for x-forwarded-for`, () => {
+      // Fails before fix: .pop() returns the last (proxy) IP, not the client IP
+      const content = src(file)
+      expect(content).not.toContain("split(',').pop()")
+      expect(content).toContain("split(',')[0]")
+    })
+  }
+})
+
+// -------------------------------------------------------------------------
 // F-035: Middleware must return 503 for protected paths when Supabase is unconfigured in production
 // -------------------------------------------------------------------------
 
