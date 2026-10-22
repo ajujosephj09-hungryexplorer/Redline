@@ -216,7 +216,7 @@ export default function LandingPage() {
 
         {/* CTA */}
         <a
-          href="/analyze"
+          href="/upload"
           className="mt-8 inline-flex items-center justify-center bg-navy text-white font-semibold text-base px-8 py-3.5 rounded-md hover:bg-slate-700 transition-colors self-start"
         >
           Try it on your contract
@@ -336,7 +336,7 @@ export default function LandingPage() {
             the sentence and tells you what to say back.
           </p>
           <a
-            href="/analyze"
+            href="/upload"
             className="mt-8 inline-flex items-center justify-center bg-navy text-white font-semibold text-base px-8 py-3.5 rounded-md hover:bg-slate-700 transition-colors"
           >
             Try it on your contract
