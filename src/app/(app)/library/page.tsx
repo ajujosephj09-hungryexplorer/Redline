@@ -109,7 +109,7 @@ export default function LibraryPage() {
         </p>
         <Link
           href="/login"
-          className="inline-block mt-4 bg-navy text-white font-semibold text-sm px-6 py-3 rounded-md hover:bg-slate-700 transition-colors"
+          className="inline-block mt-4 bg-navy text-white font-semibold text-sm px-6 py-3 rounded-md hover:bg-navy transition-colors"
         >
           Sign in
         </Link>
@@ -160,7 +160,7 @@ export default function LibraryPage() {
         </p>
         <Link
           href="/upload"
-          className="inline-block mt-4 bg-navy text-white font-semibold text-sm px-6 py-3 rounded-md hover:bg-slate-700 transition-colors"
+          className="inline-block mt-4 bg-navy text-white font-semibold text-sm px-6 py-3 rounded-md hover:bg-navy transition-colors"
         >
           Upload a contract
         </Link>

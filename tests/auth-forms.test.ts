@@ -130,6 +130,32 @@ describe('analyze page — loading state accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-027: hover:bg-slate-700/800 on primary buttons → hover:bg-navy
+// -------------------------------------------------------------------------
+
+describe('primary buttons use hover:bg-navy', () => {
+  const primaryButtonFiles = [
+    'src/app/page.tsx',
+    'src/app/(auth)/login/page.tsx',
+    'src/app/(auth)/signup/page.tsx',
+    'src/components/QuestionBox.tsx',
+    'src/components/UploadForm.tsx',
+    'src/components/NavBar.tsx',
+    'src/app/(app)/library/page.tsx',
+    'src/app/(app)/rules/page.tsx',
+  ]
+
+  for (const file of primaryButtonFiles) {
+    it(`${file} does not use hover:bg-slate-700 or hover:bg-slate-800`, () => {
+      // Fails before fix: inconsistent raw slate values instead of navy token
+      const content = src(file)
+      expect(content).not.toContain('hover:bg-slate-700')
+      expect(content).not.toContain('hover:bg-slate-800')
+    })
+  }
+})
+
+// -------------------------------------------------------------------------
 // F-026: globals.css scrollbar track colour and thumb border-radius
 // -------------------------------------------------------------------------
 

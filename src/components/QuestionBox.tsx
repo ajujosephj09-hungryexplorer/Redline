@@ -236,7 +236,7 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
           <button
             onClick={submit}
             disabled={loading || input.trim().length === 0}
-            className="bg-navy text-white text-sm font-semibold px-5 py-2.5 rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-navy text-white text-sm font-semibold px-5 py-2.5 rounded-md hover:bg-navy transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Send
           </button>

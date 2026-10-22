@@ -217,7 +217,7 @@ export default function LandingPage() {
         {/* CTA */}
         <a
           href="/upload"
-          className="mt-8 inline-flex items-center justify-center bg-navy text-white font-semibold text-base px-8 py-3.5 rounded-md hover:bg-slate-700 transition-colors self-start"
+          className="mt-8 inline-flex items-center justify-center bg-navy text-white font-semibold text-base px-8 py-3.5 rounded-md hover:bg-navy transition-colors self-start"
         >
           Try it on your contract
         </a>
@@ -337,7 +337,7 @@ export default function LandingPage() {
           </p>
           <a
             href="/upload"
-            className="mt-8 inline-flex items-center justify-center bg-navy text-white font-semibold text-base px-8 py-3.5 rounded-md hover:bg-slate-700 transition-colors"
+            className="mt-8 inline-flex items-center justify-center bg-navy text-white font-semibold text-base px-8 py-3.5 rounded-md hover:bg-navy transition-colors"
           >
             Try it on your contract
           </a>

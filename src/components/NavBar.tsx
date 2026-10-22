@@ -78,7 +78,7 @@ export default function NavBar() {
               </Link>
               <Link
                 href="/signup"
-                className="text-sm bg-navy text-white font-semibold px-4 py-2.5 rounded-md hover:bg-slate-700 transition-colors"
+                className="text-sm bg-navy text-white font-semibold px-4 py-2.5 rounded-md hover:bg-navy transition-colors"
               >
                 Sign up
               </Link>
