@@ -130,6 +130,17 @@ describe('analyze page — loading state accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-044: NavBar must not use overflow-x-auto (creates unexpected scroll strip)
+// -------------------------------------------------------------------------
+
+describe('NavBar — nav links wrapping', () => {
+  it('NavBar does not use overflow-x-auto on the nav links container', () => {
+    // Fails before fix: overflow-x-auto creates a horizontal scroll strip on narrow viewports
+    expect(src('src/components/NavBar.tsx')).not.toContain('overflow-x-auto')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-043: counter-offer blocks must use bg-counter-offer-bg token, not bg-emerald-50
 // -------------------------------------------------------------------------
 

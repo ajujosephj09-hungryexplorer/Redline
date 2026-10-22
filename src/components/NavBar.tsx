@@ -46,12 +46,12 @@ export default function NavBar() {
             Redline
           </Link>
           {authed === true && (
-            <div className="flex items-center gap-3 sm:gap-4 overflow-x-auto">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
               {appLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-sm text-slate-600 hover:text-navy transition-colors whitespace-nowrap"
+                  className="text-sm text-slate-600 hover:text-navy transition-colors"
                 >
                   {link.label}
                 </Link>
