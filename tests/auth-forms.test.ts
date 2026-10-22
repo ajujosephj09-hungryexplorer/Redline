@@ -130,6 +130,17 @@ describe('analyze page — loading state accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-029: "Skip to questions" anchor must not be hidden on desktop
+// -------------------------------------------------------------------------
+
+describe('AnalysisView — skip to questions link', () => {
+  it('AnalysisView does not use sm:hidden anywhere (skip-to-questions was the last instance)', () => {
+    // Fails before fix: skip-to-questions anchor has sm:hidden, hiding it on desktop
+    expect(src('src/app/(app)/dashboard/documents/[id]/AnalysisView.tsx')).not.toContain('sm:hidden')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-028: criticalFlags/moderateFlags/lowFlags must be wrapped in useMemo
 // -------------------------------------------------------------------------
 

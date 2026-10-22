@@ -437,7 +437,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
           </p>
           <a
             href="#question-box"
-            className="mt-1 text-xs text-slate-400 hover:text-navy transition-colors sm:hidden inline-block"
+            className="mt-1 text-xs text-slate-400 hover:text-navy transition-colors inline-block"
           >
             Skip to questions ↓
           </a>
