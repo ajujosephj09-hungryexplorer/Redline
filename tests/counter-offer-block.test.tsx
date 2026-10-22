@@ -10,6 +10,20 @@ import CounterOfferBlock from '@/components/CounterOfferBlock'
 // F-007: CounterOfferBlock extracted from FindingRow / GapCard duplication
 // -------------------------------------------------------------------------
 
+// -------------------------------------------------------------------------
+// F-012: Edit/Copy buttons must not use py-0.5 (~20 px, below WCAG touch target)
+// -------------------------------------------------------------------------
+
+describe('CounterOfferBlock — button touch targets', () => {
+  it('Edit and Copy buttons do not use py-0.5', () => {
+    const { readFileSync } = require('fs')
+    const { resolve } = require('path')
+    const source = readFileSync(resolve(__dirname, '../src/components/CounterOfferBlock.tsx'), 'utf-8')
+    // The original buttons used py-0.5 (≈20 px). CounterOfferBlock must not regress.
+    expect(source).not.toContain('py-0.5')
+  })
+})
+
 describe('CounterOfferBlock', () => {
   beforeEach(() => {
     Object.defineProperty(navigator, 'clipboard', {
