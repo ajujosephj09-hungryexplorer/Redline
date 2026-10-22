@@ -19,6 +19,8 @@ interface Document {
   plain_text: string
 }
 
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'failed'
+
 export default function DocumentAnalysisClient({ documentId }: Props) {
   const [doc, setDoc] = useState<Document | null>(null)
   const [rules, setRules] = useState<Rule[] | undefined>(undefined)
@@ -26,6 +28,8 @@ export default function DocumentAnalysisClient({ documentId }: Props) {
   const [analysedAt, setAnalysedAt] = useState<string | undefined>(undefined)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
+  const [pendingResult, setPendingResult] = useState<AnalysisResult | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -72,12 +76,55 @@ export default function DocumentAnalysisClient({ documentId }: Props) {
     return () => { cancelled = true }
   }, [documentId])
 
-  const handleAnalysisComplete = useCallback(async (result: AnalysisResult) => {
+  // F-050: attempt save with one auto-retry; expose status to AnalysisView
+  const attemptSave = useCallback(async (result: AnalysisResult) => {
     const supabase = createClient()
     if (!supabase) return
-    await saveAnalysis(supabase, documentId, result)
-    setAnalysedAt(new Date().toISOString())
+
+    setSaveStatus('saving')
+
+    // First attempt
+    try {
+      await saveAnalysis(supabase, documentId, result)
+      setAnalysedAt(new Date().toISOString())
+      setSaveStatus('saved')
+      return
+    } catch {
+      // fall through to retry
+    }
+
+    // Auto-retry once
+    try {
+      await saveAnalysis(supabase, documentId, result)
+      setAnalysedAt(new Date().toISOString())
+      setSaveStatus('saved')
+    } catch {
+      setSaveStatus('failed')
+    }
   }, [documentId])
+
+  const handleAnalysisComplete = useCallback(async (result: AnalysisResult) => {
+    setPendingResult(result)
+    await attemptSave(result)
+  }, [attemptSave])
+
+  const handleRetrySave = useCallback(() => {
+    if (pendingResult) attemptSave(pendingResult)
+  }, [pendingResult, attemptSave])
+
+  // F-055: compute whether rules have changed since the cached analysis
+  const rulesChangedSinceAnalysis: boolean = (() => {
+    if (!cachedResult?.ruleFingerprint || !rules) return false
+    const currentFingerprint = rules
+      .filter((r) => r.enabled)
+      .map((r) => r.id)
+      .sort()
+    const stored = [...cachedResult.ruleFingerprint].sort()
+    return (
+      stored.length > 0 &&
+      JSON.stringify(currentFingerprint) !== JSON.stringify(stored)
+    )
+  })()
 
   if (loading) {
     return (
@@ -112,6 +159,9 @@ export default function DocumentAnalysisClient({ documentId }: Props) {
         initialResult={cachedResult ?? undefined}
         analysedAt={analysedAt}
         onAnalysisComplete={handleAnalysisComplete}
+        rulesChangedSinceAnalysis={rulesChangedSinceAnalysis}
+        saveStatus={saveStatus === 'idle' ? undefined : saveStatus}
+        onRetrySave={handleRetrySave}
       />
     </>
   )

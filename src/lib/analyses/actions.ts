@@ -54,7 +54,5 @@ export async function saveAnalysis(
     .from('analyses')
     .insert({ document_id: documentId, user_id: user.id, result })
 
-  if (error) {
-    console.error('Failed to cache analysis:', error.message)
-  }
+  if (error) throw new Error(error.message)
 }

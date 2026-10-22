@@ -13,6 +13,8 @@ export interface AnalysisResult {
   flags: RiskFlag[]
   gaps: Gap[]
   checklist: ChecklistItem[]
+  /** Sorted enabled rule IDs at analysis time — used to detect stale results. */
+  ruleFingerprint?: string[]
 }
 
 export interface Gap {
