@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { fetchRules } from '@/lib/rules/actions'
 import { fetchAnalysis, saveAnalysis } from '@/lib/analyses/actions'
@@ -94,13 +95,21 @@ export default function DocumentAnalysisClient({ documentId }: Props) {
   }
 
   return (
-    <AnalysisView
-      documentText={doc.plain_text}
-      documentTitle={doc.title}
-      rules={rules}
-      initialResult={cachedResult ?? undefined}
-      analysedAt={analysedAt}
-      onAnalysisComplete={handleAnalysisComplete}
-    />
+    <>
+      <Link
+        href="/library"
+        className="inline-block text-xs text-slate-400 hover:text-navy transition-colors mb-4"
+      >
+        ← Your contracts
+      </Link>
+      <AnalysisView
+        documentText={doc.plain_text}
+        documentTitle={doc.title}
+        rules={rules}
+        initialResult={cachedResult ?? undefined}
+        analysedAt={analysedAt}
+        onAnalysisComplete={handleAnalysisComplete}
+      />
+    </>
   )
 }
