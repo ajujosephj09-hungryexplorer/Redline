@@ -44,7 +44,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <h1 className="text-2xl font-bold text-navy">Sign in to Redline</h1>
         <p className="text-sm text-slate-600 mt-1">
-          Analyze your contracts. Find the risk before you sign.
+          Sign in to access your saved contracts.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
@@ -58,7 +58,7 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-navy placeholder:text-slate-400 focus:border-navy focus:ring-0"
+              className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-navy placeholder:text-slate-400 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/30"
               placeholder="you@example.com"
             />
           </div>
@@ -73,19 +73,19 @@ export default function LoginPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-navy placeholder:text-slate-400 focus:border-navy focus:ring-0"
+              className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-navy placeholder:text-slate-400 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/30"
               placeholder="Your password"
             />
           </div>
 
           {error && (
-            <p className="text-sm text-severity-critical">{error}</p>
+            <p className="text-sm text-error">{error}</p>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-navy text-white font-semibold text-sm px-4 py-2.5 rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-navy text-white font-semibold text-sm px-4 py-2.5 rounded-md hover:bg-navy transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>

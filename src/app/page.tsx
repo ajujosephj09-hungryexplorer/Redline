@@ -127,7 +127,7 @@ function FindingRow({
               </p>
             </div>
 
-            <div className="bg-emerald-50 border-l border-severity-clear px-4 py-3">
+            <div className="bg-counter-offer-bg border-l border-severity-clear px-4 py-3">
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
                 Counter-offer
               </p>
@@ -216,8 +216,8 @@ export default function LandingPage() {
 
         {/* CTA */}
         <a
-          href="/analyze"
-          className="mt-8 inline-flex items-center justify-center bg-navy text-white font-semibold text-base px-8 py-3.5 rounded-md hover:bg-slate-700 transition-colors self-start"
+          href="/upload"
+          className="mt-8 inline-flex items-center justify-center bg-navy text-white font-semibold text-base px-8 py-3.5 rounded-md hover:bg-navy transition-colors self-start"
         >
           Try it on your contract
         </a>
@@ -286,7 +286,7 @@ export default function LandingPage() {
                     Critical
                   </span>
                 ) : (
-                  <span className="text-xs font-semibold text-amber-700 uppercase tracking-wider">
+                  <span className="text-xs font-semibold text-severity-moderate-text uppercase tracking-wider">
                     Moderate
                   </span>
                 )}
@@ -336,8 +336,8 @@ export default function LandingPage() {
             the sentence and tells you what to say back.
           </p>
           <a
-            href="/analyze"
-            className="mt-8 inline-flex items-center justify-center bg-navy text-white font-semibold text-base px-8 py-3.5 rounded-md hover:bg-slate-700 transition-colors"
+            href="/upload"
+            className="mt-8 inline-flex items-center justify-center bg-navy text-white font-semibold text-base px-8 py-3.5 rounded-md hover:bg-navy transition-colors"
           >
             Try it on your contract
           </a>

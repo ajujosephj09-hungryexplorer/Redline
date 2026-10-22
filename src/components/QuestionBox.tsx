@@ -202,7 +202,7 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
                   Redline
                 </p>
                 <div className="flex items-center gap-2">
-                  <div className="h-3.5 w-3.5 border-2 border-navy border-t-transparent rounded-full animate-spin" />
+                  <div aria-hidden="true" className="h-3.5 w-3.5 border-2 border-navy border-t-transparent rounded-full animate-spin" />
                   <p className="text-sm text-slate-500">Reading the contract...</p>
                 </div>
               </div>
@@ -217,8 +217,12 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
 
         {/* Input row */}
         <div className="flex gap-2">
+          <label htmlFor="question-input" className="sr-only">
+            Ask a question about this contract
+          </label>
           <input
             ref={inputRef}
+            id="question-input"
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value.slice(0, MAX_QUESTION_LENGTH))}
@@ -232,7 +236,7 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
           <button
             onClick={submit}
             disabled={loading || input.trim().length === 0}
-            className="bg-navy text-white text-sm font-semibold px-5 py-2.5 rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-navy text-white text-sm font-semibold px-5 py-2.5 rounded-md hover:bg-navy transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Send
           </button>

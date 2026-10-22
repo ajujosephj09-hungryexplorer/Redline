@@ -8,9 +8,12 @@ export default {
     extend: {
       colors: {
         navy: '#1e293b',
+        error: '#dc2626',
+        'counter-offer-bg': '#ecfdf5',
         severity: {
           critical: '#dc2626',
           moderate: '#f59e0b',
+          'moderate-text': '#b45309',
           clear: '#16a34a',
         },
       },

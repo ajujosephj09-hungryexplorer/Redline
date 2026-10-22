@@ -109,7 +109,7 @@ export default function LibraryPage() {
         </p>
         <Link
           href="/login"
-          className="inline-block mt-4 bg-navy text-white font-semibold text-sm px-6 py-3 rounded-md hover:bg-slate-700 transition-colors"
+          className="inline-block mt-4 bg-navy text-white font-semibold text-sm px-6 py-3 rounded-md hover:bg-navy transition-colors"
         >
           Sign in
         </Link>
@@ -160,7 +160,7 @@ export default function LibraryPage() {
         </p>
         <Link
           href="/upload"
-          className="inline-block mt-4 bg-navy text-white font-semibold text-sm px-6 py-3 rounded-md hover:bg-slate-700 transition-colors"
+          className="inline-block mt-4 bg-navy text-white font-semibold text-sm px-6 py-3 rounded-md hover:bg-navy transition-colors"
         >
           Upload a contract
         </Link>
@@ -200,7 +200,7 @@ export default function LibraryPage() {
               <span className="block text-xs text-slate-400 mt-0.5">
                 {formatUploadDate(doc.created_at)}
                 {doc.has_analysis && (
-                  <span className="ml-2 text-severity-clear">Analyzed</span>
+                  <span className="ml-2 text-slate-400">Analyzed</span>
                 )}
               </span>
             </Link>
@@ -211,7 +211,7 @@ export default function LibraryPage() {
                   <button
                     onClick={() => handleDelete(doc.id)}
                     disabled={deletingId === doc.id}
-                    className="text-xs font-medium text-severity-critical hover:underline disabled:opacity-50"
+                    className="text-xs font-semibold bg-severity-critical text-white px-2 py-1 rounded-md hover:opacity-90 transition-opacity disabled:opacity-50"
                   >
                     {deletingId === doc.id ? 'Deleting...' : 'Confirm'}
                   </button>

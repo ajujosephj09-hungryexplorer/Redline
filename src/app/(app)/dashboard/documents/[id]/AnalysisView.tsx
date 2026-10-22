@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useMemo, memo } from 'react'
 import type { AnalysisResult, RiskFlag, Gap, ChecklistItem, Severity } from '@/lib/analysis/types'
 import type { Rule } from '@/lib/rules/types'
 import { getLocalRules } from '@/lib/rules/local'
 import QuestionBox from '@/components/QuestionBox'
+import CounterOfferBlock from '@/components/CounterOfferBlock'
 
 interface Props {
   documentText: string
@@ -42,7 +43,7 @@ function severityPill(severity: Severity) {
     case 'moderate':
       return 'bg-severity-moderate text-navy text-xs font-semibold px-2.5 py-0.5 rounded-sm'
     case 'low':
-      return 'text-severity-clear text-xs font-semibold'
+      return 'text-slate-600 text-xs font-semibold'
   }
 }
 
@@ -54,27 +55,13 @@ function severityLabel(severity: Severity) {
 // FindingRow — expandable risk flag
 // ---------------------------------------------------------------------------
 
-function FindingRow({ flag, open, onToggle }: { flag: RiskFlag; open: boolean; onToggle: () => void }) {
-  const [copied, setCopied] = useState(false)
-  const [counterText, setCounterText] = useState(flag.counterOffer)
-  const [editingCounter, setEditingCounter] = useState(false)
-  const counterRef = useRef<HTMLTextAreaElement>(null)
-
-  const copyCounter = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(counterText)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 1500)
-    } catch {
-      // Clipboard API may not be available in all contexts
-    }
-  }, [counterText])
-
+const FindingRow = memo(function FindingRow({ flag, open, onToggle }: { flag: RiskFlag; open: boolean; onToggle: () => void }) {
   return (
     <div className="border border-slate-200 rounded-md bg-white shadow-sm">
       {/* Header row */}
       <button
         onClick={onToggle}
+        aria-expanded={open}
         className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors rounded-md"
       >
         <span className={severityPill(flag.severity)}>
@@ -83,7 +70,7 @@ function FindingRow({ flag, open, onToggle }: { flag: RiskFlag; open: boolean; o
         <span className="text-sm font-semibold text-navy flex-1 min-w-0">
           {flag.ruleName}
         </span>
-        <span className="text-sm text-slate-600 truncate max-w-[50%]">
+        <span className="text-sm text-slate-600 shrink text-right leading-snug">
           {flag.problem}
         </span>
         <svg
@@ -119,102 +106,25 @@ function FindingRow({ flag, open, onToggle }: { flag: RiskFlag; open: boolean; o
             </div>
 
             {/* Counter-offer block */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <p className="uppercase text-xs tracking-wider font-semibold text-slate-500">
-                  Counter-offer
-                </p>
-                <div className="flex items-center gap-2">
-                  {!editingCounter && (
-                    <button
-                      onClick={() => setEditingCounter(true)}
-                      className="text-xs font-semibold border rounded px-2 py-0.5 transition-colors border-slate-200 text-slate-500 hover:border-navy hover:text-navy"
-                    >
-                      Edit
-                    </button>
-                  )}
-                  <button
-                    onClick={copyCounter}
-                    className={`text-xs font-semibold border rounded px-2 py-0.5 transition-colors ${
-                      copied
-                        ? 'border-severity-clear text-severity-clear'
-                        : 'border-slate-200 text-slate-500 hover:border-navy hover:text-navy'
-                    }`}
-                  >
-                    {copied ? 'Copied' : 'Copy'}
-                  </button>
-                </div>
-              </div>
-              {editingCounter ? (
-                <div>
-                  <textarea
-                    ref={counterRef}
-                    defaultValue={counterText}
-                    rows={4}
-                    autoFocus
-                    onKeyDown={(e) => { if (e.key === 'Escape') setEditingCounter(false) }}
-                    className="w-full text-sm text-navy border border-slate-300 rounded-md p-3 focus:outline-none focus:ring-1 focus:ring-navy resize-y leading-relaxed"
-                  />
-                  <div className="flex items-center gap-3 mt-1.5">
-                    <button
-                      onClick={() => {
-                        const trimmed = counterRef.current?.value.trim()
-                        if (trimmed) setCounterText(trimmed)
-                        setEditingCounter(false)
-                      }}
-                      className="text-xs font-semibold text-navy hover:opacity-70 transition-opacity"
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={() => setEditingCounter(false)}
-                      className="text-xs text-slate-400 hover:text-navy transition-colors"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-emerald-50 border-l-4 border-severity-clear rounded-r-md p-3">
-                  <p className="text-sm text-navy leading-relaxed whitespace-pre-wrap">
-                    {counterText}
-                  </p>
-                </div>
-              )}
-            </div>
+            <CounterOfferBlock initialText={flag.counterOffer} />
           </div>
         </div>
       </div>
     </div>
   )
-}
+})
 
 // ---------------------------------------------------------------------------
 // GapCard — a missing clause
 // ---------------------------------------------------------------------------
 
 function GapCard({ gap }: { gap: Gap }) {
-  const [copied, setCopied] = useState(false)
-  const [counterText, setCounterText] = useState(gap.counterOffer)
-  const [editingCounter, setEditingCounter] = useState(false)
-  const counterRef = useRef<HTMLTextAreaElement>(null)
-
-  const copyCounter = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(counterText)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 1500)
-    } catch {
-      // Clipboard API may not be available in all contexts
-    }
-  }, [counterText])
-
   return (
-    <div className="bg-amber-50 border border-amber-200 rounded-md">
+    <div data-testid="gap-card" className="bg-white border border-slate-200 rounded-md shadow-sm">
       <div className="px-4 py-3 space-y-3">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <span className="text-xs font-semibold text-amber-600 uppercase tracking-wider">
+          <span className="bg-severity-moderate text-navy text-xs font-semibold px-2.5 py-0.5 rounded-sm">
             Missing
           </span>
           <span className="text-sm font-semibold text-navy">
@@ -227,70 +137,8 @@ function GapCard({ gap }: { gap: Gap }) {
           {gap.explanation}
         </p>
 
-        {/* Counter-offer block */}
-        <div>
-          <div className="flex items-center justify-between mb-1.5">
-            <p className="uppercase text-xs tracking-wider font-semibold text-slate-500">
-              Suggested language
-            </p>
-            <div className="flex items-center gap-2">
-              {!editingCounter && (
-                <button
-                  onClick={() => setEditingCounter(true)}
-                  className="text-xs font-semibold border rounded px-2 py-0.5 transition-colors border-slate-200 text-slate-500 hover:border-navy hover:text-navy"
-                >
-                  Edit
-                </button>
-              )}
-              <button
-                onClick={copyCounter}
-                className={`text-xs font-semibold border rounded px-2 py-0.5 transition-colors ${
-                  copied
-                    ? 'border-severity-clear text-severity-clear'
-                    : 'border-slate-200 text-slate-500 hover:border-navy hover:text-navy'
-                }`}
-              >
-                {copied ? 'Copied' : 'Copy'}
-              </button>
-            </div>
-          </div>
-          {editingCounter ? (
-            <div>
-              <textarea
-                ref={counterRef}
-                defaultValue={counterText}
-                rows={4}
-                autoFocus
-                onKeyDown={(e) => { if (e.key === 'Escape') setEditingCounter(false) }}
-                className="w-full text-sm text-navy border border-slate-300 rounded-md p-3 focus:outline-none focus:ring-1 focus:ring-navy resize-y leading-relaxed"
-              />
-              <div className="flex items-center gap-3 mt-1.5">
-                <button
-                  onClick={() => {
-                    const trimmed = counterRef.current?.value.trim()
-                    if (trimmed) setCounterText(trimmed)
-                    setEditingCounter(false)
-                  }}
-                  className="text-xs font-semibold text-navy hover:opacity-70 transition-opacity"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => setEditingCounter(false)}
-                  className="text-xs text-slate-400 hover:text-navy transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-emerald-50 border-l-4 border-severity-clear rounded-r-md p-3">
-              <p className="text-sm text-navy leading-relaxed whitespace-pre-wrap">
-                {counterText}
-              </p>
-            </div>
-          )}
-        </div>
+        {/* Suggested language */}
+        <CounterOfferBlock label="Suggested language" initialText={gap.counterOffer} />
       </div>
     </div>
   )
@@ -305,7 +153,7 @@ function checklistStatusStyle(status: ChecklistItem['status']) {
     case 'flagged':
       return 'text-severity-critical'
     case 'gap':
-      return 'text-amber-600'
+      return 'text-severity-moderate-text'
     case 'clean':
       return 'text-severity-clear'
   }
@@ -338,8 +186,8 @@ function RulesChecklist({ items, isAnonymous }: { items: ChecklistItem[]; isAnon
         )}
       </div>
       <div className="border border-slate-200 rounded-md divide-y divide-slate-200">
-        {items.map((item, i) => (
-          <div key={i} className="flex items-center justify-between px-5 py-3.5">
+        {items.map((item) => (
+          <div key={item.ruleName} className="flex items-center justify-between px-5 py-3.5">
             <span className="text-sm font-semibold text-navy">{item.ruleName}</span>
             <span
               className={`text-xs font-semibold uppercase tracking-wider ${checklistStatusStyle(item.status)}`}
@@ -359,6 +207,14 @@ function RulesChecklist({ items, isAnonymous }: { items: ChecklistItem[]; isAnon
 
 type Status = 'idle' | 'loading' | 'done' | 'error'
 
+const LOADING_MESSAGES = [
+  'Reading the contract...',
+  'Checking each clause against your rules...',
+  'Identifying risks and missing protections...',
+  'Drafting counter offers for flagged clauses...',
+  'Wrapping up the analysis...',
+]
+
 export default function AnalysisView({ documentText, documentTitle, rules: externalRules, isAnonymous, onReset, initialResult, analysedAt, onAnalysisComplete }: Props) {
   const [status, setStatus] = useState<Status>(() => initialResult ? 'done' : 'idle')
   const [result, setResult] = useState<AnalysisResult | null>(() => initialResult ?? null)
@@ -368,14 +224,6 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
   const [retryCount, setRetryCount] = useState(0)
   const [openFlagIndices, setOpenFlagIndices] = useState<Set<number>>(new Set())
 
-  const loadingMessages = [
-    'Reading the contract...',
-    'Checking each clause against your rules...',
-    'Identifying risks and missing protections...',
-    'Drafting counter offers for flagged clauses...',
-    'Wrapping up the analysis...',
-  ]
-
   useEffect(() => {
     if (status !== 'loading') {
       setLoadingMsgIndex(0)
@@ -383,14 +231,14 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
     }
 
     // Last message sticks — don't cycle past it
-    if (loadingMsgIndex >= loadingMessages.length - 1) return
+    if (loadingMsgIndex >= LOADING_MESSAGES.length - 1) return
 
     const timer = setTimeout(() => {
-      setLoadingMsgIndex((i) => Math.min(i + 1, loadingMessages.length - 1))
+      setLoadingMsgIndex((i) => Math.min(i + 1, LOADING_MESSAGES.length - 1))
     }, 4000)
 
     return () => clearTimeout(timer)
-  }, [status, loadingMsgIndex, loadingMessages.length])
+  }, [status, loadingMsgIndex, LOADING_MESSAGES.length])
 
   useEffect(() => {
     // Use the cached result on first load; only re-run if the user requests it
@@ -451,14 +299,30 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
     }
   }, [result])
 
-  function toggleFlag(index: number) {
+  const toggleFlag = useCallback((index: number) => {
     setOpenFlagIndices((prev) => {
       const next = new Set(prev)
       if (next.has(index)) next.delete(index)
       else next.add(index)
       return next
     })
-  }
+  }, [])
+
+  // These must stay above the early returns so hooks are always called in the
+  // same order (React Rules of Hooks).
+  const allFlags = result?.flags ?? []
+  const criticalFlags = useMemo(
+    () => allFlags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'critical'),
+    [allFlags]
+  )
+  const moderateFlags = useMemo(
+    () => allFlags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'moderate'),
+    [allFlags]
+  )
+  const lowFlags = useMemo(
+    () => allFlags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'low'),
+    [allFlags]
+  )
 
   // ---- Loading ----
   if (status === 'idle' || status === 'loading') {
@@ -466,12 +330,12 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
       <div className="max-w-3xl mx-auto" role="status" aria-live="polite">
         <h1 className="text-2xl font-bold text-navy">{documentTitle}</h1>
         <div className="mt-6 flex items-center gap-3">
-          <div className="h-5 w-5 border-2 border-navy border-t-transparent rounded-full animate-spin" />
+          <div aria-hidden="true" className="h-5 w-5 border-2 border-navy border-t-transparent rounded-full animate-spin" />
           <p
             key={loadingMsgIndex}
             className="text-sm text-slate-600 animate-fadeIn"
           >
-            {loadingMessages[loadingMsgIndex]}
+            {LOADING_MESSAGES[loadingMsgIndex]}
           </p>
         </div>
       </div>
@@ -498,7 +362,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
   }
 
   // ---- Results ----
-  const flags = result?.flags ?? []
+  const flags = allFlags
   const gaps = result?.gaps ?? []
   const checklist = result?.checklist ?? []
   const criticalCount = flags.filter((f) => f.severity === 'critical').length
@@ -513,9 +377,6 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
     setOpenFlagIndices(new Set())
   }
 
-  const criticalFlags = flags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'critical')
-  const moderateFlags = flags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'moderate')
-  const lowFlags = flags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'low')
   const allExpanded = flags.length > 0 && openFlagIndices.size === flags.length
 
   return (
@@ -557,6 +418,21 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
         </p>
       </div>
 
+      {/* Anonymous save banner — shown immediately after summary so it is seen before findings */}
+      {isAnonymous && (
+        <div className="mt-3 flex items-center justify-between gap-4 border border-slate-200 rounded-md px-4 py-3 bg-white">
+          <p className="text-sm text-slate-600">
+            This analysis disappears when you close the tab.
+          </p>
+          <a
+            href="/signup"
+            className="text-sm font-semibold text-navy underline underline-offset-2 hover:opacity-70 transition-opacity shrink-0"
+          >
+            Save it →
+          </a>
+        </div>
+      )}
+
       {/* Guidance for users with findings */}
       {!isClean && (
         <>
@@ -565,7 +441,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
           </p>
           <a
             href="#question-box"
-            className="mt-1 text-xs text-slate-400 hover:text-navy transition-colors sm:hidden inline-block"
+            className="mt-1 text-xs text-slate-400 hover:text-navy transition-colors inline-block"
           >
             Skip to questions ↓
           </a>
@@ -600,10 +476,10 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
               <span className="text-severity-critical font-semibold">{criticalCount} critical</span>
             )}
             {moderateCount > 0 && (
-              <span className="text-amber-700 font-semibold">{moderateCount} moderate</span>
+              <span className="text-severity-moderate-text font-semibold">{moderateCount} moderate</span>
             )}
             {gaps.length > 0 && (
-              <span className="text-amber-600 font-semibold">{gaps.length} missing</span>
+              <span className="text-severity-moderate-text font-semibold">{gaps.length} missing</span>
             )}
           </div>
           {flags.length > 1 && (
@@ -641,7 +517,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
           </span>
           <span className="text-xs text-slate-500 flex items-center gap-1.5">
             <span className="inline-block w-2 h-2 rounded-full bg-severity-clear shrink-0" />
-            <span><strong className="font-semibold">Clear</strong> — checked and looks fair</span>
+            <span><strong className="font-semibold">Low</strong> — flagged but not urgent</span>
           </span>
         </div>
       )}
@@ -668,7 +544,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
           )}
           {moderateFlags.length > 0 && (
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-amber-700 mb-2">
+              <p className="text-xs font-semibold uppercase tracking-wider text-severity-moderate-text mb-2">
                 Moderate
               </p>
               <div className="space-y-3">
@@ -685,8 +561,8 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
           )}
           {lowFlags.length > 0 && (
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-severity-clear mb-2">
-                Clear
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">
+                Low
               </p>
               <div className="space-y-3">
                 {lowFlags.map(({ flag, index }) => (
@@ -713,7 +589,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
           </h2>
           <p className="text-xs text-slate-500 mb-3">Protections that aren't in this contract but should be.</p>
           <div className="space-y-3">
-            {gaps.map((gap, i) => <GapCard key={i} gap={gap} />)}
+            {gaps.map((gap) => <GapCard key={gap.ruleName} gap={gap} />)}
           </div>
         </div>
       )}
@@ -724,22 +600,6 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
       {result && (
         <div id="question-box">
           <QuestionBox documentText={documentText} analysisResult={result} />
-        </div>
-      )}
-
-      <hr className="border-t border-slate-200 my-8" />
-
-      {/* Save prompt for anonymous users */}
-      {isAnonymous && (
-        <div className="mt-8 border border-slate-200 rounded-md p-5">
-          <p className="text-sm font-semibold text-navy mb-1">Save this analysis</p>
-          <p className="text-sm text-slate-600 mb-3">
-            This analysis disappears when you close the tab.{' '}
-            <a href="/signup" className="text-navy underline underline-offset-2 hover:opacity-70 transition-opacity">
-              Create a free account
-            </a>{' '}
-            to save it and access it later.
-          </p>
         </div>
       )}
 

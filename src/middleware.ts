@@ -10,8 +10,15 @@ const protectedPaths = ['/dashboard']
 const authPaths = ['/login', '/signup']
 
 export async function middleware(request: NextRequest) {
-  // When Supabase is not configured, let everything through
+  // When Supabase is not configured:
+  // - In production, return 503 so protected routes are never silently open.
+  // - In development, let everything through so the app runs without credentials.
   if (!isConfigured) {
+    if (process.env.NODE_ENV === 'production') {
+      return new NextResponse('Service unavailable: authentication is not configured.', {
+        status: 503,
+      })
+    }
     return NextResponse.next()
   }
 

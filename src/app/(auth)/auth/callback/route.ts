@@ -31,5 +31,7 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/login`)
   }
 
-  return NextResponse.redirect(`${origin}/dashboard`)
+  const next = searchParams.get('next')
+  const destination = next && next.startsWith('/') ? next : '/dashboard'
+  return NextResponse.redirect(`${origin}${destination}`)
 }

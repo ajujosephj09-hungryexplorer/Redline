@@ -93,7 +93,7 @@ function InlineEdit({
           fill="none"
           stroke="currentColor"
           strokeWidth="1.5"
-          className="shrink-0 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="shrink-0 text-slate-400 opacity-40 group-hover:opacity-100 transition-opacity"
         >
           <path d="M8.5 1.5l2 2L4 10H2v-2L8.5 1.5z" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
@@ -207,7 +207,7 @@ function AddRuleForm({
         <button
           type="submit"
           disabled={!name.trim() || !description.trim() || saving}
-          className="bg-navy text-white text-sm font-semibold rounded-md px-4 py-2 disabled:opacity-40 hover:bg-slate-800 transition-colors"
+          className="bg-navy text-white text-sm font-semibold rounded-md px-4 py-2 disabled:opacity-40 hover:bg-navy transition-colors"
         >
           {saving ? 'Saving...' : 'Add rule'}
         </button>
@@ -489,7 +489,7 @@ export default function RulesPage() {
         <button
           type="button"
           onClick={() => setShowAddForm(true)}
-          className="bg-navy text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-slate-800 transition-colors"
+          className="bg-navy text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-navy transition-colors"
         >
           Add rule
         </button>

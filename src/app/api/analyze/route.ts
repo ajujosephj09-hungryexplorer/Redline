@@ -4,7 +4,7 @@ import type { Rule } from '@/lib/rules/types'
 import { apiLimiter } from '@/lib/rate-limit'
 
 export async function POST(request: Request) {
-  const ip = request.headers.get('x-real-ip') ?? request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ?? 'unknown'
+  const ip = request.headers.get('x-real-ip') ?? request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
   if (!apiLimiter.check(ip)) {
     return NextResponse.json(
       { error: 'Too many requests. Please wait a minute and try again.' },
@@ -36,6 +36,13 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: 'Missing or empty "text" field.' },
       { status: 400 }
+    )
+  }
+
+  if (text.length > 200_000) {
+    return NextResponse.json(
+      { error: 'Contract text is too long. Maximum is 200 000 characters.' },
+      { status: 413 }
     )
   }
 

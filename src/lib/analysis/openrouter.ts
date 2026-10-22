@@ -4,15 +4,23 @@ export interface Message {
 }
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions'
+const RETRYABLE_STATUSES = new Set([429, 502, 503, 504])
+const MAX_ATTEMPTS = 3
+const RETRY_DELAY_MS = 1_000
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
 
 /**
  * Sends a chat completion request to OpenRouter and returns the parsed JSON
  * from the model's response. Throws on missing config, HTTP errors, or
- * malformed responses.
+ * malformed responses. Retries up to 3 times on transient errors (429/502/503/504).
  */
 export async function callOpenRouter(
   messages: Message[],
-  jsonSchema: object
+  jsonSchema: object,
+  opts: { reasoningEffort?: 'low' | 'medium' | 'high' } = {}
 ): Promise<unknown> {
   const apiKey = process.env.OPENROUTER_API_KEY
   if (!apiKey) {
@@ -28,7 +36,7 @@ export async function callOpenRouter(
     )
   }
 
-  const body = {
+  const body: Record<string, unknown> = {
     model,
     messages,
     response_format: {
@@ -39,45 +47,79 @@ export async function callOpenRouter(
         schema: jsonSchema,
       },
     },
-    reasoning: { effort: 'low' },
   }
 
-  const res = await fetch(OPENROUTER_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify(body),
-  })
-
-  if (!res.ok) {
-    const text = await res.text().catch(() => '(no body)')
-    console.error(`OpenRouter request failed (${res.status}): ${text}`)
-    throw new Error(
-      'The analysis service returned an error. Please try again in a moment.'
-    )
+  // Only send the reasoning field when the caller explicitly requests it.
+  // Most models do not understand this parameter and will return a 422.
+  if (opts.reasoningEffort) {
+    body.reasoning = { effort: opts.reasoningEffort }
   }
 
-  const data = await res.json()
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 25_000)
 
-  const content = data?.choices?.[0]?.message?.content
-  if (typeof content !== 'string') {
-    console.error(
-      'OpenRouter response missing message content:',
-      JSON.stringify(data).slice(0, 500)
-    )
-    throw new Error(
-      'The analysis service returned an unexpected response. Please try again.'
-    )
+    let res: Response
+    try {
+      res = await fetch(OPENROUTER_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      })
+    } catch (err) {
+      const name = (err as { name?: string }).name
+      if (name === 'AbortError') {
+        throw new Error(
+          'The analysis service timed out. Please try again in a moment.'
+        )
+      }
+      throw err
+    } finally {
+      clearTimeout(timeout)
+    }
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => '(no body)')
+      console.error(`OpenRouter request failed (${res.status}): ${text}`)
+
+      if (RETRYABLE_STATUSES.has(res.status) && attempt < MAX_ATTEMPTS) {
+        await sleep(RETRY_DELAY_MS)
+        continue
+      }
+
+      throw new Error(
+        'The analysis service returned an error. Please try again in a moment.'
+      )
+    }
+
+    const data = await res.json()
+
+    const content = data?.choices?.[0]?.message?.content
+    if (typeof content !== 'string') {
+      console.error(
+        'OpenRouter response missing message content:',
+        JSON.stringify(data).slice(0, 500)
+      )
+      throw new Error(
+        'The analysis service returned an unexpected response. Please try again.'
+      )
+    }
+
+    try {
+      return JSON.parse(content)
+    } catch {
+      console.error('OpenRouter returned non-JSON content:', content.slice(0, 500))
+      throw new Error(
+        'The analysis service returned an unexpected response. Please try again.'
+      )
+    }
   }
 
-  try {
-    return JSON.parse(content)
-  } catch {
-    console.error('OpenRouter returned non-JSON content:', content.slice(0, 500))
-    throw new Error(
-      'The analysis service returned an unexpected response. Please try again.'
-    )
-  }
+  throw new Error(
+    'The analysis service returned an error. Please try again in a moment.'
+  )
 }
