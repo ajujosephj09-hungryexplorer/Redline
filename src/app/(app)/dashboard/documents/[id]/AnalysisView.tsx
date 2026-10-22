@@ -75,6 +75,7 @@ function FindingRow({ flag, open, onToggle }: { flag: RiskFlag; open: boolean; o
       {/* Header row */}
       <button
         onClick={onToggle}
+        aria-expanded={open}
         className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors rounded-md"
       >
         <span className={severityPill(flag.severity)}>
