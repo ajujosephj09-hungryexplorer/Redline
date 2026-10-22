@@ -48,3 +48,29 @@ describe('fetchAnalysis', () => {
     await expect(fetchAnalysis(supabase, 'doc-123')).rejects.toThrow('permission denied')
   })
 })
+
+// -------------------------------------------------------------------------
+// F-038: fetchAnalysis must validate the shape of data.result at runtime
+// -------------------------------------------------------------------------
+
+describe('fetchAnalysis — runtime shape validation', () => {
+  it('throws when data.result is not a valid AnalysisResult shape', async () => {
+    // Fails before fix: `data.result as AnalysisResult` blindly trusts the DB
+    const supabase = mockSupabase({
+      data: { result: { unexpected: 'shape' }, created_at: '2026-01-01T00:00:00Z' },
+      error: null,
+    })
+    await expect(fetchAnalysis(supabase, 'doc-123')).rejects.toThrow()
+  })
+
+  it('accepts a valid AnalysisResult shape', async () => {
+    const supabase = mockSupabase({
+      data: {
+        result: { summary: 'ok', flags: [], gaps: [], checklist: [] },
+        created_at: '2026-01-01T00:00:00Z',
+      },
+      error: null,
+    })
+    await expect(fetchAnalysis(supabase, 'doc-123')).resolves.not.toBeNull()
+  })
+})
