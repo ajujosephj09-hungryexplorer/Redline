@@ -39,6 +39,13 @@ export async function POST(request: Request) {
     )
   }
 
+  if (text.length > 200_000) {
+    return NextResponse.json(
+      { error: 'Contract text is too long. Maximum is 200 000 characters.' },
+      { status: 413 }
+    )
+  }
+
   if (!Array.isArray(rules)) {
     return NextResponse.json(
       { error: '"rules" must be an array.' },
