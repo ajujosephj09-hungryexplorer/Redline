@@ -1,17 +1,19 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 
 interface Props {
   label?: string
   initialText: string
+  /** When provided, shown above the textarea in edit mode for cross-reference. */
+  citation?: string
 }
 
-export default function CounterOfferBlock({ label = 'Counter-offer', initialText }: Props) {
+export default function CounterOfferBlock({ label = 'Counter-offer', initialText, citation }: Props) {
   const [copied, setCopied] = useState(false)
   const [counterText, setCounterText] = useState(initialText)
   const [editingCounter, setEditingCounter] = useState(false)
-  const counterRef = useRef<HTMLTextAreaElement>(null)
+  const [draftValue, setDraftValue] = useState('')
 
   const copyCounter = useCallback(async () => {
     try {
@@ -23,6 +25,22 @@ export default function CounterOfferBlock({ label = 'Counter-offer', initialText
     }
   }, [counterText])
 
+  function enterEdit() {
+    setDraftValue(counterText)
+    setEditingCounter(true)
+  }
+
+  function saveEdit() {
+    const trimmed = draftValue.trim()
+    if (trimmed) setCounterText(trimmed)
+    setEditingCounter(false)
+  }
+
+  function cancelEdit() {
+    setDraftValue('')
+    setEditingCounter(false)
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
@@ -32,7 +50,7 @@ export default function CounterOfferBlock({ label = 'Counter-offer', initialText
         <div className="flex items-center gap-2">
           {!editingCounter && (
             <button
-              onClick={() => setEditingCounter(true)}
+              onClick={enterEdit}
               className="text-xs font-semibold border rounded px-2 py-1.5 transition-colors border-slate-200 text-slate-500 hover:border-navy hover:text-navy"
             >
               Edit
@@ -52,31 +70,49 @@ export default function CounterOfferBlock({ label = 'Counter-offer', initialText
       </div>
       {editingCounter ? (
         <div>
+          {/* F-054: show citation context so the user doesn't lose their place */}
+          {citation && (
+            <div className="mb-2" data-testid="edit-citation">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
+                From contract
+              </p>
+              <p className="text-xs font-mono text-slate-600 bg-slate-50 border-l-2 border-navy rounded-r p-2 leading-relaxed whitespace-pre-wrap">
+                {citation}
+              </p>
+            </div>
+          )}
           <textarea
-            ref={counterRef}
-            defaultValue={counterText}
+            value={draftValue}
+            onChange={(e) => setDraftValue(e.target.value)}
             rows={4}
             autoFocus
-            onKeyDown={(e) => { if (e.key === 'Escape') setEditingCounter(false) }}
+            onKeyDown={(e) => { if (e.key === 'Escape') cancelEdit() }}
             className="w-full text-sm text-navy border border-slate-300 rounded-md p-3 focus:outline-none focus:ring-1 focus:ring-navy resize-y leading-relaxed"
           />
           <div className="flex items-center gap-3 mt-1.5">
+            {/* F-056: Save disabled when textarea is empty or whitespace-only */}
             <button
-              onClick={() => {
-                const trimmed = counterRef.current?.value.trim()
-                if (trimmed) setCounterText(trimmed)
-                setEditingCounter(false)
-              }}
-              className="text-xs font-semibold text-navy hover:opacity-70 transition-opacity"
+              onClick={saveEdit}
+              disabled={!draftValue.trim()}
+              className="text-xs font-semibold text-navy hover:opacity-70 transition-opacity disabled:opacity-40"
             >
               Save
             </button>
             <button
-              onClick={() => setEditingCounter(false)}
+              onClick={cancelEdit}
               className="text-xs text-slate-400 hover:text-navy transition-colors"
             >
               Cancel
             </button>
+            {!draftValue.trim() && (
+              <button
+                type="button"
+                onClick={() => setDraftValue(counterText)}
+                className="text-xs text-slate-400 hover:text-navy transition-colors underline underline-offset-2"
+              >
+                Restore original
+              </button>
+            )}
           </div>
         </div>
       ) : (

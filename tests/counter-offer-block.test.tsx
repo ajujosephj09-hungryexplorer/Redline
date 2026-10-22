@@ -24,6 +24,82 @@ describe('CounterOfferBlock — button touch targets', () => {
   })
 })
 
+// -------------------------------------------------------------------------
+// F-056: Save button must be disabled when textarea is empty
+// -------------------------------------------------------------------------
+
+describe('CounterOfferBlock — empty save guard (F-056)', () => {
+  it('Save button is disabled when textarea is blank', async () => {
+    render(<CounterOfferBlock initialText="Original counter-offer." />)
+    await userEvent.click(screen.getByRole('button', { name: /edit/i }))
+
+    const ta = screen.getByRole('textbox')
+    await userEvent.clear(ta)
+
+    // Fails before fix: Save button is always enabled
+    const saveBtn = screen.getByRole('button', { name: /save/i })
+    expect(saveBtn).toBeDisabled()
+  })
+
+  it('Save button is enabled once text is entered', async () => {
+    render(<CounterOfferBlock initialText="Original counter-offer." />)
+    await userEvent.click(screen.getByRole('button', { name: /edit/i }))
+
+    const ta = screen.getByRole('textbox')
+    await userEvent.clear(ta)
+    await userEvent.type(ta, 'New text.')
+
+    expect(screen.getByRole('button', { name: /save/i })).not.toBeDisabled()
+  })
+
+  it('shows "Restore original" button when textarea is blank', async () => {
+    render(<CounterOfferBlock initialText="Original counter-offer." />)
+    await userEvent.click(screen.getByRole('button', { name: /edit/i }))
+
+    const ta = screen.getByRole('textbox')
+    await userEvent.clear(ta)
+
+    expect(screen.getByRole('button', { name: /restore original/i })).toBeTruthy()
+  })
+})
+
+// -------------------------------------------------------------------------
+// F-054: Citation context must appear in edit mode when citation prop provided
+// -------------------------------------------------------------------------
+
+describe('CounterOfferBlock — citation context in edit mode (F-054)', () => {
+  it('shows citation text above textarea when editing with citation prop', async () => {
+    render(
+      <CounterOfferBlock
+        initialText="Counter-offer text."
+        citation="The exact clause from the contract."
+      />
+    )
+    await userEvent.click(screen.getByRole('button', { name: /edit/i }))
+
+    // Fails before fix: citation is not shown inside CounterOfferBlock
+    expect(screen.getByText('The exact clause from the contract.')).toBeTruthy()
+  })
+
+  it('does not show citation section when no citation prop is given', async () => {
+    render(<CounterOfferBlock initialText="Counter-offer text." />)
+    await userEvent.click(screen.getByRole('button', { name: /edit/i }))
+
+    expect(screen.queryByText(/from contract/i)).toBeNull()
+  })
+
+  it('citation is not visible when not in edit mode', () => {
+    render(
+      <CounterOfferBlock
+        initialText="Counter-offer text."
+        citation="The exact clause from the contract."
+      />
+    )
+    // Not in edit mode — citation block should be hidden
+    expect(screen.queryByTestId('edit-citation')).toBeNull()
+  })
+})
+
 describe('CounterOfferBlock', () => {
   beforeEach(() => {
     Object.defineProperty(navigator, 'clipboard', {
