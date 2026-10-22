@@ -199,3 +199,80 @@ describe('openrouter timeout', () => {
     expect(aborted).toBe(false)
   })
 })
+
+// -------------------------------------------------------------------------
+// F-032: Retry on transient OpenRouter errors (429, 502, 503, 504)
+// -------------------------------------------------------------------------
+
+describe('openrouter retry on transient errors', () => {
+  const originalFetch = globalThis.fetch
+  const originalEnv = { ...process.env }
+
+  const successResponse = {
+    ok: true,
+    json: () =>
+      Promise.resolve({
+        choices: [{ message: { content: JSON.stringify({ ok: true }) } }],
+      }),
+  }
+
+  beforeEach(() => {
+    process.env.OPENROUTER_API_KEY = 'sk-or-test-key'
+    process.env.OPENROUTER_MODEL = 'test/model'
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+  })
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch
+    process.env.OPENROUTER_API_KEY = originalEnv.OPENROUTER_API_KEY
+    process.env.OPENROUTER_MODEL = originalEnv.OPENROUTER_MODEL
+    vi.restoreAllMocks()
+    vi.useRealTimers()
+  })
+
+  it('retries on 429 and succeeds on second attempt', async () => {
+    // Fails before fix: 429 throws immediately without retry
+    vi.useFakeTimers()
+
+    globalThis.fetch = vi.fn()
+      .mockResolvedValueOnce({ ok: false, status: 429, text: () => Promise.resolve('rate limited') })
+      .mockResolvedValueOnce(successResponse)
+
+    const promise = callOpenRouter([{ role: 'user', content: 'test' }], {})
+    promise.catch(() => {})
+    await vi.advanceTimersByTimeAsync(2_000)
+    const result = await promise
+    expect(result).toEqual({ ok: true })
+    expect(globalThis.fetch as ReturnType<typeof vi.fn>).toHaveBeenCalledTimes(2)
+  })
+
+  it('gives up after 3 attempts on 502', async () => {
+    // Fails before fix: no retry, only 1 attempt total
+    vi.useFakeTimers()
+
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 502,
+      text: () => Promise.resolve('bad gateway'),
+    })
+
+    const promise = callOpenRouter([{ role: 'user', content: 'test' }], {})
+    promise.catch(() => {})
+    await vi.advanceTimersByTimeAsync(10_000)
+    await expect(promise).rejects.toThrow('analysis service')
+    expect(globalThis.fetch as ReturnType<typeof vi.fn>).toHaveBeenCalledTimes(3)
+  })
+
+  it('does not retry on 401 (non-transient)', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 401,
+      text: () => Promise.resolve('unauthorized'),
+    })
+
+    await expect(
+      callOpenRouter([{ role: 'user', content: 'test' }], {})
+    ).rejects.toThrow('analysis service')
+    expect(globalThis.fetch as ReturnType<typeof vi.fn>).toHaveBeenCalledTimes(1)
+  })
+})
