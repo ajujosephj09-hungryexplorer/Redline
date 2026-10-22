@@ -42,7 +42,7 @@ function severityPill(severity: Severity) {
     case 'moderate':
       return 'bg-severity-moderate text-navy text-xs font-semibold px-2.5 py-0.5 rounded-sm'
     case 'low':
-      return 'text-severity-clear text-xs font-semibold'
+      return 'text-slate-600 text-xs font-semibold'
   }
 }
 
@@ -657,7 +657,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
           </span>
           <span className="text-xs text-slate-500 flex items-center gap-1.5">
             <span className="inline-block w-2 h-2 rounded-full bg-severity-clear shrink-0" />
-            <span><strong className="font-semibold">Clear</strong> — checked and looks fair</span>
+            <span><strong className="font-semibold">Low</strong> — flagged but not urgent</span>
           </span>
         </div>
       )}
@@ -701,8 +701,8 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
           )}
           {lowFlags.length > 0 && (
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-severity-clear mb-2">
-                Clear
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">
+                Low
               </p>
               <div className="space-y-3">
                 {lowFlags.map(({ flag, index }) => (

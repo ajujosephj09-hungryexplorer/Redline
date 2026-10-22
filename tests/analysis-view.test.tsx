@@ -68,6 +68,45 @@ describe('FindingRow — accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-006: severityPill('low') must not use the word "Clear" or text-severity-clear
+// -------------------------------------------------------------------------
+
+describe('severityPill — low severity label', () => {
+  it('low findings group header is labelled "Low", not "Clear"', () => {
+    const LOW_RESULT: AnalysisResult = {
+      summary: 'Test.',
+      flags: [
+        {
+          ruleName: 'Minor Issue',
+          problem: 'Minor thing.',
+          citation: 'Some clause.',
+          severity: 'low',
+          counterOffer: 'Change minor thing.',
+        },
+      ],
+      gaps: [],
+      checklist: [{ ruleName: 'Minor Issue', status: 'flagged' }],
+    }
+
+    render(
+      <AnalysisView
+        documentText="Some clause."
+        documentTitle="Test Contract"
+        initialResult={LOW_RESULT}
+      />
+    )
+
+    // Fails before fix: the group header text is "Clear"
+    expect(screen.queryByText('Clear', { selector: 'p' })).toBeNull()
+    // The group header should say "Low"
+    const lowHeader = screen.getByText('Low', { selector: 'p' })
+    expect(lowHeader).toBeTruthy()
+    // It must not use the clear/green colour
+    expect(lowHeader.className).not.toContain('text-severity-clear')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-004: Anonymous save prompt must appear before the first FindingRow
 // -------------------------------------------------------------------------
 
