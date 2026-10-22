@@ -104,7 +104,7 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
 
   // Scroll to bottom when conversation updates
   useEffect(() => {
@@ -113,12 +113,19 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
     }
   }, [conversation, loading])
 
+  function resetTextareaHeight() {
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto'
+    }
+  }
+
   const submit = useCallback(async () => {
     const trimmed = input.trim()
     if (!trimmed || loading) return
 
     setError('')
     setInput('')
+    resetTextareaHeight()
 
     const userTurn: ConversationTurn = { role: 'user', content: trimmed }
     setConversation((prev) => [...prev, userTurn])
@@ -215,23 +222,28 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
           <p className="text-sm text-severity-critical mb-3">{error}</p>
         )}
 
-        {/* Input row */}
+        {/* Input row — F-060: textarea auto-expands up to 4 rows; Enter submits, Shift+Enter newline */}
         <div className="flex gap-2">
           <label htmlFor="question-input" className="sr-only">
             Ask a question about this contract
           </label>
-          <input
+          <textarea
             ref={inputRef}
             id="question-input"
-            type="text"
+            rows={1}
             value={input}
-            onChange={(e) => setInput(e.target.value.slice(0, MAX_QUESTION_LENGTH))}
+            onChange={(e) => {
+              setInput(e.target.value.slice(0, MAX_QUESTION_LENGTH))
+              // Auto-expand up to ~4 rows (96px)
+              e.target.style.height = 'auto'
+              e.target.style.height = `${Math.min(e.target.scrollHeight, 96)}px`
+            }}
             onKeyDown={handleKeyDown}
             placeholder="e.g. What does the termination clause say?"
             disabled={loading}
             maxLength={MAX_QUESTION_LENGTH}
             aria-describedby="question-char-count"
-            className="flex-1 text-sm border border-slate-300 rounded-md px-3 py-2.5 text-navy placeholder:text-slate-400 focus:outline-none focus:border-navy focus:ring-1 focus:ring-navy disabled:opacity-60"
+            className="flex-1 text-sm border border-slate-300 rounded-md px-3 py-2.5 text-navy placeholder:text-slate-400 focus:outline-none focus:border-navy focus:ring-1 focus:ring-navy disabled:opacity-60 resize-none overflow-hidden"
           />
           <button
             onClick={submit}
