@@ -43,4 +43,25 @@ describe('RateLimiter', () => {
 
     expect(limiter.check('1.2.3.4')).toBe(true)
   })
+
+  // -------------------------------------------------------------------------
+  // F-036: Expired entries must be pruned so the Map stays bounded
+  // -------------------------------------------------------------------------
+
+  it('prunes expired entries from the internal store', () => {
+    // Fails before fix: expired entries accumulate in the Map indefinitely
+    const limiter = new RateLimiter({ windowMs: 1, maxRequests: 10 })
+
+    limiter.check('10.0.0.1')
+    limiter.check('10.0.0.2')
+    limiter.check('10.0.0.3')
+
+    // Busy-wait until the 1ms window expires for all three entries
+    const start = Date.now()
+    while (Date.now() - start < 2) { /* wait */ }
+
+    // Triggering a check on any key should prune all expired entries
+    limiter.check('10.0.0.1')
+    expect(limiter.storeSize).toBe(1) // only 10.0.0.1 remains (just reset)
+  })
 })

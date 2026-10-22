@@ -2,6 +2,12 @@
  * Simple in-memory sliding-window rate limiter.
  * Each instance tracks request counts per key (typically IP address).
  * The Map persists while the serverless function is warm.
+ *
+ * Limitation: state is per-process. Multiple serverless instances (e.g.
+ * on Vercel) each maintain their own store, so the effective per-IP limit
+ * across all instances is maxRequests × number-of-instances. This is
+ * acceptable for a soft-limit defence; a shared store (Redis) would be
+ * required for a hard limit.
  */
 
 interface Entry {
@@ -19,15 +25,26 @@ export class RateLimiter {
     this.maxRequests = opts.maxRequests
   }
 
+  /** Number of keys currently tracked — exposed for testing. */
+  get storeSize(): number {
+    return this.store.size
+  }
+
   /**
    * Returns true if the request should be allowed, false if rate-limited.
-   * Automatically advances the window and prunes expired entries.
+   * Prunes all expired entries on every call to keep the Map bounded.
    */
   check(key: string): boolean {
     const now = Date.now()
+
+    // Prune expired entries so the Map doesn't grow indefinitely
+    for (const [k, e] of this.store) {
+      if (now >= e.resetAt) this.store.delete(k)
+    }
+
     const entry = this.store.get(key)
 
-    if (!entry || now >= entry.resetAt) {
+    if (!entry) {
       this.store.set(key, { count: 1, resetAt: now + this.windowMs })
       return true
     }
