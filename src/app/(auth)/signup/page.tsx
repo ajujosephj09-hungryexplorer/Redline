@@ -79,7 +79,7 @@ export default function SignupPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-navy placeholder:text-slate-400 focus:border-navy focus:ring-0"
+              className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-navy placeholder:text-slate-400 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/30"
               placeholder="you@example.com"
             />
           </div>
@@ -95,7 +95,7 @@ export default function SignupPage() {
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-navy placeholder:text-slate-400 focus:border-navy focus:ring-0"
+              className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-navy placeholder:text-slate-400 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/30"
               placeholder="At least 6 characters"
             />
           </div>
