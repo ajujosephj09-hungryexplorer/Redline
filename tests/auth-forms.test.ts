@@ -130,6 +130,21 @@ describe('analyze page — loading state accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-030: Pencil icon should be visible at opacity-40 resting, not opacity-0
+// -------------------------------------------------------------------------
+
+describe('rules page — pencil icon resting state', () => {
+  it('pencil icon does not use opacity-0 (invisible at rest)', () => {
+    // Fails before fix: opacity-0 makes the icon invisible until hover
+    expect(src('src/app/(app)/rules/page.tsx')).not.toContain('opacity-0 group-hover:opacity-100')
+  })
+
+  it('pencil icon uses opacity-40 at rest', () => {
+    expect(src('src/app/(app)/rules/page.tsx')).toContain('opacity-40')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-029: "Skip to questions" anchor must not be hidden on desktop
 // -------------------------------------------------------------------------
 

@@ -93,7 +93,7 @@ function InlineEdit({
           fill="none"
           stroke="currentColor"
           strokeWidth="1.5"
-          className="shrink-0 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="shrink-0 text-slate-400 opacity-40 group-hover:opacity-100 transition-opacity"
         >
           <path d="M8.5 1.5l2 2L4 10H2v-2L8.5 1.5z" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
