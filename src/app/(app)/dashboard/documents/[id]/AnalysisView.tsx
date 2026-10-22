@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, memo } from 'react'
 import type { AnalysisResult, RiskFlag, Gap, ChecklistItem, Severity } from '@/lib/analysis/types'
 import type { Rule } from '@/lib/rules/types'
 import { getLocalRules } from '@/lib/rules/local'
@@ -55,7 +55,7 @@ function severityLabel(severity: Severity) {
 // FindingRow — expandable risk flag
 // ---------------------------------------------------------------------------
 
-function FindingRow({ flag, open, onToggle }: { flag: RiskFlag; open: boolean; onToggle: () => void }) {
+const FindingRow = memo(function FindingRow({ flag, open, onToggle }: { flag: RiskFlag; open: boolean; onToggle: () => void }) {
   return (
     <div className="border border-slate-200 rounded-md bg-white shadow-sm">
       {/* Header row */}
@@ -112,7 +112,7 @@ function FindingRow({ flag, open, onToggle }: { flag: RiskFlag; open: boolean; o
       </div>
     </div>
   )
-}
+})
 
 // ---------------------------------------------------------------------------
 // GapCard — a missing clause
@@ -299,14 +299,14 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
     }
   }, [result])
 
-  function toggleFlag(index: number) {
+  const toggleFlag = useCallback((index: number) => {
     setOpenFlagIndices((prev) => {
       const next = new Set(prev)
       if (next.has(index)) next.delete(index)
       else next.add(index)
       return next
     })
-  }
+  }, [])
 
   // ---- Loading ----
   if (status === 'idle' || status === 'loading') {

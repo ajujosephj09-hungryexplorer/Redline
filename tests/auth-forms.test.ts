@@ -9,6 +9,25 @@ function src(rel: string) {
 }
 
 // -------------------------------------------------------------------------
+// F-016: toggleFlag must be useCallback-wrapped; FindingRow must be React.memo'd
+// -------------------------------------------------------------------------
+
+describe('AnalysisView — FindingRow memoisation', () => {
+  it('toggleFlag is wrapped in useCallback', () => {
+    const content = src('src/app/(app)/dashboard/documents/[id]/AnalysisView.tsx')
+    // Fails before fix: toggleFlag is a plain function, not useCallback
+    expect(content).toContain('useCallback')
+    expect(content).toMatch(/const toggleFlag\s*=\s*useCallback/)
+  })
+
+  it('FindingRow is wrapped in memo (React.memo)', () => {
+    const content = src('src/app/(app)/dashboard/documents/[id]/AnalysisView.tsx')
+    // Fails before fix: FindingRow is not memoised
+    expect(content).toMatch(/memo\(function FindingRow|React\.memo/)
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-015: loadingMessages must be defined at module scope, not inside component
 // -------------------------------------------------------------------------
 
