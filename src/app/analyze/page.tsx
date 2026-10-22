@@ -64,7 +64,7 @@ export default function AnalyzePage() {
       <div className="min-h-screen">
         <NavBar />
         <div className="max-w-3xl mx-auto px-6 py-10">
-          <p className="text-sm text-slate-500">Loading...</p>
+          <p role="status" className="text-sm text-slate-500">Loading...</p>
         </div>
       </div>
     )

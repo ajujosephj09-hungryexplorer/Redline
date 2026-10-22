@@ -119,6 +119,17 @@ describe('auth form focus rings', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-024: analyze/page.tsx loading state must have role="status"
+// -------------------------------------------------------------------------
+
+describe('analyze page — loading state accessibility', () => {
+  it('the Loading... paragraph has role="status"', () => {
+    // Fails before fix: plain <p> with no role, screen readers won't announce it
+    expect(src('src/app/analyze/page.tsx')).toContain('role="status"')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-023: amber-600 lacks contrast on white; all amber text must be amber-700
 // -------------------------------------------------------------------------
 
