@@ -45,7 +45,10 @@ export default function DocumentAnalysisClient({ documentId }: Props) {
           .eq('id', documentId)
           .single(),
         fetchRules(supabase).catch(() => undefined),
-        fetchAnalysis(supabase, documentId).catch(() => null),
+        fetchAnalysis(supabase, documentId).catch((err) => {
+          console.error('Failed to load cached analysis:', err instanceof Error ? err.message : err)
+          return null
+        }),
       ])
 
       if (cancelled) return

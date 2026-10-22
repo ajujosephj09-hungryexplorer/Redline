@@ -17,7 +17,8 @@ export async function fetchAnalysis(
     .limit(1)
     .maybeSingle()
 
-  if (error || !data) return null
+  if (error) throw new Error(error.message)
+  if (!data) return null
   return { result: data.result as AnalysisResult, createdAt: data.created_at }
 }
 
