@@ -130,6 +130,36 @@ describe('analyze page — loading state accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-028: criticalFlags/moderateFlags/lowFlags must be wrapped in useMemo
+// -------------------------------------------------------------------------
+
+describe('AnalysisView — memoised flag partitions', () => {
+  it('imports useMemo from react', () => {
+    // Fails before fix: useMemo is not imported
+    expect(src('src/app/(app)/dashboard/documents/[id]/AnalysisView.tsx')).toContain('useMemo')
+  })
+
+  it('criticalFlags is derived via useMemo', () => {
+    // Fails before fix: plain const that re-runs every render
+    expect(src('src/app/(app)/dashboard/documents/[id]/AnalysisView.tsx')).toMatch(
+      /criticalFlags\s*=\s*useMemo/
+    )
+  })
+
+  it('moderateFlags is derived via useMemo', () => {
+    expect(src('src/app/(app)/dashboard/documents/[id]/AnalysisView.tsx')).toMatch(
+      /moderateFlags\s*=\s*useMemo/
+    )
+  })
+
+  it('lowFlags is derived via useMemo', () => {
+    expect(src('src/app/(app)/dashboard/documents/[id]/AnalysisView.tsx')).toMatch(
+      /lowFlags\s*=\s*useMemo/
+    )
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-027: hover:bg-slate-700/800 on primary buttons → hover:bg-navy
 // -------------------------------------------------------------------------
 

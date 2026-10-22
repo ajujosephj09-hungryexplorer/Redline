@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, memo } from 'react'
+import { useEffect, useState, useCallback, useMemo, memo } from 'react'
 import type { AnalysisResult, RiskFlag, Gap, ChecklistItem, Severity } from '@/lib/analysis/types'
 import type { Rule } from '@/lib/rules/types'
 import { getLocalRules } from '@/lib/rules/local'
@@ -361,9 +361,18 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
     setOpenFlagIndices(new Set())
   }
 
-  const criticalFlags = flags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'critical')
-  const moderateFlags = flags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'moderate')
-  const lowFlags = flags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'low')
+  const criticalFlags = useMemo(
+    () => flags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'critical'),
+    [flags]
+  )
+  const moderateFlags = useMemo(
+    () => flags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'moderate'),
+    [flags]
+  )
+  const lowFlags = useMemo(
+    () => flags.map((f, i) => ({ flag: f, index: i })).filter(({ flag }) => flag.severity === 'low'),
+    [flags]
+  )
   const allExpanded = flags.length > 0 && openFlagIndices.size === flags.length
 
   return (
