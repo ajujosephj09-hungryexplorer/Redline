@@ -120,11 +120,11 @@ function FindingRow({ flag, open, onToggle }: { flag: RiskFlag; open: boolean; o
 
 function GapCard({ gap }: { gap: Gap }) {
   return (
-    <div className="bg-amber-50 border border-amber-200 rounded-md">
+    <div data-testid="gap-card" className="bg-white border border-slate-200 rounded-md shadow-sm">
       <div className="px-4 py-3 space-y-3">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <span className="text-xs font-semibold text-amber-600 uppercase tracking-wider">
+          <span className="bg-severity-moderate text-navy text-xs font-semibold px-2.5 py-0.5 rounded-sm">
             Missing
           </span>
           <span className="text-sm font-semibold text-navy">

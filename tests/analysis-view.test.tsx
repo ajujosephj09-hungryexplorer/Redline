@@ -68,6 +68,40 @@ describe('FindingRow — accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-011: GapCard must not use amber as background (Severity Monopoly Rule)
+// -------------------------------------------------------------------------
+
+describe('GapCard — amber background', () => {
+  it('gap card root element does not use bg-amber-50 or border-amber-200', () => {
+    const GAP_RESULT: AnalysisResult = {
+      summary: 'Missing IP clause.',
+      flags: [],
+      gaps: [
+        {
+          ruleName: 'IP Assignment',
+          explanation: 'No IP assignment clause found.',
+          counterOffer: 'All work product created under this agreement is assigned to Client.',
+        },
+      ],
+      checklist: [{ ruleName: 'IP Assignment', status: 'gap' }],
+    }
+
+    render(
+      <AnalysisView
+        documentText="Some contract."
+        documentTitle="Test Contract"
+        initialResult={GAP_RESULT}
+      />
+    )
+
+    const card = screen.getByTestId('gap-card')
+    // Fails before fix: card had bg-amber-50 border-amber-200
+    expect(card.className).not.toContain('bg-amber-50')
+    expect(card.className).not.toContain('border-amber-200')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-006: severityPill('low') must not use the word "Clear" or text-severity-clear
 // -------------------------------------------------------------------------
 
