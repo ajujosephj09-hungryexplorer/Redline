@@ -91,9 +91,8 @@ export async function callOpenRouter(
         continue
       }
 
-      // DEBUG: surface status + truncated body so the error appears in the UI
       throw new Error(
-        `[DEBUG] OpenRouter ${res.status}: ${text.slice(0, 300)}`
+        'The analysis service returned an error. Please try again in a moment.'
       )
     }
 
