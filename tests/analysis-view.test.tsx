@@ -182,6 +182,188 @@ describe('QuestionBox — accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-049: FindingRow expand button must have aria-label with the finding name
+// -------------------------------------------------------------------------
+
+describe('FindingRow — aria-label (F-049)', () => {
+  it('accordion button aria-label contains the ruleName', () => {
+    render(
+      <AnalysisView
+        documentText="Payment is due within 90 days."
+        documentTitle="Test Contract"
+        initialResult={MODERATE_RESULT}
+      />
+    )
+
+    const ruleTexts = screen.getAllByText('Payment Terms')
+    const accordionBtn = ruleTexts
+      .map((el) => el.closest('button'))
+      .filter(Boolean)[0] as HTMLButtonElement
+
+    // Fails before fix: button has no aria-label
+    expect(accordionBtn).toHaveAttribute('aria-label', expect.stringContaining('Payment Terms'))
+  })
+})
+
+// -------------------------------------------------------------------------
+// F-051: "Jump to critical findings" anchor link
+// -------------------------------------------------------------------------
+
+describe('AnalysisView — jump to critical findings (F-051)', () => {
+  const CRITICAL_RESULT: AnalysisResult = {
+    summary: 'Contract with a critical finding.',
+    flags: [
+      {
+        ruleName: 'IP Assignment',
+        problem: 'Assigns all IP.',
+        citation: 'The Contractor assigns all IP to Client.',
+        severity: 'critical',
+        counterOffer: 'Limit assignment to deliverables.',
+      },
+    ],
+    gaps: [],
+    checklist: [{ ruleName: 'IP Assignment', status: 'flagged' }],
+  }
+
+  it('shows anchor link when critical flags are present', () => {
+    render(
+      <AnalysisView
+        documentText="The Contractor assigns all IP to Client."
+        documentTitle="Test Contract"
+        initialResult={CRITICAL_RESULT}
+      />
+    )
+    // Fails before fix: no jump link exists
+    const anchor = screen.getByRole('link', { name: /jump to critical findings/i })
+    expect(anchor).toHaveAttribute('href', '#critical-findings')
+  })
+
+  it('does not show anchor link when no critical flags', () => {
+    render(
+      <AnalysisView
+        documentText="Payment is due within 90 days."
+        documentTitle="Test Contract"
+        initialResult={MODERATE_RESULT}
+      />
+    )
+    expect(screen.queryByRole('link', { name: /jump to critical findings/i })).toBeNull()
+  })
+})
+
+// -------------------------------------------------------------------------
+// F-053: "Your response" card must render when flags exist
+// -------------------------------------------------------------------------
+
+describe('AnalysisView — your response card (F-053)', () => {
+  it('renders "Your response" section and copy button when flags exist', () => {
+    render(
+      <AnalysisView
+        documentText="Payment is due within 90 days."
+        documentTitle="Test Contract"
+        initialResult={MODERATE_RESULT}
+      />
+    )
+    // Fails before fix: no "Your response" card exists
+    expect(screen.getByText(/your response/i, { selector: 'h2' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: /copy all counter-offers/i })).toBeTruthy()
+  })
+
+  it('does not render "Your response" card when no flags', () => {
+    const CLEAN: AnalysisResult = { summary: 'Clean.', flags: [], gaps: [], checklist: [] }
+    render(
+      <AnalysisView
+        documentText="Some contract."
+        documentTitle="Test Contract"
+        initialResult={CLEAN}
+      />
+    )
+    expect(screen.queryByRole('button', { name: /copy all counter-offers/i })).toBeNull()
+  })
+})
+
+// -------------------------------------------------------------------------
+// F-055: Stale-analysis banner when rulesChangedSinceAnalysis is true
+// -------------------------------------------------------------------------
+
+describe('AnalysisView — stale rules banner (F-055)', () => {
+  it('shows stale banner when rulesChangedSinceAnalysis is true', () => {
+    render(
+      <AnalysisView
+        documentText="Payment is due within 90 days."
+        documentTitle="Test Contract"
+        initialResult={MODERATE_RESULT}
+        rulesChangedSinceAnalysis
+      />
+    )
+    // Fails before fix: no stale banner exists
+    expect(screen.getByText(/your rules changed since this analysis/i)).toBeTruthy()
+  })
+
+  it('does not show stale banner when rulesChangedSinceAnalysis is false', () => {
+    render(
+      <AnalysisView
+        documentText="Payment is due within 90 days."
+        documentTitle="Test Contract"
+        initialResult={MODERATE_RESULT}
+        rulesChangedSinceAnalysis={false}
+      />
+    )
+    expect(screen.queryByText(/your rules changed since this analysis/i)).toBeNull()
+  })
+})
+
+// -------------------------------------------------------------------------
+// F-050: Save status is shown in the cache status line
+// -------------------------------------------------------------------------
+
+describe('AnalysisView — save status (F-050)', () => {
+  it('shows "Saved" when saveStatus is "saved"', () => {
+    render(
+      <AnalysisView
+        documentText="Payment is due within 90 days."
+        documentTitle="Test Contract"
+        initialResult={MODERATE_RESULT}
+        saveStatus="saved"
+      />
+    )
+    // Fails before fix: no save status UI
+    expect(screen.getByText('Saved')).toBeTruthy()
+  })
+
+  it('shows retry button when saveStatus is "failed"', () => {
+    render(
+      <AnalysisView
+        documentText="Payment is due within 90 days."
+        documentTitle="Test Contract"
+        initialResult={MODERATE_RESULT}
+        saveStatus="failed"
+      />
+    )
+    expect(screen.getByText(/failed to save/i)).toBeTruthy()
+    expect(screen.getByRole('button', { name: /retry/i })).toBeTruthy()
+  })
+})
+
+// -------------------------------------------------------------------------
+// F-060: Question input must be a textarea
+// -------------------------------------------------------------------------
+
+describe('QuestionBox — textarea (F-060)', () => {
+  it('question input is rendered as a textarea', () => {
+    render(
+      <AnalysisView
+        documentText="Payment is due within 90 days."
+        documentTitle="Test Contract"
+        initialResult={MODERATE_RESULT}
+      />
+    )
+    const input = screen.getByRole('textbox', { name: /ask a question about this contract/i })
+    // Fails before fix: element was <input>, not <textarea>
+    expect(input.tagName.toLowerCase()).toBe('textarea')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-004: Anonymous save prompt must appear before the first FindingRow
 // -------------------------------------------------------------------------
 

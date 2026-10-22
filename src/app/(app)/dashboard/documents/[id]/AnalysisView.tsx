@@ -16,6 +16,11 @@ interface Props {
   initialResult?: AnalysisResult
   analysedAt?: string
   onAnalysisComplete?: (result: AnalysisResult) => void
+  /** Set by parent when rule set has changed since this analysis was saved. */
+  rulesChangedSinceAnalysis?: boolean
+  /** Save status propagated from parent (DocumentAnalysisClient). */
+  saveStatus?: 'saving' | 'saved' | 'failed'
+  onRetrySave?: () => void
 }
 
 function formatRelativeDate(iso: string): string {
@@ -62,6 +67,7 @@ const FindingRow = memo(function FindingRow({ flag, open, onToggle }: { flag: Ri
       <button
         onClick={onToggle}
         aria-expanded={open}
+        aria-label={`${open ? 'Collapse' : 'Expand'} ${flag.ruleName}`}
         className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors rounded-md"
       >
         <span className={severityPill(flag.severity)}>
@@ -105,8 +111,8 @@ const FindingRow = memo(function FindingRow({ flag, open, onToggle }: { flag: Ri
               </div>
             </div>
 
-            {/* Counter-offer block */}
-            <CounterOfferBlock initialText={flag.counterOffer} />
+            {/* Counter-offer block — F-054: pass citation for in-edit reference */}
+            <CounterOfferBlock initialText={flag.counterOffer} citation={flag.citation} />
           </div>
         </div>
       </div>
@@ -140,6 +146,56 @@ function GapCard({ gap }: { gap: Gap }) {
         {/* Suggested language */}
         <CounterOfferBlock label="Suggested language" initialText={gap.counterOffer} />
       </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// YourResponseCard — F-053: copy all counter-offers as negotiation template
+// ---------------------------------------------------------------------------
+
+function YourResponseCard({ flags, criticalCount, moderateCount }: { flags: RiskFlag[]; criticalCount: number; moderateCount: number }) {
+  const [copied, setCopied] = useState(false)
+
+  async function copyAll() {
+    const text = flags
+      .map((f) => `${f.ruleName}\n${f.counterOffer}`)
+      .join('\n\n')
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    } catch {
+      // Clipboard API may not be available in all contexts
+    }
+  }
+
+  const parts: string[] = []
+  if (criticalCount > 0) parts.push(`${criticalCount} critical`)
+  if (moderateCount > 0) parts.push(`${moderateCount} moderate`)
+  const issueSummary = parts.join(' and ')
+  const totalOther = flags.length - criticalCount - moderateCount
+  const otherLabel = totalOther > 0 ? ` and ${totalOther} low` : ''
+
+  return (
+    <div className="mt-6 border border-slate-200 rounded-md bg-white shadow-sm p-5">
+      <h2 className="text-sm uppercase tracking-wider font-semibold text-slate-500 mb-2">
+        Your response
+      </h2>
+      <p className="text-sm text-slate-700 mb-3">
+        You have {issueSummary}{otherLabel} {flags.length === 1 ? 'issue' : 'issues'} to raise.
+        Copy all counter-offers to build your negotiation reply.
+      </p>
+      <button
+        onClick={copyAll}
+        className={`text-xs font-semibold border rounded px-3 py-1.5 transition-colors ${
+          copied
+            ? 'border-severity-clear text-severity-clear'
+            : 'border-slate-200 text-slate-500 hover:border-navy hover:text-navy'
+        }`}
+      >
+        {copied ? 'Copied' : 'Copy all counter-offers'}
+      </button>
     </div>
   )
 }
@@ -215,7 +271,7 @@ const LOADING_MESSAGES = [
   'Wrapping up the analysis...',
 ]
 
-export default function AnalysisView({ documentText, documentTitle, rules: externalRules, isAnonymous, onReset, initialResult, analysedAt, onAnalysisComplete }: Props) {
+export default function AnalysisView({ documentText, documentTitle, rules: externalRules, isAnonymous, onReset, initialResult, analysedAt, onAnalysisComplete, rulesChangedSinceAnalysis, saveStatus, onRetrySave }: Props) {
   const [status, setStatus] = useState<Status>(() => initialResult ? 'done' : 'idle')
   const [result, setResult] = useState<AnalysisResult | null>(() => initialResult ?? null)
   const [isFromCache, setIsFromCache] = useState(() => !!initialResult)
@@ -272,9 +328,16 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
         const data: AnalysisResult = await res.json()
         if (cancelled) return
 
-        setResult(data)
+        // F-055: attach rule fingerprint so parent can detect staleness later
+        const ruleFingerprint = rules
+          .filter((r) => r.enabled)
+          .map((r) => r.id)
+          .sort()
+        const resultWithFingerprint: AnalysisResult = { ...data, ruleFingerprint }
+
+        setResult(resultWithFingerprint)
         setStatus('done')
-        onAnalysisComplete?.(data)
+        onAnalysisComplete?.(resultWithFingerprint)
       } catch (err) {
         if (cancelled) return
         setErrorMsg(
@@ -393,7 +456,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
 
       {/* Cache status line — shown for all saved documents, not anonymous */}
       {status === 'done' && !isAnonymous && (
-        <div className="flex items-center gap-3 mt-1">
+        <div className="flex items-center gap-3 mt-1 flex-wrap">
           {isFromCache && analysedAt && (
             <span className="text-xs text-slate-400">
               Analyzed {formatRelativeDate(analysedAt)}
@@ -405,6 +468,24 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
           >
             Re-analyze
           </button>
+          {/* F-050: save status */}
+          {saveStatus === 'saving' && (
+            <span className="text-xs text-slate-400">Saving...</span>
+          )}
+          {saveStatus === 'saved' && (
+            <span className="text-xs text-slate-400">Saved</span>
+          )}
+          {saveStatus === 'failed' && (
+            <span className="text-xs text-slate-400">
+              Failed to save.{' '}
+              <button
+                onClick={onRetrySave}
+                className="underline underline-offset-2 hover:text-navy transition-colors"
+              >
+                Retry
+              </button>
+            </span>
+          )}
         </div>
       )}
 
@@ -417,6 +498,21 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
           {result?.summary}
         </p>
       </div>
+
+      {/* F-055: Stale-analysis banner */}
+      {rulesChangedSinceAnalysis && (
+        <div className="mt-3 border border-slate-200 bg-slate-50 rounded-md px-4 py-3 flex items-center justify-between gap-4">
+          <p className="text-sm text-slate-700">
+            Your rules changed since this analysis.
+          </p>
+          <button
+            onClick={() => setRetryCount((c) => c + 1)}
+            className="text-sm font-semibold text-navy underline underline-offset-2 shrink-0 hover:opacity-70 transition-opacity"
+          >
+            Re-analyze
+          </button>
+        </div>
+      )}
 
       {/* Anonymous save banner — shown immediately after summary so it is seen before findings */}
       {isAnonymous && (
@@ -439,12 +535,23 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
           <p className="mt-3 text-sm text-slate-500">
             Expand each finding below to see the exact contract language and a counter-offer you can send back.
           </p>
-          <a
-            href="#question-box"
-            className="mt-1 text-xs text-slate-400 hover:text-navy transition-colors inline-block"
-          >
-            Skip to questions ↓
-          </a>
+          <div className="flex items-center gap-4 mt-1">
+            {/* F-051: jump link when critical findings are present */}
+            {criticalFlags.length > 0 && (
+              <a
+                href="#critical-findings"
+                className="text-xs font-semibold text-severity-critical hover:opacity-70 transition-opacity"
+              >
+                Jump to critical findings ↓
+              </a>
+            )}
+            <a
+              href="#question-box"
+              className="text-xs text-slate-400 hover:text-navy transition-colors"
+            >
+              Skip to questions ↓
+            </a>
+          </div>
         </>
       )}
 
@@ -526,7 +633,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
       {flags.length > 0 && (
         <div className="mt-4 space-y-5">
           {criticalFlags.length > 0 && (
-            <div>
+            <div id="critical-findings">
               <p className="text-xs font-semibold uppercase tracking-wider text-severity-critical mb-2">
                 Critical
               </p>
@@ -592,6 +699,11 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
             {gaps.map((gap) => <GapCard key={gap.ruleName} gap={gap} />)}
           </div>
         </div>
+      )}
+
+      {/* F-053: "Your response" card — copy all counter-offers as a negotiation template */}
+      {flags.length > 0 && (
+        <YourResponseCard flags={flags} criticalCount={criticalCount} moderateCount={moderateCount} />
       )}
 
       <hr className="border-t border-slate-200 my-8" />
