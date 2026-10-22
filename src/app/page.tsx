@@ -127,7 +127,7 @@ function FindingRow({
               </p>
             </div>
 
-            <div className="bg-emerald-50 border-l border-severity-clear px-4 py-3">
+            <div className="bg-counter-offer-bg border-l border-severity-clear px-4 py-3">
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
                 Counter-offer
               </p>

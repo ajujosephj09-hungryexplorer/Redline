@@ -80,7 +80,7 @@ export default function CounterOfferBlock({ label = 'Counter-offer', initialText
           </div>
         </div>
       ) : (
-        <div className="bg-emerald-50 border-l-4 border-severity-clear rounded-r-md p-3">
+        <div className="bg-counter-offer-bg border-l-4 border-severity-clear rounded-r-md p-3">
           <p className="text-sm text-navy leading-relaxed whitespace-pre-wrap">
             {counterText}
           </p>

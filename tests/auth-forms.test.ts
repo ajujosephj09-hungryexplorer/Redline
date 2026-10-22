@@ -130,6 +130,26 @@ describe('analyze page — loading state accessibility', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-043: counter-offer blocks must use bg-counter-offer-bg token, not bg-emerald-50
+// -------------------------------------------------------------------------
+
+describe('counter-offer blocks use design token', () => {
+  const counterOfferFiles = [
+    'src/app/page.tsx',
+    'src/components/CounterOfferBlock.tsx',
+  ]
+
+  for (const file of counterOfferFiles) {
+    it(`${file} uses bg-counter-offer-bg, not bg-emerald-50`, () => {
+      // Fails before fix: hardcoded emerald-50 bypasses the token
+      const content = src(file)
+      expect(content).not.toContain('bg-emerald-50')
+      expect(content).toContain('bg-counter-offer-bg')
+    })
+  }
+})
+
+// -------------------------------------------------------------------------
 // F-039: Login subtitle must not re-pitch returning users
 // -------------------------------------------------------------------------
 

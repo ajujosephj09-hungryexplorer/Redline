@@ -9,6 +9,7 @@ export default {
       colors: {
         navy: '#1e293b',
         error: '#dc2626',
+        'counter-offer-bg': '#ecfdf5',
         severity: {
           critical: '#dc2626',
           moderate: '#f59e0b',
