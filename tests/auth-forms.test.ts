@@ -9,6 +9,26 @@ function src(rel: string) {
 }
 
 // -------------------------------------------------------------------------
+// F-009: Decorative spinners must be aria-hidden
+// -------------------------------------------------------------------------
+
+describe('decorative spinners are aria-hidden', () => {
+  it('AnalysisView loading spinner has aria-hidden="true"', () => {
+    const lines = src('src/app/(app)/dashboard/documents/[id]/AnalysisView.tsx').split('\n')
+    const spinnerLine = lines.find((l) => l.includes('animate-spin'))
+    // Fails before fix: spinner line has no aria-hidden
+    expect(spinnerLine).toContain('aria-hidden')
+  })
+
+  it('QuestionBox loading spinner has aria-hidden="true"', () => {
+    const lines = src('src/components/QuestionBox.tsx').split('\n')
+    const spinnerLine = lines.find((l) => l.includes('animate-spin'))
+    // Fails before fix: spinner line has no aria-hidden
+    expect(spinnerLine).toContain('aria-hidden')
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-002: Auth inputs must not use focus:ring-0 (removes focus indicator)
 // -------------------------------------------------------------------------
 

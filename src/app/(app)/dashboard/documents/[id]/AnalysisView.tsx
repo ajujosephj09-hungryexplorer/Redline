@@ -314,7 +314,7 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
       <div className="max-w-3xl mx-auto" role="status" aria-live="polite">
         <h1 className="text-2xl font-bold text-navy">{documentTitle}</h1>
         <div className="mt-6 flex items-center gap-3">
-          <div className="h-5 w-5 border-2 border-navy border-t-transparent rounded-full animate-spin" />
+          <div aria-hidden="true" className="h-5 w-5 border-2 border-navy border-t-transparent rounded-full animate-spin" />
           <p
             key={loadingMsgIndex}
             className="text-sm text-slate-600 animate-fadeIn"

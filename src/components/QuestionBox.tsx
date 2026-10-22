@@ -202,7 +202,7 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
                   Redline
                 </p>
                 <div className="flex items-center gap-2">
-                  <div className="h-3.5 w-3.5 border-2 border-navy border-t-transparent rounded-full animate-spin" />
+                  <div aria-hidden="true" className="h-3.5 w-3.5 border-2 border-navy border-t-transparent rounded-full animate-spin" />
                   <p className="text-sm text-slate-500">Reading the contract...</p>
                 </div>
               </div>
