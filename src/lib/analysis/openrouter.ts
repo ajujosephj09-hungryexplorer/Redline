@@ -19,7 +19,8 @@ function sleep(ms: number): Promise<void> {
  */
 export async function callOpenRouter(
   messages: Message[],
-  jsonSchema: object
+  jsonSchema: object,
+  opts: { reasoningEffort?: 'low' | 'medium' | 'high' } = {}
 ): Promise<unknown> {
   const apiKey = process.env.OPENROUTER_API_KEY
   if (!apiKey) {
@@ -46,7 +47,7 @@ export async function callOpenRouter(
         schema: jsonSchema,
       },
     },
-    reasoning: { effort: 'low' },
+    reasoning: { effort: opts.reasoningEffort ?? 'low' },
   }
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {

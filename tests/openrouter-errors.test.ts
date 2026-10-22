@@ -139,6 +139,57 @@ describe('openrouter error sanitization', () => {
 })
 
 // -------------------------------------------------------------------------
+// F-040: callOpenRouter must accept optional reasoningEffort parameter
+// -------------------------------------------------------------------------
+
+describe('openrouter reasoningEffort', () => {
+  const originalFetch = globalThis.fetch
+  const originalEnv = { ...process.env }
+
+  beforeEach(() => {
+    process.env.OPENROUTER_API_KEY = 'sk-or-test-key'
+    process.env.OPENROUTER_MODEL = 'test/model'
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+  })
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch
+    process.env.OPENROUTER_API_KEY = originalEnv.OPENROUTER_API_KEY
+    process.env.OPENROUTER_MODEL = originalEnv.OPENROUTER_MODEL
+    vi.restoreAllMocks()
+  })
+
+  it('defaults to reasoning effort "low" when not specified', async () => {
+    let capturedBody: unknown
+    globalThis.fetch = vi.fn().mockImplementation(async (_url: string, init: RequestInit) => {
+      capturedBody = JSON.parse(init.body as string)
+      return {
+        ok: true,
+        json: () => Promise.resolve({ choices: [{ message: { content: JSON.stringify({ ok: true }) } }] }),
+      }
+    })
+
+    await callOpenRouter([{ role: 'user', content: 'test' }], {})
+    expect((capturedBody as Record<string, unknown>).reasoning).toEqual({ effort: 'low' })
+  })
+
+  it('passes the supplied reasoningEffort in the request body', async () => {
+    // Fails before fix: effort is hardcoded, no parameter exists
+    let capturedBody: unknown
+    globalThis.fetch = vi.fn().mockImplementation(async (_url: string, init: RequestInit) => {
+      capturedBody = JSON.parse(init.body as string)
+      return {
+        ok: true,
+        json: () => Promise.resolve({ choices: [{ message: { content: JSON.stringify({ ok: true }) } }] }),
+      }
+    })
+
+    await callOpenRouter([{ role: 'user', content: 'test' }], {}, { reasoningEffort: 'medium' })
+    expect((capturedBody as Record<string, unknown>).reasoning).toEqual({ effort: 'medium' })
+  })
+})
+
+// -------------------------------------------------------------------------
 // F-021: 25-second AbortController timeout on OpenRouter fetch
 // -------------------------------------------------------------------------
 
