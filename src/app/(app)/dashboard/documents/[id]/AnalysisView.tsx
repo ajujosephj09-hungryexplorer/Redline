@@ -80,6 +80,7 @@ const FindingRow = memo(function FindingRow({ flag, open, onToggle }: { flag: Ri
           {flag.problem}
         </span>
         <svg
+          aria-hidden="true"
           className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-300 ease-out ${
             open ? 'rotate-180' : ''
           }`}
@@ -269,6 +270,7 @@ const LOADING_MESSAGES = [
   'Identifying risks and missing protections...',
   'Drafting counter offers for flagged clauses...',
   'Wrapping up the analysis...',
+  'Still working, this usually takes 15 to 30 seconds...',
 ]
 
 export default function AnalysisView({ documentText, documentTitle, rules: externalRules, isAnonymous, onReset, initialResult, analysedAt, onAnalysisComplete, rulesChangedSinceAnalysis, saveStatus, onRetrySave }: Props) {
@@ -279,6 +281,14 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0)
   const [retryCount, setRetryCount] = useState(0)
   const [openFlagIndices, setOpenFlagIndices] = useState<Set<number>>(new Set())
+
+  // F-065: warn before leaving during analysis
+  useEffect(() => {
+    if (status !== 'loading') return
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault() }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [status])
 
   useEffect(() => {
     if (status !== 'loading') {

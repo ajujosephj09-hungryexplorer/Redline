@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 const appLinks = [
@@ -13,6 +13,7 @@ const appLinks = [
 
 export default function NavBar() {
   const router = useRouter()
+  const pathname = usePathname()
   const [authed, setAuthed] = useState<boolean | null>(null)
 
   useEffect(() => {
@@ -47,15 +48,23 @@ export default function NavBar() {
           </Link>
           {authed === true && (
             <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-              {appLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-sm text-slate-600 hover:text-navy transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {appLinks.map((link) => {
+                const active = pathname.startsWith(link.href)
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    aria-current={active ? 'page' : undefined}
+                    className={`text-sm transition-colors ${
+                      active
+                        ? 'text-navy font-semibold'
+                        : 'text-slate-600 hover:text-navy'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              })}
             </div>
           )}
         </div>
@@ -78,7 +87,7 @@ export default function NavBar() {
               </Link>
               <Link
                 href="/signup"
-                className="text-sm bg-navy text-white font-semibold px-4 py-2.5 rounded-md hover:bg-navy transition-colors"
+                className="text-sm bg-navy text-white font-semibold px-4 py-2.5 rounded-md hover:bg-navy-hover transition-colors"
               >
                 Sign up
               </Link>

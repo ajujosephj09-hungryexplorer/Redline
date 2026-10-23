@@ -176,7 +176,7 @@ export default function UploadForm({ onParsed, submitLabel }: UploadFormProps) {
               <button
                 onClick={handleParse}
                 disabled={parsing}
-                className="mt-4 bg-navy text-white font-semibold text-sm px-8 py-3.5 rounded-md hover:bg-navy transition-colors disabled:opacity-50"
+                className="mt-4 bg-navy text-white font-semibold text-sm px-8 py-3.5 rounded-md hover:bg-navy-hover transition-colors disabled:opacity-50"
               >
                 {parsing ? 'Reading...' : 'Read file'}
               </button>
@@ -222,7 +222,7 @@ export default function UploadForm({ onParsed, submitLabel }: UploadFormProps) {
               <button
                 onClick={handleParse}
                 disabled={parsing}
-                className="bg-navy text-white font-semibold text-sm px-8 py-3.5 rounded-md hover:bg-navy transition-colors disabled:opacity-50"
+                className="bg-navy text-white font-semibold text-sm px-8 py-3.5 rounded-md hover:bg-navy-hover transition-colors disabled:opacity-50"
               >
                 {parsing ? 'Reading...' : 'Read text'}
               </button>
@@ -253,7 +253,7 @@ export default function UploadForm({ onParsed, submitLabel }: UploadFormProps) {
 
           <button
             onClick={() => onParsed({ title: parsed.title, text: parsed.text })}
-            className="mt-4 bg-navy text-white font-semibold text-sm px-8 py-3.5 rounded-md hover:bg-navy transition-colors"
+            className="mt-4 bg-navy text-white font-semibold text-sm px-8 py-3.5 rounded-md hover:bg-navy-hover transition-colors"
           >
             {submitLabel}
           </button>
