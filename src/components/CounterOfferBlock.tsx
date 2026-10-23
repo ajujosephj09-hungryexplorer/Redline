@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 
 interface Props {
   label?: string
@@ -14,6 +14,14 @@ export default function CounterOfferBlock({ label = 'Counter-offer', initialText
   const [counterText, setCounterText] = useState(initialText)
   const [editingCounter, setEditingCounter] = useState(false)
   const [draftValue, setDraftValue] = useState('')
+
+  // F-065: warn before leaving during counter-offer editing
+  useEffect(() => {
+    if (!editingCounter) return
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault() }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [editingCounter])
 
   const copyCounter = useCallback(async () => {
     try {
@@ -86,6 +94,7 @@ export default function CounterOfferBlock({ label = 'Counter-offer', initialText
             onChange={(e) => setDraftValue(e.target.value)}
             rows={4}
             autoFocus
+            aria-label="Edit counter-offer"
             onKeyDown={(e) => { if (e.key === 'Escape') cancelEdit() }}
             className="w-full text-sm text-navy border border-slate-300 rounded-md p-3 focus:outline-none focus:ring-1 focus:ring-navy resize-y leading-relaxed"
           />

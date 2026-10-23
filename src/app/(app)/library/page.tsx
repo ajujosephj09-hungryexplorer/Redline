@@ -109,7 +109,7 @@ export default function LibraryPage() {
         </p>
         <Link
           href="/login"
-          className="inline-block mt-4 bg-navy text-white font-semibold text-sm px-6 py-3 rounded-md hover:bg-navy transition-colors"
+          className="inline-block mt-4 bg-navy text-white font-semibold text-sm px-6 py-3 rounded-md hover:bg-navy-hover transition-colors"
         >
           Sign in
         </Link>
@@ -145,7 +145,7 @@ export default function LibraryPage() {
     return (
       <div>
         <h1 className="text-2xl font-bold text-navy">Your contracts</h1>
-        <p className="text-sm text-navy font-semibold mt-2">{error}</p>
+        <p className="text-sm text-error mt-2">{error}</p>
       </div>
     )
   }
@@ -171,7 +171,7 @@ export default function LibraryPage() {
         </ol>
         <Link
           href="/upload"
-          className="inline-block mt-6 bg-navy text-white font-semibold text-sm px-6 py-3 rounded-md hover:bg-navy transition-colors"
+          className="inline-block mt-6 bg-navy text-white font-semibold text-sm px-6 py-3 rounded-md hover:bg-navy-hover transition-colors"
         >
           Upload a contract
         </Link>
@@ -192,7 +192,7 @@ export default function LibraryPage() {
       </div>
 
       {error && (
-        <p className="text-sm text-navy font-semibold mt-3">{error}</p>
+        <p className="text-sm text-error mt-3">{error}</p>
       )}
 
       <div className="mt-6 border border-slate-200 rounded-md divide-y divide-slate-200">

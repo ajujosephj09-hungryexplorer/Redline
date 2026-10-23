@@ -187,6 +187,8 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
         {conversation.length > 0 && (
           <div
             ref={scrollRef}
+            role="log"
+            aria-live="polite"
             className="max-h-96 overflow-y-auto space-y-4 mb-4 pr-1"
           >
             {conversation.map((turn, i) => (
@@ -219,7 +221,7 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
 
         {/* Error message */}
         {error && (
-          <p className="text-sm text-severity-critical mb-3">{error}</p>
+          <p className="text-sm text-error mb-3">{error}</p>
         )}
 
         {/* Input row — F-060: textarea auto-expands up to 4 rows; Enter submits, Shift+Enter newline */}
@@ -248,7 +250,7 @@ export default function QuestionBox({ documentText, analysisResult }: Props) {
           <button
             onClick={submit}
             disabled={loading || input.trim().length === 0}
-            className="bg-navy text-white text-sm font-semibold px-5 py-2.5 rounded-md hover:bg-navy transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-navy text-white text-sm font-semibold px-5 py-2.5 rounded-md hover:bg-navy-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Send
           </button>

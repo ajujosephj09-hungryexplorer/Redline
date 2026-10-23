@@ -86,7 +86,7 @@ function InlineEdit({
         className={`${className} group text-left hover:bg-slate-50 rounded px-1 -mx-1 transition-colors cursor-text inline-flex items-center gap-1`}
       >
         {value}
-        <span className="sr-only"> (click to edit)</span>
+        <span className="sr-only"> (edit)</span>
         <svg
           width="12"
           height="12"
@@ -208,7 +208,7 @@ function AddRuleForm({
         <button
           type="submit"
           disabled={!name.trim() || !description.trim() || saving}
-          className="bg-navy text-white text-sm font-semibold rounded-md px-4 py-2 disabled:opacity-40 hover:bg-navy transition-colors"
+          className="bg-navy text-white text-sm font-semibold rounded-md px-4 py-2 disabled:opacity-40 hover:bg-navy-hover transition-colors"
         >
           {saving ? 'Saving...' : 'Add rule'}
         </button>
@@ -521,7 +521,7 @@ export default function RulesPage() {
           <button
             type="button"
             onClick={() => setShowAddForm(true)}
-            className="bg-navy text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-navy transition-colors"
+            className="bg-navy text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-navy-hover transition-colors"
           >
             Add rule
           </button>
