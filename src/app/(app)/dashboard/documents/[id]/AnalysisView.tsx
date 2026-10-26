@@ -38,6 +38,64 @@ function formatRelativeDate(iso: string): string {
 }
 
 // ---------------------------------------------------------------------------
+// Summary renderer — parse **Label:** sections into scannable blocks
+// ---------------------------------------------------------------------------
+
+function SummaryBody({ text }: { text: string }) {
+  // Split on **Label:** patterns to extract structured sections
+  const sectionPattern = /\*\*([^*]+?):\*\*/g
+  const parts: Array<{ label: string; body: string }> = []
+  let lastIndex = 0
+  let match: RegExpExecArray | null
+
+  // eslint-disable-next-line no-cond-assign
+  while ((match = sectionPattern.exec(text)) !== null) {
+    // Any text before the first label is the intro
+    if (parts.length === 0 && match.index > 0) {
+      const intro = text.slice(0, match.index).trim()
+      if (intro) parts.push({ label: '', body: intro })
+    } else if (parts.length > 0) {
+      // Close previous section
+      parts[parts.length - 1].body = text.slice(lastIndex, match.index).trim()
+    }
+    parts.push({ label: match[1].trim(), body: '' })
+    lastIndex = match.index + match[0].length
+  }
+
+  // Close last section
+  if (parts.length > 0) {
+    parts[parts.length - 1].body = text.slice(lastIndex).trim()
+  }
+
+  // No **Label:** patterns found — render as paragraphs split on double newlines
+  if (parts.length === 0) {
+    const paragraphs = text.split(/\n\n+/).filter(Boolean)
+    return (
+      <div className="space-y-3">
+        {paragraphs.map((p) => (
+          <p key={p.slice(0, 48)} className="text-sm text-navy leading-relaxed">{p}</p>
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-4">
+      {parts.map((section) => (
+        <div key={section.label || section.body.slice(0, 48)}>
+          {section.label && (
+            <p className="text-xs uppercase tracking-wider font-semibold text-slate-500 mb-1">
+              {section.label}
+            </p>
+          )}
+          <p className="text-sm text-navy leading-relaxed">{section.body}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Severity styling
 // ---------------------------------------------------------------------------
 
@@ -63,7 +121,7 @@ function severityLabel(severity: Severity) {
 const FindingRow = memo(function FindingRow({ flag, open, onToggle }: { flag: RiskFlag; open: boolean; onToggle: () => void }) {
   return (
     <div className="border border-slate-200 rounded-md bg-white shadow-sm">
-      {/* Header row */}
+      {/* Header row — F-074: pill + title + chevron only */}
       <button
         onClick={onToggle}
         aria-expanded={open}
@@ -75,9 +133,6 @@ const FindingRow = memo(function FindingRow({ flag, open, onToggle }: { flag: Ri
         </span>
         <span className="text-sm font-semibold text-navy flex-1 min-w-0">
           {flag.ruleName}
-        </span>
-        <span className="text-sm text-slate-600 shrink text-right leading-snug">
-          {flag.problem}
         </span>
         <svg
           aria-hidden="true"
@@ -100,6 +155,16 @@ const FindingRow = memo(function FindingRow({ flag, open, onToggle }: { flag: Ri
       >
         <div className="overflow-hidden">
           <div className="px-4 pb-4 space-y-3">
+            {/* F-075: What is wrong — problem description */}
+            <div>
+              <p className="uppercase text-xs tracking-wider font-semibold text-slate-500 mb-1.5">
+                What is wrong
+              </p>
+              <p className="text-sm text-navy leading-relaxed">
+                {flag.problem}
+              </p>
+            </div>
+
             {/* Citation block */}
             <div>
               <p className="uppercase text-xs tracking-wider font-semibold text-slate-500 mb-1.5">
@@ -499,14 +564,12 @@ export default function AnalysisView({ documentText, documentTitle, rules: exter
         </div>
       )}
 
-      {/* Summary card */}
+      {/* Summary card — F-073: structured sections instead of text blob */}
       <div className="mt-6 bg-white border border-slate-200 rounded-md shadow-sm p-5">
-        <h2 className="text-sm uppercase tracking-wider font-semibold text-slate-500 mb-2">
+        <h2 className="text-sm uppercase tracking-wider font-semibold text-slate-500 mb-3">
           Summary
         </h2>
-        <p className="text-base text-navy leading-relaxed">
-          {result?.summary}
-        </p>
+        {result?.summary && <SummaryBody text={result.summary} />}
       </div>
 
       {/* F-055: Stale-analysis banner */}
