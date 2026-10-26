@@ -157,6 +157,16 @@ export default function LandingPage() {
 
   return (
     <main>
+      {/* Sign in link — recessive, top-right, for returning users */}
+      <div className="max-w-3xl mx-auto px-6 pt-4 flex justify-end">
+        <a
+          href="/login"
+          className="text-xs text-slate-400 hover:text-navy transition-colors"
+        >
+          Sign in
+        </a>
+      </div>
+
       {/* ---- First viewport: the diagnostic report as hero ---- */}
       <section className="min-h-screen flex flex-col justify-center px-6 py-16 md:py-24 max-w-3xl mx-auto">
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-navy leading-tight">
