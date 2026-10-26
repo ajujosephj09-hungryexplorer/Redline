@@ -2,6 +2,17 @@
 
 import { useState, useCallback, useEffect } from 'react'
 
+/**
+ * Split a single-string counter-offer into paragraphs at structural markers.
+ * LLM often returns replacement language as one run-on string with implicit
+ * sections like "Amend X to read: '...' Add: '...' If the Company wants..."
+ */
+function splitCounterOffer(text: string): string[] {
+  // Split before instruction verbs that start a new clause action
+  const parts = text.split(/(?<=\.['"\u2019\u201D]?\s)(?=(?:Add|Delete|Remove|Replace|Amend|Insert|Strike|If the |If Surna |Alternatively)[\s:])/g)
+  return parts.map((p) => p.trim()).filter(Boolean)
+}
+
 interface Props {
   label?: string
   initialText: string
@@ -126,9 +137,23 @@ export default function CounterOfferBlock({ label = 'Counter-offer', initialText
         </div>
       ) : (
         <div className="bg-counter-offer-bg border-l-4 border-severity-clear rounded-r-md p-3">
-          <p className="text-sm text-navy leading-relaxed whitespace-pre-wrap">
-            {counterText}
-          </p>
+          {counterText.includes('\n') ? (
+            <div className="space-y-2">
+              {counterText.split(/\n\n?/).filter(Boolean).map((p) => (
+                <p key={p.slice(0, 48)} className="text-sm text-navy leading-relaxed">
+                  {p}
+                </p>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {splitCounterOffer(counterText).map((p) => (
+                <p key={p.slice(0, 48)} className="text-sm text-navy leading-relaxed">
+                  {p}
+                </p>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
