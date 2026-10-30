@@ -168,6 +168,7 @@ async function main() {
   let documentsSkipped = 0
   let totalTypeCorrect = 0
   let totalTypeChecked = 0
+  let totalMatchedAnyPlanted = 0
 
   const perDocument: Array<{
     id: string
@@ -264,6 +265,8 @@ async function main() {
         }
       }
 
+      if (matchedPlanted) totalMatchedAnyPlanted++
+
       allFlags.push({
         document: entry.id,
         documentId: entry.id,
@@ -334,6 +337,7 @@ async function main() {
     d === 0 ? 'N/A' : `${n}/${d} (${((n / d) * 100).toFixed(1)}%)`
 
   const recallStr = pct(totalInScopeFound, totalInScopePlanted)
+  const precisionStr = pct(totalMatchedAnyPlanted, totalFlagsReturned)
   const groundednessStr = pct(totalGrounded, totalFlagsReturned)
   const cleanStr = `${totalCleanDocFlags} flags on ${totalBenignDocs} benign documents`
   const typeStr = pct(totalTypeCorrect, totalTypeChecked)
@@ -362,6 +366,9 @@ async function main() {
   lines.push(`Overall: ${recallStr}`)
   lines.push(`With special characters: ${recallSpecialStr}`)
   lines.push(`Without special characters: ${recallNoSpecialStr}`)
+  lines.push('')
+  lines.push('--- PRECISION (flags matching any planted clause) ---')
+  lines.push(`Overall: ${precisionStr}`)
   lines.push('')
   lines.push('--- GROUNDEDNESS ---')
   lines.push(`Flags with verbatim citations: ${groundednessStr}`)
@@ -429,6 +436,11 @@ async function main() {
         totalInScopeWithoutSpecial > 0
           ? totalInScopeFoundWithoutSpecial / totalInScopeWithoutSpecial
           : null,
+    },
+    precision: {
+      matched: totalMatchedAnyPlanted,
+      total: totalFlagsReturned,
+      rate: totalFlagsReturned > 0 ? totalMatchedAnyPlanted / totalFlagsReturned : null,
     },
     groundedness: {
       grounded: totalGrounded,
