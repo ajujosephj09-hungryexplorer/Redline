@@ -1,0 +1,100 @@
+{
+  "document": "saas-subscription.txt",
+  "title": "NORTHWIND STUDIO: SUBSCRIBER TERMS OF SERVICE",
+  "sourceKind": "pasted",
+  "checkedClauseTypes": [
+    "arbitration-and-class-action-waiver",
+    "unilateral-modification",
+    "non-compete",
+    "auto-renewal",
+    "limitation-of-liability",
+    "indemnification",
+    "fee-escalators-and-late-fees"
+  ],
+  "summary": "This is a monthly or annual subscription to Northwind Studio, a hosted design tool, for one named person. Subscribing commits you to a fee Northwind can revise on thirty days notice, a subscription that rolls into the next billing period on its own, interest and a reactivation charge on a payment that does not go through, and terms Northwind can amend by posting a new version. What Northwind can owe you is capped at what you paid for the billing period the claim arose in, third party claims about your content fall on you, and a dispute goes to one arbitrator on an individual basis rather than to a court.",
+  "plantedClauses": [
+    {
+      "id": "P-01",
+      "clauseType": "fee-escalators-and-late-fees",
+      "sourceSentence": "We may revise the fee for any plan, and a revised fee applies to you from the start of the first Billing Period that begins more than thirty (30) days after we send notice of the revision to the email address on your account.",
+      "expectedSeverityBand": "moderate",
+      "confidence": 0.93,
+      "consequence": "Northwind can put the price of your plan up. The new price starts at the beginning of the first billing period that begins more than thirty days after they email you about it.",
+      "exit": null,
+      "why": "Costs money and takes no lever, so moderate. The notice period is real and the sentence carries a non-breaking space between the word and the figure, which is the character class that broke a citation in the ticket 10 run."
+    },
+    {
+      "id": "P-02",
+      "clauseType": "fee-escalators-and-late-fees",
+      "sourceSentence": "Where a payment is not collected on its due date, interest accrues on the unpaid amount at one and one half percent (1.5%) per month from the due date until payment is received, and an account suspended for non-payment is subject to the reactivation charge published in the Fee Schedule on the Northwind support site.",
+      "expectedSeverityBand": "moderate",
+      "confidence": 0.9,
+      "consequence": "A payment that does not go through starts running interest at 1.5 percent a month. If the account is suspended for non-payment there is also a reactivation charge, and the agreement does not say what it is: the figure sits in a Fee Schedule on the support site.",
+      "exit": null,
+      "why": "Moderate: a cost, not a lost lever. The reactivation figure is cross-referenced out of the document, so the reader cannot price it from what they accepted."
+    },
+    {
+      "id": "P-03",
+      "clauseType": "auto-renewal",
+      "sourceSentence": "Your subscription continues from one Billing Period into the next without further action by either of us, and we bill the plan fee then in effect on the first day of each new Billing Period.",
+      "expectedSeverityBand": "high",
+      "confidence": 0.95,
+      "consequence": "Your subscription bills itself again at the start of every billing period. Nobody asks you first, and the price charged is whatever the plan fee is by then.",
+      "exit": {
+        "text": "Cancel through the account settings page before the last day of the billing period you are in. A cancellation on or after the first day of a period takes effect at the end of that period and the fee already taken is not refunded.",
+        "sourceSentence": "To stop the next Billing Period from starting on a monthly plan, cancel through the account settings page no later than the day before the current Billing Period ends."
+      },
+      "why": "Baseline high for auto-renewal and held there: the cancellation deadline is the day before the period ends, which is only reachable by a reader who already knows the clause is there."
+    },
+    {
+      "id": "P-04",
+      "clauseType": "auto-renewal",
+      "sourceSentence": "On an annual plan the deadline to cancel is the day that falls thirty (30) days before the anniversary of the date you first subscribed, and where no cancellation is received by that day the term extends by a further twelve (12) months at the annual fee then in effect.",
+      "expectedSeverityBand": "moderate",
+      "confidence": 0.92,
+      "consequence": "An annual plan extends by another twelve months at the fee current then, unless you cancel thirty days or more before the anniversary of the day you first subscribed. Working out the deadline means counting back from that anniversary.",
+      "exit": null,
+      "why": "Same type as the monthly renewal and a band lower, because the window is thirty days, it comes round before every renewal, and the figure is in the sentence. The window sits inside the renewal sentence itself rather than in a separate one, which is why there is no exit recorded here."
+    },
+    {
+      "id": "P-05",
+      "clauseType": "unilateral-modification",
+      "sourceSentence": "We may amend these terms, the pricing page and the Fee Schedule at any time, an amended version takes effect when we post it at northwindstudio.example/terms, and your continued use of the service after it is posted is your acceptance of the amended version.",
+      "expectedSeverityBand": "critical",
+      "confidence": 0.96,
+      "consequence": "Northwind can rewrite these terms, the prices and the Fee Schedule whenever they like. The new version takes effect the moment it is posted on their website, and carrying on using the service counts as agreeing to it.",
+      "exit": null,
+      "why": "Critical: no notice to the reader, no agreement needed, and it reaches the terms themselves, so every other clause here is provisional."
+    },
+    {
+      "id": "P-06",
+      "clauseType": "limitation-of-liability",
+      "sourceSentence": "Northwind’s aggregate liability to you for every claim relating to the service, whether framed in contract, in tort, in warranty or otherwise — and including any claim arising from lost work, lost revenue or a failed export — will not exceed the amount you actually paid us under Section 2 for the Billing Period in which the claim arose.",
+      "expectedSeverityBand": "high",
+      "confidence": 0.95,
+      "consequence": "If Northwind's service fails and it costs you work, revenue or an export, the most you can recover is the amount you paid for the single billing period the claim arose in. On a monthly plan that is one month of fees.",
+      "exit": null,
+      "why": "High: the claim survives and the recovery is capped by cross-reference to Section 2. The sentence carries two em dashes and a curly apostrophe, the exact characters a model retyped rather than copied in the ticket 10 run."
+    },
+    {
+      "id": "P-07",
+      "clauseType": "indemnification",
+      "sourceSentence": "You will indemnify and hold Northwind harmless from any claim brought by a third party that relates to content you uploaded, exported or published through the service, including a claim that the content infringes a copyright, a trade mark or a right of privacy, and you will pay our reasonable legal costs of defending such a claim.",
+      "expectedSeverityBand": "high",
+      "confidence": 0.94,
+      "consequence": "If anyone brings a claim about something you uploaded, exported or published, including a claim that it infringes a copyright or a trade mark, you pay Northwind's costs and their legal fees.",
+      "exit": null,
+      "why": "High: one way, no cap, no carve-out, and the trigger is ordinary use of a design tool rather than something unusual."
+    },
+    {
+      "id": "P-08",
+      "clauseType": "arbitration-and-class-action-waiver",
+      "sourceSentence": "Any dispute between you and Northwind arising out of these terms or out of your use of the service will be settled by binding arbitration before a single arbitrator under the consumer rules of a recognised arbitration body, and you agree to bring any claim only in your individual capacity and not as a plaintiff or class member in any purported class, collective or representative proceeding.",
+      "expectedSeverityBand": "critical",
+      "confidence": 0.97,
+      "consequence": "A dispute with Northwind goes to one arbitrator under a private body's consumer rules instead of to a court. You also give up joining other subscribers in a class or representative case, so a fault that hits every subscriber has to be taken up one person at a time.",
+      "exit": null,
+      "why": "Critical: the contract stays and the remedy goes. No opt-out anywhere in the document, unlike the phone plan in this corpus."
+    }
+  ]
+}

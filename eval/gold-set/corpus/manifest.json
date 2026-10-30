@@ -1,0 +1,93 @@
+{
+  "corpus": "redline-v1",
+  "version": 1,
+  "whatThisIs": "Nine documents with a known clause inventory per document, used by npm run eval. Two came from tests/fixtures and the other seven were written for this suite. None was collected from the world. See README.md in this directory before reading a number off a run.",
+  "documents": [
+    {
+      "id": "adhesion-contract",
+      "document": "../fixtures/adhesion-contract.txt",
+      "sidecar": "../fixtures/adhesion-contract.json",
+      "questions": "../fixtures/questions.json",
+      "provenance": "written-for-the-deterministic-suite",
+      "benign": false,
+      "unusualButHarmless": []
+    },
+    {
+      "id": "clean-document",
+      "document": "../fixtures/clean-document.txt",
+      "sidecar": "../fixtures/clean-document.json",
+      "provenance": "written-for-the-deterministic-suite",
+      "benign": true,
+      "unusualButHarmless": []
+    },
+    {
+      "id": "saas-subscription",
+      "document": "documents/saas-subscription.txt",
+      "sidecar": "sidecars/saas-subscription.json",
+      "provenance": "written-for-this-suite",
+      "benign": false,
+      "unusualButHarmless": [
+        "We may list your organisation’s name in the customer list on our website, and we will remove it within ten working days of your asking us to.",
+        "Support requests are answered in English only, between 09:00 and 17:00 Central Time from Monday to Friday. We do not answer support requests through social media accounts, and a request sent that way is not treated as received."
+      ],
+      "questions": "questions/saas-subscription.json"
+    },
+    {
+      "id": "offer-letter",
+      "document": "documents/offer-letter.txt",
+      "sidecar": "sidecars/offer-letter.json",
+      "provenance": "written-for-this-suite",
+      "benign": false,
+      "unusualButHarmless": [
+        "If you resign or are terminated for cause within twelve (12) months of your start date, the full signing payment becomes repayable within thirty days of your last working day."
+      ]
+    },
+    {
+      "id": "storage-unit-rental",
+      "document": "documents/storage-unit-rental.txt",
+      "sidecar": "sidecars/storage-unit-rental.json",
+      "provenance": "written-for-this-suite",
+      "benign": false,
+      "unusualButHarmless": [
+        "The Occupant may not store food, live animals, fuel, ammunition, tyres, anything that gives off an odour, or anything flammable, corrosive or explosive. The Occupant may not live in the unit, run a business from it, or work on a vehicle inside it."
+      ]
+    },
+    {
+      "id": "phone-plan-terms",
+      "document": "documents/phone-plan-terms.txt",
+      "sidecar": "sidecars/phone-plan-terms.json",
+      "provenance": "written-for-this-suite",
+      "benign": false,
+      "unusualButHarmless": [
+        "Calls with our support team may be recorded for training and quality.",
+        "Data speeds on an unlimited plan may be reduced after you use the monthly priority allowance shown on your Service Summary, and reduced speeds continue until the next bill period starts."
+      ]
+    },
+    {
+      "id": "internship-agreement",
+      "document": "documents/internship-agreement.txt",
+      "sidecar": "sidecars/internship-agreement.json",
+      "provenance": "written-for-this-suite",
+      "benign": false,
+      "unusualButHarmless": [
+        "An item not returned within five working days is charged at the replacement cost shown in the Programme Handbook."
+      ]
+    },
+    {
+      "id": "library-volunteer-agreement",
+      "document": "documents/library-volunteer-agreement.txt",
+      "sidecar": "sidecars/library-volunteer-agreement.json",
+      "provenance": "written-for-this-suite",
+      "benign": true,
+      "unusualButHarmless": []
+    },
+    {
+      "id": "swim-lesson-registration",
+      "document": "documents/swim-lesson-registration.txt",
+      "sidecar": "sidecars/swim-lesson-registration.json",
+      "provenance": "written-for-this-suite",
+      "benign": true,
+      "unusualButHarmless": []
+    }
+  ]
+}

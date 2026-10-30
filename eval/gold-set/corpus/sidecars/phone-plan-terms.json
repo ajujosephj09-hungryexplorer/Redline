@@ -1,0 +1,93 @@
+{
+  "document": "phone-plan-terms.txt",
+  "title": "CASCADE MOBILE: CONSUMER SERVICE AGREEMENT",
+  "sourceKind": "pasted",
+  "checkedClauseTypes": [
+    "arbitration-and-class-action-waiver",
+    "unilateral-modification",
+    "non-compete",
+    "auto-renewal",
+    "limitation-of-liability",
+    "indemnification",
+    "fee-escalators-and-late-fees"
+  ],
+  "summary": "This is a consumer wireless service agreement with Cascade Mobile, covering voice, messaging and data on the rate plan on your Service Summary and any device instalment plan. Accepting it commits you to a Regulatory Cost Recovery Charge and an Administrative Charge that Cascade can introduce, raise or drop on notice given with a bill, a late payment charge and a restoral charge, a promotional twelve month plan that renews at the standard rate rather than the promotional one, and any term of the agreement or of your plan being changed on notice. What Cascade can owe you is capped at the service charges on the affected line for one bill period, claims connected to your line fall on you, and a dispute goes to individual arbitration unless you reject that within thirty days of activating.",
+  "plantedClauses": [
+    {
+      "id": "P-01",
+      "clauseType": "fee-escalators-and-late-fees",
+      "sourceSentence": "Your bill includes a Regulatory Cost Recovery Charge and an Administrative Charge, neither of which is a tax or a charge required by any government, and Cascade may introduce, increase or remove either charge on notice given with the bill in which the change ﬁrst appears.",
+      "expectedSeverityBand": "moderate",
+      "confidence": 0.9,
+      "consequence": "Two charges on your bill, the Regulatory Cost Recovery Charge and the Administrative Charge, are Cascade's own charges rather than taxes. Cascade can add either one, raise it, or drop it, and the only notice you get is on the bill where the change first shows up.",
+      "exit": null,
+      "why": "Moderate: it costs money and the lever is intact. The sentence says plainly that neither charge is required by any government, which is the detail a reader would want and the reason these charges are worth flagging. It carries an fi ligature glyph."
+    },
+    {
+      "id": "P-02",
+      "clauseType": "fee-escalators-and-late-fees",
+      "sourceSentence": "An amount not paid by the due date shown on the bill incurs a late payment charge of the greater of five dollars ($5.00) or one and one half percent of the unpaid balance, applied each bill period until the balance is paid, and a restored line incurs the restoral charge shown in the Rate and Charge Guide.",
+      "expectedSeverityBand": "moderate",
+      "confidence": 0.92,
+      "consequence": "A bill paid late attracts the greater of five dollars or 1.5 percent of what is unpaid, charged again every bill period until the balance clears. Getting a suspended line switched back on costs a restoral charge, and that figure is in the Rate and Charge Guide rather than here.",
+      "exit": null,
+      "why": "Moderate: a compounding cost with the lever intact. One figure is stated and the other is cross-referenced out of the document."
+    },
+    {
+      "id": "P-03",
+      "clauseType": "auto-renewal",
+      "sourceSentence": "Service on a twelve month promotional plan renews for a further twelve month term at the end of the term then running, at the standard rate for the plan rather than at the promotional rate, unless you tell us to stop the renewal before the last day of the current term.",
+      "expectedSeverityBand": "high",
+      "confidence": 0.94,
+      "consequence": "A twelve month promotional plan renews for another twelve months at the standard rate, not the promotional rate you signed up for, unless you tell Cascade to stop it before the current term's last day.",
+      "exit": null,
+      "why": "Baseline high and held there: the document names no number of days, so the reader has to know their own term end date to act, and the renewal silently drops the discount."
+    },
+    {
+      "id": "P-04",
+      "clauseType": "unilateral-modification",
+      "sourceSentence": "Cascade may change any term of this Agreement, any charge, and any feature of your rate plan, and the change takes effect on the date stated in the notice we give you, which may be given on a bill, by message to your device, or by email.",
+      "expectedSeverityBand": "critical",
+      "confidence": 0.96,
+      "consequence": "Cascade can change any term of this agreement, any charge and any feature of your plan. The change starts on whatever date the notice says, and the notice can arrive on a bill, as a message to your phone, or by email.",
+      "exit": {
+        "text": "Where a change puts your monthly recurring charge up materially, you can cancel the affected line without an early termination charge, within thirty days of the notice. It does not cover any other kind of change.",
+        "sourceSentence": "Where a change materially increases your monthly recurring charge, you may cancel the affected line without an early termination charge within thirty days of the notice."
+      },
+      "why": "Critical: it reaches every term including the charges, needs no agreement, and the notice can be a line on a bill. The thirty day cancellation right for a material increase in the recurring charge sits in the next paragraph and is recorded as the exit on this flag rather than moving the band, because it only covers one kind of change."
+    },
+    {
+      "id": "P-05",
+      "clauseType": "limitation-of-liability",
+      "sourceSentence": "Cascade’s entire liability to you for any claim relating to the service, a device, or this Agreement, whether the claim is made in contract, in negligence, in warranty or under any statute, is limited to the service charges applied to the affected line during the bill period in which the claim arose, and Cascade is not liable for lost profits, lost data, or any indirect or consequential loss.",
+      "expectedSeverityBand": "high",
+      "confidence": 0.95,
+      "consequence": "If Cascade's service or a device fails and it costs you, the most you can recover is the service charges on that line for the single bill period the claim arose in. Lost profits, lost data and knock-on losses are excluded.",
+      "exit": null,
+      "why": "High: the claim survives and the recovery is capped by cross-reference to one bill period. It sweeps in negligence and statutory claims. The following sentence preserves liability that cannot be limited by law, which is why this is banded high rather than critical."
+    },
+    {
+      "id": "P-06",
+      "clauseType": "indemnification",
+      "sourceSentence": "You will indemnify and hold Cascade harmless from any claim, loss or expense, including reasonable legal fees, arising out of your use of the service, out of anything sent from or stored on your device, out of the use of your line by anyone you allow to use it, and out of any charge incurred on your account.",
+      "expectedSeverityBand": "high",
+      "confidence": 0.93,
+      "consequence": "If a claim arises out of your use of the service, out of anything sent from or stored on your phone, out of someone else using your line, or out of any charge on the account, you pay Cascade's losses and legal fees.",
+      "exit": null,
+      "why": "High: one way, no cap, and it reaches the conduct of anyone the reader lets use the line."
+    },
+    {
+      "id": "P-07",
+      "clauseType": "arbitration-and-class-action-waiver",
+      "sourceSentence": "You and Cascade agree that any dispute arising out of or relating to this Agreement, the service or any device will be resolved by individual binding arbitration administered by a nationally recognised arbitration provider under its consumer rules, and both of us give up the right to a jury trial and the right to bring or join a class, collective or representative action.",
+      "expectedSeverityBand": "critical",
+      "confidence": 0.97,
+      "consequence": "A dispute with Cascade goes to one arbitrator under a private body's consumer rules rather than to a court, on your own behalf only. You give up a jury and give up joining other customers in a class or representative case.",
+      "exit": {
+        "text": "Write to Cascade Mobile LLC, Dispute Notices, 1200 Willowbank Avenue within thirty days of activating service. The agreement says rejecting it changes nothing about your service or your rate plan.",
+        "sourceSentence": "You may reject this arbitration provision by writing to Cascade Mobile LLC, Dispute Notices, 1200 Willowbank Avenue, within thirty (30) days of activating service, and rejecting it will not affect your service or your rate plan."
+      },
+      "why": "Critical: the service stays and the remedy goes. The thirty day rejection window is recorded as an exit and does not lower the band, because it runs from activation and expires long before a dispute exists."
+    }
+  ]
+}

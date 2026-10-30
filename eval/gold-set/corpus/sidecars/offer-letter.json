@@ -1,0 +1,67 @@
+{
+  "document": "offer-letter.txt",
+  "title": "ARDENT BIOSCIENCES INC: OFFER OF EMPLOYMENT",
+  "sourceKind": "pasted",
+  "checkedClauseTypes": [
+    "arbitration-and-class-action-waiver",
+    "unilateral-modification",
+    "non-compete",
+    "auto-renewal",
+    "limitation-of-liability",
+    "indemnification",
+    "fee-escalators-and-late-fees"
+  ],
+  "summary": "This is an offer of at-will employment as a Senior Process Chemist at Ardent Biosciences, at a base salary of $148,000 with a discretionary bonus target and a $15,000 signing payment that becomes repayable if you leave within twelve months. Accepting it commits you to policies and terms of employment Ardent can amend without your agreement, to a twelve month bar on similar work for a business in a Restricted Field defined in an exhibit you have not been shown, to a matching bar on approaching Ardent's employees and customers, to covering Ardent's costs if a former employer brings a claim about your joining, and to arbitration on an individual basis instead of a court for any employment claim.",
+  "plantedClauses": [
+    {
+      "id": "P-01",
+      "clauseType": "unilateral-modification",
+      "sourceSentence": "Ardent may introduce, withdraw, interpret or amend any policy, handbook provision, benefit plan or term of employment described in this letter at any time and without your agreement, and the version in force on the Ardent intranet governs from the date it is published there.",
+      "expectedSeverityBand": "critical",
+      "confidence": 0.95,
+      "consequence": "Ardent can add, remove, reinterpret or rewrite any policy, any handbook rule, any benefit plan and any term of employment in this letter, without asking you. Whatever is on the intranet on a given day is what applies from the day it went up.",
+      "exit": null,
+      "why": "Critical: it reaches the terms of employment set out in the letter itself, needs no agreement and no notice to the reader, and the governing version is one the reader has to go and look up."
+    },
+    {
+      "id": "P-02",
+      "clauseType": "non-compete",
+      "sourceSentence": "For a period of twelve (12) months following the last day of your employment, whether that employment ends at your choice or at ours, you will not provide services that are the same as or substantially similar to those you provided to Ardent, whether as an employee, a consultant, a contractor, an adviser or a principal, to any business that develops, manufactures or sells a product within the Restricted Field as that term is defined in Exhibit B to this letter.",
+      "expectedSeverityBand": "critical",
+      "confidence": 0.96,
+      "consequence": "For a year after you leave, however you leave, you cannot do work like the work you did at Ardent for any business making or selling a product in the Restricted Field. What that field covers is not in this letter; it is in Exhibit B.",
+      "exit": null,
+      "why": "Critical: it takes away earning in the field the reader works in. Filed under Post-Termination Obligations rather than anything a reader would search for, and the scope is cross-referenced to an exhibit, so the reader cannot see how wide it is from the letter they sign."
+    },
+    {
+      "id": "P-03",
+      "clauseType": "non-compete",
+      "sourceSentence": "For the same period you will not solicit, or assist anyone else in soliciting, any employee of Ardent with whom you worked in your final twelve months, and you will not approach any customer, distributor or contract manufacturer of Ardent that you dealt with in that period for the purpose of providing a product or service in the Restricted Field.",
+      "expectedSeverityBand": "critical",
+      "confidence": 0.9,
+      "consequence": "For that same year you cannot approach Ardent colleagues you worked with in your last twelve months, or help anyone else approach them, and you cannot approach Ardent's customers, distributors or manufacturers you dealt with about work in the Restricted Field.",
+      "exit": null,
+      "why": "Critical on the same ground as the clause above: it restricts who the reader may work with after leaving. Recorded separately because it is a separate obligation with a separate scope, and a reader who spotted one may well miss the other."
+    },
+    {
+      "id": "P-04",
+      "clauseType": "indemnification",
+      "sourceSentence": "You will indemnify Ardent and hold it harmless against any claim, loss, liability or expense, including reasonable attorney fees, that arises out of a breach by you of Section 4 or Section 5 of this letter, or out of a claim by a former employer that your employment with Ardent breaches an obligation you owe to them.",
+      "expectedSeverityBand": "high",
+      "confidence": 0.93,
+      "consequence": "If a former employer claims that your working at Ardent breaks something you owe them, you pay Ardent's losses and legal fees, not Ardent. The same applies to any claim arising from your breaking the confidentiality or post-termination sections.",
+      "exit": null,
+      "why": "High: one way, no cap, and the former-employer trigger is not in the reader's control, because anyone can bring a claim."
+    },
+    {
+      "id": "P-05",
+      "clauseType": "arbitration-and-class-action-waiver",
+      "sourceSentence": "You and Ardent each agree that any claim arising out of or relating to your employment, its terms, or its end, including any statutory claim, will be resolved by final and binding arbitration administered under the employment rules of a nationally recognised arbitration provider, on an individual basis only, and each of us waives any right to a jury trial and any right to participate in a class, collective or representative action.",
+      "expectedSeverityBand": "critical",
+      "confidence": 0.97,
+      "consequence": "Any claim about your employment, its terms or how it ends, including a claim under a statute, goes to one arbitrator instead of a court, and only in your own name. You give up a jury and give up joining colleagues in a class or collective case.",
+      "exit": null,
+      "why": "Critical: the job stays and the remedy goes. No opt-out is offered anywhere in the letter."
+    }
+  ]
+}

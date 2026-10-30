@@ -63,3 +63,7 @@ engine.bin
 .impeccable/hook.cache.json
 tsconfig.tsbuildinfo
 .vercel
+
+# Eval run outputs (keep .gitkeep)
+eval-runs/*.txt
+eval-runs/*.json

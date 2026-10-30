@@ -1,0 +1,39 @@
+{
+  "document": "saas-subscription.txt",
+  "grounded": [
+    {
+      "question": "If I am on the annual plan, how long before it renews do I have to cancel?",
+      "expectedSourceSentence": "On an annual plan the deadline to cancel is the day that falls thirty (30) days before the anniversary of the date you first subscribed, and where no cancellation is received by that day the term extends by a further twelve (12) months at the annual fee then in effect."
+    },
+    {
+      "question": "What happens if my card fails and they cannot take the payment?",
+      "expectedSourceSentence": "Where a payment is not collected on its due date, interest accrues on the unpaid amount at one and one half percent (1.5%) per month from the due date until payment is received, and an account suspended for non-payment is subject to the reactivation charge published in the Fee Schedule on the Northwind support site."
+    },
+    {
+      "question": "If an export fails and I lose a day of work, what is the most I could get back from them?",
+      "expectedSourceSentence": "Northwind’s aggregate liability to you for every claim relating to the service, whether framed in contract, in tort, in warranty or otherwise — and including any claim arising from lost work, lost revenue or a failed export — will not exceed the amount you actually paid us under Section 2 for the Billing Period in which the claim arose."
+    }
+  ],
+  "ungrounded": [
+    {
+      "question": "How much does my plan cost per month?",
+      "why": "The fee is deferred to the pricing page, which is not part of this text."
+    },
+    {
+      "question": "Which state's law governs these terms?",
+      "why": "The document has no governing law clause and names no state anywhere."
+    },
+    {
+      "question": "Would the class action waiver actually hold up where I live?",
+      "why": "Whether a clause holds up is never in the document; it only says what the clause requires."
+    },
+    {
+      "question": "How much is the reactivation charge?",
+      "why": "The figure sits in a Fee Schedule on the support site that the document points at without reproducing."
+    },
+    {
+      "question": "How much storage do I get on my plan?",
+      "why": "The cap is described as the figure shown for the plan, and no figure appears in this text."
+    }
+  ]
+}
