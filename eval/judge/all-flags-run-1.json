@@ -1,0 +1,78 @@
+{
+  "runTime": "2026-10-30T17:40:00Z",
+  "rubric": "eval/judge/rubric.md",
+  "evalRun": "eval-runs/2026-10-30T16-40-28-873Z.json",
+  "scope": "all grounded flags (14 of 15 total)",
+  "verdicts": [
+    {
+      "number": 1,
+      "verdict": "PASS",
+      "reason": "This is a one-sided indemnification clause that makes the member liable for third-party claims arising from broad categories including the conduct of guests and services provided to other members, which are losses the member does not fully control."
+    },
+    {
+      "number": 2,
+      "verdict": "PASS",
+      "reason": "The quoted sentence explicitly requires binding arbitration, waives the right to a jury trial, and waives the right to participate in a class, collective, or representative action, which removes the reader's access to court and collective legal remedies."
+    },
+    {
+      "number": 3,
+      "verdict": "PASS",
+      "reason": "This is a one-sided indemnification clause that makes the user liable for third-party IP and privacy claims related to their uploaded content, plus obligates them to pay Northwind's legal costs, imposing real financial exposure."
+    },
+    {
+      "number": 4,
+      "verdict": "PASS",
+      "reason": "The quoted sentence mandates binding arbitration and explicitly waives the right to bring claims as part of a class, collective, or representative proceeding, removing the reader's access to court and collective action."
+    },
+    {
+      "number": 5,
+      "verdict": "PASS",
+      "reason": "This is a 12-month non-compete that restricts the employee from working in a broadly defined 'Restricted Field' in any capacity (employee, consultant, contractor, adviser, or principal), which materially limits where the reader can work after leaving."
+    },
+    {
+      "number": 6,
+      "verdict": "PASS",
+      "reason": "This one-sided indemnification makes the employee liable for claims by former employers alleging the employee's new employment breaches prior obligations, which is a loss the employee may not control and creates significant financial exposure."
+    },
+    {
+      "number": 7,
+      "verdict": "PASS",
+      "reason": "The quoted sentence requires binding arbitration for all employment-related claims including statutory claims, waives jury trial rights, and waives the right to participate in class, collective, or representative actions."
+    },
+    {
+      "number": 8,
+      "verdict": "PASS",
+      "reason": "This is a one-sided indemnification clause making the occupant liable for all claims arising from anyone the occupant allows onto the premises, which extends liability to third-party conduct the occupant does not fully control."
+    },
+    {
+      "number": 9,
+      "verdict": "PASS",
+      "reason": "This one-sided indemnification makes the subscriber liable for claims arising from broad categories including anything stored on their device and usage by anyone they allow to use their line, creating exposure for losses they do not fully control."
+    },
+    {
+      "number": 10,
+      "verdict": "PASS",
+      "reason": "The quoted sentence requires individual binding arbitration, waives jury trial rights, and waives the right to bring or join a class, collective, or representative action, removing the reader's access to court and collective legal remedies."
+    },
+    {
+      "number": 11,
+      "verdict": "PASS",
+      "reason": "This one-sided indemnification makes an intern liable for claims arising from anything they publish about the Firm or its clients, which is a broad obligation that creates real financial exposure for an unpaid or low-paid analyst."
+    },
+    {
+      "number": 12,
+      "verdict": "PASS",
+      "reason": "The quoted sentence mandates binding individual arbitration, waives jury trial rights, and waives the right to bring or join a class or collective action, removing the intern's access to court and collective legal remedies."
+    },
+    {
+      "number": 13,
+      "verdict": "PASS",
+      "reason": "This is a 6-month non-compete that restricts the intern from accepting any engagement (paid or unpaid) with firms on a restricted list and from approaching clients, which concretely limits where the intern can work after the programme."
+    },
+    {
+      "number": 14,
+      "verdict": "FAIL",
+      "reason": "This is a mutual termination clause in an unpaid volunteer arrangement where neither side owes anything and neither side loses anything, making it a standard term that does not cost the reader something."
+    }
+  ]
+}
