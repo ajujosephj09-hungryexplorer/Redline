@@ -60,6 +60,7 @@ engine.bin
 .impeccable/review/
 .impeccable/mocks/
 .impeccable/questions/
+.impeccable/critique/
 .impeccable/hook.cache.json
 tsconfig.tsbuildinfo
 .vercel
