@@ -1,0 +1,116 @@
+{
+  "document": "adhesion-contract.txt",
+  "title": "MERIDIAN ATHLETIC CLUB — MEMBER SERVICES AND INSTRUCTOR CERTIFICATION AGREEMENT",
+  "sourceKind": "pasted",
+  "checkedClauseTypes": [
+    "arbitration-and-class-action-waiver",
+    "unilateral-modification",
+    "non-compete",
+    "auto-renewal",
+    "limitation-of-liability",
+    "indemnification",
+    "fee-escalators-and-late-fees"
+  ],
+  "summary": "This is a twelve-month gym membership at Meridian Athletic Club, with an optional instructor certification track billed separately. Signing commits you to dues Meridian can raise once a year, a membership that renews for another twelve months unless you cancel more than three days ahead, and rules and terms Meridian can rewrite by posting a new version at the club. Disputes go to one arbitrator instead of a court, what Meridian can owe you is capped at the dues you paid over the previous twelve months, and third-party claims connected to your use of the club fall on you. The certification track adds a promise not to teach within fifteen miles of a Meridian club for a year after your candidacy ends.",
+  "plantedClauses": [
+    {
+      "id": "P-01",
+      "clauseType": "auto-renewal",
+      "sourceSentence": "At the end of the initial term, and at the end of each term thereafter, your membership renews automatically for a further twelve (12) month term at the then-current rate.",
+      "expectedSeverityBand": "high",
+      "confidence": 0.97,
+      "consequence": "Your membership signs itself up for another full year at whatever the rate is by then. Meridian does not have to ask you first.",
+      "exit": {
+        "text": "Take written cancellation to the Member Services desk more than three days before your renewal date. Later than that and you owe the next year in full.",
+        "sourceSentence": "To stop a renewal you must deliver written notice of cancellation to the Member Services desk no later than three (3) days before the renewal date."
+      },
+      "why": "Baseline high for auto-renewal, held at high rather than lifted because the three-day window is short and a late notice costs a full further term of dues."
+    },
+    {
+      "id": "P-02",
+      "clauseType": "fee-escalators-and-late-fees",
+      "sourceSentence": "Meridian may adjust dues once in any twelve (12) month period by the greater of six percent (6%)  or the increase in the Consumer Price Index for All Urban Consumers over the preceding twelve months, on thirty (30) days notice to the email address on your account.",
+      "expectedSeverityBand": "moderate",
+      "confidence": 0.93,
+      "consequence": "Meridian can raise your dues once a year, by 6 percent or by the rise in the Consumer Price Index, whichever is bigger. You get thirty days notice by email before the higher amount is drawn.",
+      "exit": null,
+      "why": "Costs money and leaves the reader able to walk at the end of the term, so moderate; the greater-of formula compounds but takes nothing away."
+    },
+    {
+      "id": "P-03",
+      "clauseType": "fee-escalators-and-late-fees",
+      "sourceSentence": "Dues not received within ten (10) days of the draw date incur the late charge set out in the Schedule of Fees then in effect, which is posted at the Member Services desk and on the Meridian website and forms part of this Agreement.",
+      "expectedSeverityBand": "moderate",
+      "confidence": 0.9,
+      "consequence": "Dues more than ten days late trigger a late charge. The agreement does not say how much. The figure sits in a Schedule of Fees posted at the club, and Section 4 lets Meridian change that schedule.",
+      "exit": null,
+      "why": "Moderate: a cost, not a lost lever. The figure is cross-referenced out of the document, so the reader cannot price it from what they signed."
+    },
+    {
+      "id": "P-04",
+      "clauseType": "unilateral-modification",
+      "sourceSentence": "Meridian may amend the Club Rules, the Schedule of Fees, the hours of operation, the class timetable and the terms of this Agreement at any time by posting the amended version at the club or on the Meridian website, and the amended version applies to you from the date it is posted.",
+      "expectedSeverityBand": "critical",
+      "confidence": 0.96,
+      "consequence": "Meridian can rewrite the rules, the fees and this agreement by posting a new version, and the new version binds you from the day it goes up. Turning up to train afterwards counts as agreeing to it.",
+      "exit": null,
+      "why": "Critical: no notice to the reader, no agreement needed, and it reaches the terms of the agreement itself, so every other clause here is provisional."
+    },
+    {
+      "id": "P-05",
+      "clauseType": "limitation-of-liability",
+      "sourceSentence": "Meridian’s total liability to you for any claim arising out of or relating to this Agreement, your membership or your use of any facility — whether the claim is framed in contract, in negligence or otherwise — will not exceed the total dues and fees you paid to Meridian in the twelve (12) months immediately before the event giving rise to the claim.",
+      "expectedSeverityBand": "high",
+      "confidence": 0.95,
+      "consequence": "If Meridian gets something wrong and it costs you, the most you can recover is what you paid them in dues and fees over the previous twelve months. The clause does not name a figure, so you have to add up your own payments to know what the cap is.",
+      "exit": null,
+      "why": "High: the lever survives but the payout is capped by cross-reference, and the sentence sweeps in negligence claims alongside contract ones."
+    },
+    {
+      "id": "P-06",
+      "clauseType": "indemnification",
+      "sourceSentence": "You will indemnify, defend and hold harmless Meridian and its ofﬁcers, employees, instructors and contractors against any claim, demand, loss, liability or expense, including reasonable legal fees, that is brought by a third party and arises out of your use of the facilities, your conduct on club premises, the conduct of a guest you bring, or any service you provide to another member.",
+      "expectedSeverityBand": "high",
+      "confidence": 0.94,
+      "consequence": "If someone else brings a claim tied to your use of the club, your conduct, a guest you signed in, or a session you ran for another member, you pay Meridian's costs and legal fees. Meridian picks the lawyers and you cannot settle without their written agreement.",
+      "exit": null,
+      "why": "High: one-way, no cap and no carve-out, and the guest and member-service triggers make it reachable by an ordinary member rather than theoretical."
+    },
+    {
+      "id": "P-07",
+      "clauseType": "auto-renewal",
+      "sourceSentence": "Program enrolment renews on each anniversary of your Program start date at the then-current tuition.",
+      "expectedSeverityBand": "moderate",
+      "confidence": 0.92,
+      "consequence": "Your place in the certification program rolls into another year at whatever tuition is current then, billed a year in advance.",
+      "exit": {
+        "text": "Write to the Program office at least ninety days before your anniversary date. Meridian bills nothing further and your candidacy closes at the end of the year you are in.",
+        "sourceSentence": "You may end your Program enrolment by notifying the Program ofﬁce in writing at least ninety (90) days before the anniversary date, in which case no further tuition is charged and your candidacy closes at the end of the Program year then running."
+      },
+      "why": "Same clause type as P-01 and a band lower. Ninety days is long enough to act on, the notice goes to a named office rather than a desk, and the document states what happens when the reader uses it."
+    },
+    {
+      "id": "P-08",
+      "clauseType": "non-compete",
+      "sourceSentence": "For twelve (12) months after your Program candidacy ends for any reason, you will not teach, coach or deliver group ﬁtness instruction or personal training, whether as an employee, as a contractor or on your own account, at any facility within ﬁfteen (15) miles of a Meridian location at which you taught or trained.",
+      "expectedSeverityBand": "critical",
+      "confidence": 0.96,
+      "consequence": "For a year after your candidacy ends, you cannot teach group fitness or personal training within fifteen miles of a Meridian club you worked at. That covers being employed, contracting and teaching on your own account.",
+      "exit": null,
+      "why": "Critical: it takes away earning in the field the certification trains you for, and it is filed under Post-Termination Obligations rather than anything a reader would search for."
+    },
+    {
+      "id": "P-09",
+      "clauseType": "arbitration-and-class-action-waiver",
+      "sourceSentence": "Any dispute, claim or controversy between you and Meridian arising out of or relating to this Agreement, your membership or the Program will be resolved by ﬁnal and binding arbitration administered by a nationally recognised arbitration provider under its consumer arbitration rules, and you and Meridian each waive any right to a trial by jury and any right to bring or participate in a class, collective or representative action.",
+      "expectedSeverityBand": "critical",
+      "confidence": 0.98,
+      "consequence": "A dispute with Meridian goes to one arbitrator instead of a court, with no jury. You also give up joining other members in a class or representative action, so a problem that hits every member has to be taken up one person at a time.",
+      "exit": {
+        "text": "Write to the Member Services address in Section 11 within thirty days of first accepting the agreement. The agreement says opting out does not affect your membership or your place in the program.",
+        "sourceSentence": "You may opt out of this Section 12 by delivering written notice to the address in Section 11 within thirty (30) days after you ﬁrst accept this Agreement, and opting out will not affect your membership or your standing in the Program."
+      },
+      "why": "Critical: the contract stays and the remedy goes. The thirty-day opt-out is recorded as an exit and does not lower the band, because it expires long before a dispute exists."
+    }
+  ]
+}

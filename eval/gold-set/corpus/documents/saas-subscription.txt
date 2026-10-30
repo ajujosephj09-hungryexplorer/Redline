@@ -1,0 +1,73 @@
+NORTHWIND STUDIO: SUBSCRIBER TERMS OF SERVICE
+
+Last updated 14 February 2026. These terms govern your use of Northwind Studio, a hosted design tool operated by Northwind Software LLC (“Northwind”, “we”, “us”). By creating an account and completing checkout you accept them.
+
+1. WHAT A SUBSCRIPTION INCLUDES
+
+A subscription gives one named person access to the editor, the shared asset library and the export tools on the plan you chose at checkout. Plans, and what each one includes, are listed on the pricing page. Storage is capped at the figure shown for your plan, and we will write to you when your account is within ten percent of that cap.
+
+You may install the desktop companion on up to three devices you control. You may not share your credentials with anyone else, and an account we believe is being used by more than one person may be suspended while we ask you about it.
+
+2. WHAT YOU PAY
+
+Subscription fees are billed in advance for each Billing Period. A Billing Period is one calendar month on a monthly plan and twelve calendar months on an annual plan, running from the day you first subscribed.
+
+We may revise the fee for any plan, and a revised fee applies to you from the start of the first Billing Period that begins more than thirty (30) days after we send notice of the revision to the email address on your account.
+
+Where a payment is not collected on its due date, interest accrues on the unpaid amount at one and one half percent (1.5%) per month from the due date until payment is received, and an account suspended for non-payment is subject to the reactivation charge published in the Fee Schedule on the Northwind support site.
+
+3. ACCOUNT HOUSEKEEPING
+
+Keep the contact address and the payment instrument on your account current. A payment instrument that has expired is treated as a failed collection, and we will retry it twice before the account is suspended.
+
+Your subscription continues from one Billing Period into the next without further action by either of us, and we bill the plan fee then in effect on the first day of each new Billing Period.
+
+To stop the next Billing Period from starting on a monthly plan, cancel through the account settings page no later than the day before the current Billing Period ends. A cancellation made on or after the first day of a Billing Period takes effect at the end of that Billing Period, and the fee already collected for it is not refunded.
+
+On an annual plan the deadline to cancel is the day that falls thirty (30) days before the anniversary of the date you first subscribed, and where no cancellation is received by that day the term extends by a further twelve (12) months at the annual fee then in effect.
+
+4. CHANGES TO THESE TERMS
+
+We may amend these terms, the pricing page and the Fee Schedule at any time, an amended version takes effect when we post it at northwindstudio.example/terms, and your continued use of the service after it is posted is your acceptance of the amended version.
+
+5. SERVICE LEVELS AND REMEDIES
+
+We aim for availability of 99.5 percent in each calendar month, measured across the editor and the export tools and excluding scheduled maintenance we have announced at least forty-eight hours ahead. Where availability in a calendar month falls below that figure, your remedy is the service credit set out in the Service Credit Policy and nothing further.
+
+Northwind’s aggregate liability to you for every claim relating to the service, whether framed in contract, in tort, in warranty or otherwise — and including any claim arising from lost work, lost revenue or a failed export — will not exceed the amount you actually paid us under Section 2 for the Billing Period in which the claim arose.
+
+6. YOUR CONTENT AND THIRD PARTY CLAIMS
+
+You keep ownership of everything you upload. You give us the licence we need to store it, render it, back it up and show it back to you, and that licence ends when you delete the content or close the account.
+
+You will indemnify and hold Northwind harmless from any claim brought by a third party that relates to content you uploaded, exported or published through the service, including a claim that the content infringes a copyright, a trade mark or a right of privacy, and you will pay our reasonable legal costs of defending such a claim.
+
+7. REFERENCES AND SUPPORT
+
+We may list your organisation’s name in the customer list on our website, and we will remove it within ten working days of your asking us to.
+
+Support requests are answered in English only, between 09:00 and 17:00 Central Time from Monday to Friday. We do not answer support requests through social media accounts, and a request sent that way is not treated as received.
+
+8. RESOLVING THINGS
+
+Any dispute between you and Northwind arising out of these terms or out of your use of the service will be settled by binding arbitration before a single arbitrator under the consumer rules of a recognised arbitration body, and you agree to bring any claim only in your individual capacity and not as a plaintiff or class member in any purported class, collective or representative proceeding.
+
+The arbitrator’s award is final. Either of us may still bring an individual claim in a small claims court of competent jurisdiction where the claim qualifies to be heard there.
+
+9. ENDING THE SUBSCRIPTION
+
+You may close your account at any time from the account settings page. Closing an account stops future Billing Periods and does not refund a Billing Period already begun.
+
+We may suspend or close an account that has not paid, that has breached Section 1, or that is being used to store content we are required by law to remove. Where we close an account for a reason other than those, we refund the unused part of the Billing Period then running.
+
+10. NOTICES
+
+Notices to you go to the email address on the account. Notices to us go to legal@northwindstudio.example or to Northwind Software LLC, 4400 Fern Hollow Road, Suite 210.
+
+ACCEPTED BY:
+
+Subscriber signature: ______________________________
+
+Printed name: ______________________________
+
+Date: ______________________________

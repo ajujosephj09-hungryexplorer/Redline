@@ -137,3 +137,15 @@ When a user dismisses a flag, nothing adjusts. They can manually edit their rule
 **What "too many flags" looks like.** There is no data on how many flags per document a user will tolerate before deciding the tool is noise. The clean-contract behavior (summary + checklist) handles the zero-flag case, but the boundary between "thorough" and "crying wolf" is unknown.
 
 **Whether gap analysis is valued.** No existing tool in the research offers gap analysis for missing clauses. This means there is no competitive validation that users want it — but also no evidence they do not. It is a bet.
+
+## How we measure it
+
+An eval suite runs every document in a gold set through the same analysis pipeline the product uses, with the same model and settings, and reports three numbers.
+
+**Recall** counts how many planted clauses the analysis found, out of the planted clauses whose types this product flags. The gold set contains seven clause types. Four map onto this product's six rules: `arbitration-and-class-action-waiver` maps to Forced Arbitration + Class Action Waiver, `non-compete` maps to Non-Compete, `indemnification` maps to Indemnification (overbroad), and `fee-escalators-and-late-fees` maps to Payment Terms (unfavorable). Three types are out of scope and never counted as misses: `limitation-of-liability`, `auto-renewal`, and `unilateral-modification`. The PRD excluded Auto-Renewal and Liability Cap as rare in freelancer contracts, and Unilateral Modification was never among the eight clause types the research surfaced. A planted clause counts as found when a flag quotes a sentence that overlaps the planted sentence.
+
+**Groundedness** counts how many flags quote a sentence that appears character for character in the document, out of all flags returned. A flag whose citation is not a verbatim substring of the document text is ungrounded.
+
+**Clean document rate** counts how many flags the analysis returns on documents that should come back clean. Any flag on a benign document is an over-flag.
+
+**The limit.** A model wrote the gold set, so the phrasing is not independent of the measurement. A sentence written to read like an arbitration clause is a sentence a model is likely to recognise as one. These numbers are an upper bound on what the analysis achieves, not a promise to a reader. No number from a run over this corpus belongs in copy a user sees.

@@ -10,6 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "smoke": "tsx scripts/smoke.ts",
+    "eval": "tsx scripts/eval.ts",
+    "label": "node eval/labels/server.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

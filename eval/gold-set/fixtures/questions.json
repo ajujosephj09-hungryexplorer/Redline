@@ -1,0 +1,79 @@
+{
+  "document": "adhesion-contract.txt",
+  "grounded": [
+    {
+      "question": "If I forget to cancel, am I on the hook for another whole year?",
+      "expectedSourceSentence": "At the end of the initial term, and at the end of each term thereafter, your membership renews automatically for a further twelve (12) month term at the then-current rate."
+    },
+    {
+      "question": "How much warning do I get before it renews, and who do I tell?",
+      "expectedSourceSentence": "To stop a renewal you must deliver written notice of cancellation to the Member Services desk no later than three (3) days before the renewal date."
+    },
+    {
+      "question": "Can they put my monthly price up while I am a member?",
+      "expectedSourceSentence": "Meridian may adjust dues once in any twelve (12) month period by the greater of six percent (6%)  or the increase in the Consumer Price Index for All Urban Consumers over the preceding twelve months, on thirty (30) days notice to the email address on your account."
+    },
+    {
+      "question": "What happens if my payment bounces and I am two weeks late?",
+      "expectedSourceSentence": "Dues not received within ten (10) days of the draw date incur the late charge set out in the Schedule of Fees then in effect, which is posted at the Member Services desk and on the Meridian website and forms part of this Agreement."
+    },
+    {
+      "question": "Can they change the rules after I have signed?",
+      "expectedSourceSentence": "Meridian may amend the Club Rules, the Schedule of Fees, the hours of operation, the class timetable and the terms of this Agreement at any time by posting the amended version at the club or on the Meridian website, and the amended version applies to you from the date it is posted."
+    },
+    {
+      "question": "If I get hurt because a machine was broken, what is the most I could get back from them?",
+      "expectedSourceSentence": "Meridian’s total liability to you for any claim arising out of or relating to this Agreement, your membership or your use of any facility — whether the claim is framed in contract, in negligence or otherwise — will not exceed the total dues and fees you paid to Meridian in the twelve (12) months immediately before the event giving rise to the claim."
+    },
+    {
+      "question": "If a friend I sign in as a guest sues the club, does that land on me?",
+      "expectedSourceSentence": "You will indemnify, defend and hold harmless Meridian and its ofﬁcers, employees, instructors and contractors against any claim, demand, loss, liability or expense, including reasonable legal fees, that is brought by a third party and arises out of your use of the facilities, your conduct on club premises, the conduct of a guest you bring, or any service you provide to another member."
+    },
+    {
+      "question": "After I finish the instructor course, can I teach at the studio down the road?",
+      "expectedSourceSentence": "For twelve (12) months after your Program candidacy ends for any reason, you will not teach, coach or deliver group ﬁtness instruction or personal training, whether as an employee, as a contractor or on your own account, at any facility within ﬁfteen (15) miles of a Meridian location at which you taught or trained."
+    },
+    {
+      "question": "Am I giving up the right to take them to court?",
+      "expectedSourceSentence": "Any dispute, claim or controversy between you and Meridian arising out of or relating to this Agreement, your membership or the Program will be resolved by ﬁnal and binding arbitration administered by a nationally recognised arbitration provider under its consumer arbitration rules, and you and Meridian each waive any right to a trial by jury and any right to bring or participate in a class, collective or representative action."
+    },
+    {
+      "question": "Is there any way to keep my right to sue?",
+      "expectedSourceSentence": "You may opt out of this Section 12 by delivering written notice to the address in Section 11 within thirty (30) days after you ﬁrst accept this Agreement, and opting out will not affect your membership or your standing in the Program."
+    }
+  ],
+  "ungrounded": [
+    {
+      "question": "Which state's law applies to this agreement?",
+      "why": "The document has no governing law clause and names no state anywhere."
+    },
+    {
+      "question": "Would a court actually uphold the class action waiver?",
+      "why": "Whether a clause holds up is never in the document; it only says what the clause requires."
+    },
+    {
+      "question": "How much are the monthly dues?",
+      "why": "The amount is deferred to the enrolment form, which is not part of this text."
+    },
+    {
+      "question": "What is the late charge in dollars?",
+      "why": "The figure sits in a Schedule of Fees that the document points at without reproducing."
+    },
+    {
+      "question": "Which arbitration provider would hear my claim, and who pays the filing fee?",
+      "why": "The document says a nationally recognised provider without naming one, and it never allocates arbitration costs."
+    },
+    {
+      "question": "Is the instructor certification recognised by anyone outside Meridian?",
+      "why": "The document describes the coursework and assessments but says nothing about outside recognition or accreditation."
+    },
+    {
+      "question": "Will they email me before the membership renews?",
+      "why": "The document requires notice for a dues increase but never says anything about a renewal reminder."
+    },
+    {
+      "question": "Does Meridian share my contact and billing details with anyone else?",
+      "why": "The document requires the reader to keep those details current and says nothing about what is done with them."
+    }
+  ]
+}

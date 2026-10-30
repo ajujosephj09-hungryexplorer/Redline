@@ -1,0 +1,67 @@
+{
+  "document": "internship-agreement.txt",
+  "title": "LOWELL AND KERR LLP: SUMMER ANALYST PROGRAMME AGREEMENT",
+  "sourceKind": "pasted",
+  "checkedClauseTypes": [
+    "arbitration-and-class-action-waiver",
+    "unilateral-modification",
+    "non-compete",
+    "auto-renewal",
+    "limitation-of-liability",
+    "indemnification",
+    "fee-escalators-and-late-fees"
+  ],
+  "summary": "This is a twelve week fixed term Summer Analyst Programme at Lowell and Kerr LLP, paying the weekly stipend on the Programme Schedule with an optional housing advance repaid out of it. Signing commits you to a late charge on any housing advance instalment not recovered in ten days, a handbook and terms of the agreement the Firm can amend by email, a six month bar after the Programme on taking work with any firm on a confidential Restricted List and on approaching clients whose files you worked on, and covering the Firm's costs if a claim arises from your breaching confidentiality or those post-programme terms. Disputes go to individual arbitration instead of a court, and the Programme carries no promise of further employment.",
+  "plantedClauses": [
+    {
+      "id": "P-01",
+      "clauseType": "fee-escalators-and-late-fees",
+      "sourceSentence": "Where the Analyst takes the optional housing advance, it is repaid in six equal instalments deducted from the stipend, and any instalment not recovered within ten (10) days of its due date carries the late charge set out in the Programme Handbook until it is repaid in full.",
+      "expectedSeverityBand": "moderate",
+      "confidence": 0.87,
+      "consequence": "The housing advance comes back out of your stipend in six equal instalments. An instalment the Firm cannot recover within ten days of its due date starts attracting a late charge, and this agreement does not say how much: the figure is in the Programme Handbook.",
+      "exit": null,
+      "why": "Moderate: a cost, not a lost lever. The figure is cross-referenced into a handbook Section 3 lets the Firm amend, so a reader cannot price the late charge from what they signed. Lowest confidence in this corpus because the clause reads as a repayment schedule rather than as a fee clause."
+    },
+    {
+      "id": "P-02",
+      "clauseType": "unilateral-modification",
+      "sourceSentence": "The Firm may amend the Programme Handbook, the assessment structure, the teaching schedule and the terms of this Agreement at any time by issuing a revised version to the Analyst by email, and the revised version applies from the date of that email.",
+      "expectedSeverityBand": "critical",
+      "confidence": 0.94,
+      "consequence": "The Firm can rewrite the handbook, the assessments, the teaching schedule and the terms of this agreement by emailing you a new version, and the new version applies from the date of that email.",
+      "exit": null,
+      "why": "Critical: it reaches the terms of the agreement itself and needs no agreement from the reader. Notice is real, which is why the consequence says so, but notice is not consent."
+    },
+    {
+      "id": "P-03",
+      "clauseType": "non-compete",
+      "sourceSentence": "For six (6) months after the Programme ends, the Analyst will not accept an engagement, whether paid or unpaid and whether as an employee, a contractor or an intern, with any firm on the Restricted List issued to the Analyst in week one of the Programme, and will not approach any client of the Firm whose file the Analyst worked on.",
+      "expectedSeverityBand": "critical",
+      "confidence": 0.93,
+      "consequence": "For six months after the Programme you cannot take work, paid or unpaid, with any firm on a Restricted List handed to you in week one, and you cannot approach any client whose file you worked on. The list is confidential and can be reissued while you are there.",
+      "exit": null,
+      "why": "Critical: it takes away earning in the field the Programme trains for, at the point in a career where the reader has least leverage. Filed under Post-Programme Obligations, and the restricted employers are named on a list rather than in the agreement."
+    },
+    {
+      "id": "P-04",
+      "clauseType": "indemnification",
+      "sourceSentence": "The Analyst will indemnify the Firm and hold it harmless against any claim, loss or expense, including reasonable legal costs, arising out of a breach by the Analyst of Section 4 or Section 5, or out of anything the Analyst publishes about the Firm or a client of the Firm.",
+      "expectedSeverityBand": "high",
+      "confidence": 0.92,
+      "consequence": "If a claim arises out of your breaching confidentiality or the post-programme terms, or out of anything you publish about the Firm or one of its clients, you pay the Firm's losses and legal costs.",
+      "exit": null,
+      "why": "High: one way, no cap, and the publication trigger reaches an ordinary social media post about a summer job."
+    },
+    {
+      "id": "P-05",
+      "clauseType": "arbitration-and-class-action-waiver",
+      "sourceSentence": "Any dispute between the Analyst and the Firm arising out of the Programme or out of this Agreement will be resolved by final and binding arbitration on an individual basis, administered under the employment rules of a nationally recognised provider, and the Analyst gives up any right to a jury trial and any right to bring or join a class or collective action.",
+      "expectedSeverityBand": "critical",
+      "confidence": 0.96,
+      "consequence": "A dispute with the Firm goes to one arbitrator on your own behalf only, under a private body's employment rules, instead of to a court. You give up a jury and give up joining other analysts in a class or collective case.",
+      "exit": null,
+      "why": "Critical: the placement stays and the remedy goes. No opt-out anywhere in the agreement."
+    }
+  ]
+}
