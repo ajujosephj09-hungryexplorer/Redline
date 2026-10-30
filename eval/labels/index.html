@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Redline flag labelling</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6; color: #1a1a1a; background: #f8f8f8;
+    max-width: 720px; margin: 0 auto; padding: 24px 16px;
+  }
+  h1 { font-size: 1.4rem; margin-bottom: 4px; }
+  .subtitle { color: #555; font-size: 0.85rem; margin-bottom: 20px; }
+
+  /* Reference panel */
+  .ref-toggle {
+    background: #fff; border: 1px solid #ddd; border-radius: 6px;
+    padding: 10px 14px; cursor: pointer; width: 100%;
+    text-align: left; font-size: 0.9rem; font-weight: 600;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 2px;
+  }
+  .ref-toggle:hover { background: #fafafa; }
+  .ref-toggle .arrow { transition: transform 0.2s; }
+  .ref-toggle.open .arrow { transform: rotate(90deg); }
+  .ref-panel {
+    display: none; background: #fff; border: 1px solid #ddd;
+    border-top: none; border-radius: 0 0 6px 6px;
+    padding: 16px; font-size: 0.82rem; line-height: 1.7;
+    max-height: 400px; overflow-y: auto; margin-bottom: 16px;
+  }
+  .ref-panel.open { display: block; }
+  .ref-panel h3 { font-size: 0.9rem; margin: 14px 0 6px; }
+  .ref-panel h3:first-child { margin-top: 0; }
+  .ref-panel p { margin-bottom: 8px; }
+  .ref-panel .rule-box {
+    background: #f0f7ff; border: 1px solid #c0d8f0; border-radius: 4px;
+    padding: 10px 12px; margin-top: 12px; font-weight: 500;
+  }
+
+  /* Progress */
+  .progress-bar {
+    background: #fff; border: 1px solid #ddd; border-radius: 6px;
+    padding: 10px 14px; margin-bottom: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.85rem;
+  }
+  .progress-bar .count { font-weight: 600; }
+
+  /* Server status */
+  .server-down {
+    display: none; background: #fff3f3; border: 1px solid #e88; border-radius: 6px;
+    padding: 10px 14px; margin-bottom: 16px; font-size: 0.85rem;
+    align-items: center; gap: 10px;
+  }
+  .server-down.visible { display: flex; }
+  .server-down button {
+    padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px;
+    background: #fff; cursor: pointer; font-size: 0.82rem; white-space: nowrap;
+  }
+
+  /* Flag card */
+  .flag-card {
+    background: #fff; border: 1px solid #ddd; border-radius: 8px;
+    padding: 20px; margin-bottom: 16px;
+  }
+  .flag-meta {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;
+    font-size: 0.82rem;
+  }
+  .flag-meta span {
+    background: #f0f0f0; padding: 3px 8px; border-radius: 4px;
+  }
+  .flag-meta .sev-critical { background: #fde8e8; color: #b91c1c; }
+  .flag-meta .sev-moderate { background: #fef3c7; color: #92400e; }
+  .flag-meta .sev-low { background: #e0f2fe; color: #0369a1; }
+
+  .paragraph {
+    font-size: 0.88rem; line-height: 1.8; margin-bottom: 16px;
+    padding: 12px; background: #fafafa; border-radius: 4px;
+    white-space: pre-wrap; word-wrap: break-word;
+  }
+  .paragraph mark {
+    background: #fef08a; padding: 1px 2px; border-radius: 2px;
+  }
+
+  /* Label controls */
+  .label-controls { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; }
+  .label-controls button {
+    padding: 8px 20px; border: 2px solid #ddd; border-radius: 6px;
+    background: #fff; cursor: pointer; font-size: 0.9rem; font-weight: 600;
+    transition: all 0.15s;
+  }
+  .label-controls button:hover { border-color: #999; }
+  .label-controls button.pass { border-color: #15803d; color: #15803d; }
+  .label-controls button.pass.active { background: #16a34a; color: #fff; }
+  .label-controls button.fail { border-color: #dc2626; color: #dc2626; }
+  .label-controls button.fail.active { background: #dc2626; color: #fff; }
+  .note-input {
+    flex: 1; min-width: 200px; padding: 8px 10px;
+    border: 1px solid #ddd; border-radius: 6px; font-size: 0.85rem;
+    font-family: inherit;
+  }
+
+  /* Nav */
+  .nav-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 4px;
+  }
+  .nav-row button {
+    padding: 8px 16px; border: 1px solid #ddd; border-radius: 6px;
+    background: #fff; cursor: pointer; font-size: 0.85rem;
+  }
+  .nav-row button:hover { background: #f0f0f0; }
+  .nav-row button:disabled { opacity: 0.4; cursor: default; }
+  .nav-row .pos { font-size: 0.85rem; color: #666; }
+
+  /* Summary line */
+  .summary-line {
+    display: none; background: #f0fdf4; border: 1px solid #86efac;
+    border-radius: 6px; padding: 12px 14px; margin-bottom: 16px;
+    font-size: 0.88rem;
+  }
+  .summary-line.visible { display: block; }
+  .summary-line code {
+    background: #dcfce7; padding: 2px 6px; border-radius: 3px;
+    cursor: pointer; user-select: all; font-size: 0.85rem;
+  }
+
+  /* Reflection box */
+  .reflection {
+    display: none; background: #fff; border: 1px solid #ddd;
+    border-radius: 6px; padding: 14px; margin-bottom: 16px;
+  }
+  .reflection.visible { display: block; }
+  .reflection label { font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 6px; }
+  .reflection textarea {
+    width: 100%; height: 60px; padding: 8px; border: 1px solid #ddd;
+    border-radius: 4px; font-family: inherit; font-size: 0.85rem; resize: vertical;
+  }
+</style>
+</head>
+<body>
+
+<h1>Flag labelling</h1>
+<div class="subtitle">10 flags from the eval run. PASS or FAIL each one.</div>
+
+<div class="server-down" id="serverDown">
+  <span>Server is not responding. Your labels are saved in the browser.</span>
+  <button onclick="copyLabelsToClipboard()">Copy labels to clipboard</button>
+</div>
+
+<button class="ref-toggle" id="refToggle" onclick="toggleRef()">
+  <span>Reference: what good looks like + which clauses this product flags</span>
+  <span class="arrow">&#9654;</span>
+</button>
+<div class="ref-panel" id="refPanel">
+<h3>What good looks like</h3>
+<p>These are testable. If the product ships and any of these fail, the analysis cannot be trusted.</p>
+<p><strong>Citation accuracy:</strong> Every risk flag cites an exact sentence from the uploaded document. A human can find that sentence in the original and confirm it exists verbatim. A flag that cites a sentence not in the document, or paraphrases instead of quoting, is a bug.</p>
+<p><strong>Flag relevance:</strong> Given a contract with a 2-year industry-wide non-compete, the tool flags it at high severity. Given the same contract with a 6-month non-compete limited to one named competitor, the tool flags it at lower severity. The severity must change when the language changes, even if the clause category is the same.</p>
+<p><strong>Gap detection:</strong> Given a contract with no payment timeline, the tool surfaces a gap explaining that no due date was specified and why that matters. Given a contract with no non-compete clause, the tool does not surface a gap &mdash; it says nothing, because absence of a non-compete is good.</p>
+<p><strong>Counter-offer usefulness:</strong> The drafted alternative language is specific to the contract, not a generic template. A counter-offer for a termination clause in an hourly engagement suggests minimum-commitment language. A counter-offer for the same rule in a retainer suggests a kill fee or notice period. If the counter-offers are identical across different contract shapes, they are not good enough.</p>
+<p><strong>Clean contract behavior:</strong> Given a contract with no issues, the tool shows the plain-English summary and a checklist of every rule that was checked, each with a clean status. It does not invent flags to justify its existence.</p>
+<p><strong>Question box grounding:</strong> The question box is an output feature &mdash; it appears after the analysis runs and has access to the analysis context (flags, gaps, summary). Every answer is traceable to the uploaded document. If the document does not contain the answer, the tool says so. An answer that draws on knowledge outside the document is a bug. The question box does not need to function as a standalone document Q&amp;A tool &mdash; the red-line rules are the framework that does the asking.</p>
+<p><strong>False positive preference:</strong> The tool errs toward flagging. A clause that is borderline gets flagged, not skipped. The user dismisses it in 10 seconds by reading the citation. A missed risk is invisible until the freelancer gets hurt.</p>
+
+<h3>My red lines</h3>
+<p>Six default rules ship with the product. Each one is here because of what it costs a freelancer when it goes wrong.</p>
+<p><strong>1. IP Assignment (overbroad)</strong><br>Flags when the contract assigns ownership of pre-existing work, work outside the project scope, or derivative rights beyond what the project requires. This is the top red flag in freelancer contracts (research/summary.md, rank 7 by overall harm frequency, but rank 1 for freelancers specifically). A designer who signs an overbroad IP clause loses the right to reuse pre-existing portfolio work.<br>Gap: If no IP clause exists, ownership defaults to the client in many jurisdictions. The freelancer loses rights without a single word being written.</p>
+<p><strong>2. Payment Terms (unfavorable)</strong><br>Flags net-60 or net-90 payment windows, milestone triggers controlled entirely by the client, and absence of late-payment penalties. The research does not list "Payment Terms" as a standalone clause type. It is included here because the research's loudest signal &mdash; 71% freelancer non-payment rate &mdash; traces directly to unfavorable or absent payment terms. The clause type was not named; the consequence was.<br>Gap: If no payment timeline is specified, there is no enforceable due date. The client pays when they choose to.</p>
+<p><strong>3. Termination without guaranteed payment</strong><br>Flags contracts where the client can cancel the engagement with no financial obligation &mdash; no kill fee, no minimum commitment, no notice period. A freelancer who blocks time for a client and gets canceled on day one absorbs the entire loss.<br>Gap: If no termination clause exists, neither party knows how to exit. Ambiguity favors the party holding the money.</p>
+<p><strong>4. Non-Compete</strong><br>Flags restrictions on who the freelancer can work for during or after the engagement. Severity depends on the specific language &mdash; a 6-month restriction limited to one named competitor is low severity; a 2-year restriction covering "any business in the same industry" is critical. Non-competes affect 30-60 million workers; the FTC estimates banning them would add $250-$296 billion per year in worker earnings (research/summary.md).<br>No gap: Absence of a non-compete is the ideal state.</p>
+<p><strong>5. Indemnification (overbroad)</strong><br>Flags clauses that make the freelancer liable for the client's losses, especially losses the freelancer does not control. Indemnification is the primary source of commercial litigation; attorney fee obligations alone can exceed contract value (research/summary.md).<br>No gap: Absence of an indemnification clause means less exposure. Default liability rules are almost always less aggressive than a written clause.</p>
+<p><strong>6. Forced Arbitration + Class Action Waiver</strong><br>Flags clauses that require disputes to go through arbitration instead of court and waive the right to join a class action. Consumers win only 9% of arbitration cases; when companies counter-sue, they win 93% of the time. 60+ million workers are covered by forced arbitration; 826.5 million consumer agreements contain these clauses (research/summary.md).<br>No gap: Absence means full court access is preserved.</p>
+<p><strong>Severity for all six</strong> is determined by the specific language in the contract &mdash; scope, duration, and one-sidedness &mdash; not by which category the clause falls into. The tool never comments on legal enforceability. It flags what the language says.</p>
+
+<div class="rule-box">
+  <strong>The labelling rule:</strong> PASS if the quoted sentence really is the kind of clause the flag names and really costs the reader something. Otherwise FAIL.
+</div>
+</div>
+
+<div class="progress-bar">
+  <span>Labelled: <span class="count" id="labelCount">0</span> / 10</span>
+  <span id="mindChanges"></span>
+</div>
+
+<div class="summary-line" id="summaryLine">
+  All 10 labelled. Copy this line: <code id="summaryText" onclick="this.select && this.select(); navigator.clipboard.writeText(this.textContent)"></code>
+</div>
+
+<div class="reflection" id="reflection">
+  <label>What changed in how you judge? (shown after all 10 are labelled)</label>
+  <textarea id="reflectionText" placeholder="Optional: one or two sentences"></textarea>
+</div>
+
+<div class="flag-card" id="flagCard">
+  <div class="flag-meta" id="flagMeta"></div>
+  <div class="paragraph" id="flagParagraph"></div>
+  <div class="label-controls">
+    <button class="pass" id="btnPass" onclick="setLabel('PASS')">PASS</button>
+    <button class="fail" id="btnFail" onclick="setLabel('FAIL')">FAIL</button>
+    <input class="note-input" id="noteInput" type="text" placeholder="Why, in one sentence" maxlength="200">
+  </div>
+</div>
+
+<div class="nav-row">
+  <button id="btnPrev" onclick="go(-1)">&larr; Previous</button>
+  <span class="pos" id="posLabel"></span>
+  <button id="btnNext" onclick="go(1)">Next &rarr;</button>
+</div>
+
+<script>
+let flags = []
+let labels = {} // { "1": { label, note, history: [{label,note,time}], changedMind: 0 } }
+let current = 0
+let serverAlive = true
+let saveTimer = null
+
+async function init() {
+  try {
+    const res = await fetch('/flags.json')
+    flags = await res.json()
+  } catch { return }
+
+  try {
+    const res = await fetch('/labels.json')
+    const saved = await res.json()
+    if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
+      labels = saved
+    }
+  } catch {}
+
+  // Merge with localStorage backup
+  try {
+    const local = JSON.parse(localStorage.getItem('redline-labels') || '{}')
+    for (const k of Object.keys(local)) {
+      if (!labels[k]) labels[k] = local[k]
+    }
+  } catch {}
+
+  render()
+  checkServer()
+  setInterval(checkServer, 5000)
+}
+
+function render() {
+  if (!flags.length) return
+  const f = flags[current]
+  const n = f.number
+
+  // Meta
+  const sevClass = 'sev-' + f.severity
+  document.getElementById('flagMeta').innerHTML =
+    `<span>${f.document}</span>` +
+    `<span>${f.clauseType}</span>` +
+    `<span class="${sevClass}">${f.severity}</span>`
+
+  // Paragraph with highlighted citation
+  const para = f.paragraph
+  const cite = f.citation
+  const idx = para.indexOf(cite)
+  let html
+  if (idx >= 0) {
+    html = escHtml(para.slice(0, idx)) +
+      '<mark>' + escHtml(cite) + '</mark>' +
+      escHtml(para.slice(idx + cite.length))
+  } else {
+    html = escHtml(para)
+  }
+  document.getElementById('flagParagraph').innerHTML = html
+
+  // Label state
+  const entry = labels[n]
+  const btnPass = document.getElementById('btnPass')
+  const btnFail = document.getElementById('btnFail')
+  const noteInput = document.getElementById('noteInput')
+  btnPass.classList.toggle('active', entry?.label === 'PASS')
+  btnFail.classList.toggle('active', entry?.label === 'FAIL')
+  noteInput.value = entry?.note || ''
+
+  // Nav
+  document.getElementById('btnPrev').disabled = current === 0
+  document.getElementById('btnNext').disabled = current === flags.length - 1
+  document.getElementById('posLabel').textContent = `${current + 1} of ${flags.length}`
+
+  // Progress
+  const labelled = Object.values(labels).filter(e => e.label && e.note).length
+  document.getElementById('labelCount').textContent = labelled
+  const totalMindChanges = Object.values(labels).reduce((s, e) => s + (e.changedMind || 0), 0)
+  document.getElementById('mindChanges').textContent =
+    totalMindChanges > 0 ? `Changed mind: ${totalMindChanges}` : ''
+
+  // Summary
+  const allDone = labelled === flags.length
+  const summaryEl = document.getElementById('summaryLine')
+  const reflectionEl = document.getElementById('reflection')
+  summaryEl.classList.toggle('visible', allDone)
+  reflectionEl.classList.toggle('visible', allDone)
+  if (allDone) {
+    const pass = Object.values(labels).filter(e => e.label === 'PASS').length
+    const fail = Object.values(labels).filter(e => e.label === 'FAIL').length
+    const changes = totalMindChanges
+    let line = `${pass} PASS, ${fail} FAIL`
+    if (changes > 0) line += `, changed my mind ${changes === 1 ? 'once' : changes + ' times'}`
+    document.getElementById('summaryText').textContent = line
+  }
+}
+
+function setLabel(label) {
+  const n = flags[current].number
+  const entry = labels[n] || { label: null, note: null, history: [], changedMind: 0 }
+
+  // If changing an existing label, record history
+  if (entry.label && entry.label !== label) {
+    entry.history.push({
+      label: entry.label,
+      note: entry.note,
+      time: new Date().toISOString()
+    })
+    entry.changedMind = (entry.changedMind || 0) + 1
+  }
+
+  entry.label = label
+  entry.note = document.getElementById('noteInput').value
+  labels[n] = entry
+  scheduleSave()
+  render()
+}
+
+document.getElementById('noteInput').addEventListener('input', () => {
+  const n = flags[current].number
+  if (labels[n]) {
+    labels[n].note = document.getElementById('noteInput').value
+    scheduleSave()
+    render()
+  }
+})
+
+document.getElementById('reflectionText').addEventListener('input', () => {
+  labels._reflection = document.getElementById('reflectionText').value
+  scheduleSave()
+})
+
+function go(delta) {
+  const next = current + delta
+  if (next < 0 || next >= flags.length) return
+  // Auto-save note on current flag before navigating
+  const n = flags[current].number
+  if (labels[n]) {
+    labels[n].note = document.getElementById('noteInput').value
+  }
+  current = next
+  render()
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+  if (e.key === 'ArrowLeft') go(-1)
+  if (e.key === 'ArrowRight') go(1)
+})
+
+function scheduleSave() {
+  if (saveTimer) clearTimeout(saveTimer)
+  saveTimer = setTimeout(save, 300)
+}
+
+async function save() {
+  // Always save to localStorage
+  try {
+    localStorage.setItem('redline-labels', JSON.stringify(labels))
+  } catch {}
+
+  // Try server
+  try {
+    const res = await fetch('/labels.json', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(labels, null, 2)
+    })
+    if (!res.ok) throw new Error()
+    serverAlive = true
+    document.getElementById('serverDown').classList.remove('visible')
+  } catch {
+    serverAlive = false
+    document.getElementById('serverDown').classList.add('visible')
+  }
+}
+
+async function checkServer() {
+  try {
+    const res = await fetch('/flags.json', { method: 'HEAD' })
+    if (res.ok) {
+      if (!serverAlive) {
+        serverAlive = true
+        document.getElementById('serverDown').classList.remove('visible')
+        save() // push localStorage labels to server
+      }
+    } else { throw new Error() }
+  } catch {
+    if (serverAlive) {
+      serverAlive = false
+      document.getElementById('serverDown').classList.add('visible')
+    }
+  }
+}
+
+function copyLabelsToClipboard() {
+  navigator.clipboard.writeText(JSON.stringify(labels, null, 2))
+    .then(() => alert('Labels copied to clipboard'))
+    .catch(() => alert('Copy failed. Labels are in localStorage under key "redline-labels".'))
+}
+
+function toggleRef() {
+  const btn = document.getElementById('refToggle')
+  const panel = document.getElementById('refPanel')
+  btn.classList.toggle('open')
+  panel.classList.toggle('open')
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+}
+
+init()
+</script>
+</body>
+</html>

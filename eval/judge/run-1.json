@@ -1,0 +1,56 @@
+{
+  "runTime": "2026-10-30T17:30:00Z",
+  "rubric": "eval/judge/rubric.md",
+  "verdicts": [
+    {
+      "number": 1,
+      "verdict": "PASS",
+      "reason": "The clause is a genuine indemnification clause that makes the member liable for third-party claims arising from their own conduct, their guests' conduct, and any service they provide to another member — with Meridian selecting counsel and controlling settlement — which is overbroad because it extends liability to situations the member may not control (e.g., a guest's actions or vaguely defined 'service' to another member)."
+    },
+    {
+      "number": 2,
+      "verdict": "PASS",
+      "reason": "The clause requires binding arbitration and explicitly waives the right to a jury trial and to bring or participate in a class, collective, or representative action, which removes the member's access to court and collective legal remedies."
+    },
+    {
+      "number": 3,
+      "verdict": "PASS",
+      "reason": "The clause is a genuine indemnification clause that makes an unpaid intern liable for claims arising from breaches of confidentiality/IP sections and from 'anything the Analyst publishes about the Firm or a client,' which is overbroad because the open-ended publishing trigger could encompass truthful statements or whistleblowing, creating disproportionate exposure for someone receiving no compensation."
+    },
+    {
+      "number": 4,
+      "verdict": "PASS",
+      "reason": "The clause imposes mandatory binding arbitration on an individual basis and explicitly strips the intern of the right to a jury trial and to bring or join a class or collective action, removing meaningful legal recourse for someone in an inherently unequal power position."
+    },
+    {
+      "number": 5,
+      "verdict": "FAIL",
+      "reason": "This is a mutual termination clause in an unpaid volunteer arrangement where neither side owes anything and neither side loses anything, making it a standard term that does not cost the reader something."
+    },
+    {
+      "number": 6,
+      "verdict": "PASS",
+      "reason": "The clause is a genuine non-compete that restricts where the employee can work for 12 months post-employment across an entire 'Restricted Field' defined in a separate exhibit, regardless of whether the employee quit or was fired, which materially restricts their ability to earn a living."
+    },
+    {
+      "number": 7,
+      "verdict": "PASS",
+      "reason": "The clause is a genuine indemnification clause that makes the employee liable not only for their own breaches of confidentiality/IP sections but also for claims by a former employer that the employee's new employment breaches a prior obligation — a risk the employee may not fully control and that properly belongs to the hiring company's due diligence."
+    },
+    {
+      "number": 8,
+      "verdict": "PASS",
+      "reason": "The clause is a genuine indemnification clause that makes the subscriber liable for claims arising from anything sent from or stored on their device, use of their line by anyone they allow, and any charges on their account — which is overbroad because it extends liability to actions of third parties the subscriber authorized to use the line but does not control."
+    },
+    {
+      "number": 9,
+      "verdict": "PASS",
+      "reason": "The clause is a genuine indemnification clause that makes the user liable for third-party IP and privacy claims related to content they uploaded, exported, or published through the service, which is a real obligation that creates concrete legal and financial exposure for the user."
+    },
+    {
+      "number": 10,
+      "verdict": "PASS",
+      "reason": "The clause is a genuine indemnification clause that makes the occupant liable for every claim arising from their use of the unit or premises and the acts of anyone the occupant allows onto the premises, which is overbroad because it extends liability to the independent actions of third parties the occupant permitted on-site."
+    }
+  ]
+}
